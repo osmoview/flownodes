@@ -1,4 +1,4 @@
-package nodes
+package flownodes
 
 type Script struct {
 	ID string

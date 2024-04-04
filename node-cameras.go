@@ -1,4 +1,4 @@
-package nodes
+package flownodes
 
 type Cameras struct {
 	Frames Port

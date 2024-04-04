@@ -1,4 +1,4 @@
-package nodes
+package flownodes
 
 type Text struct {
 	Text string

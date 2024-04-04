@@ -1,4 +1,4 @@
-package nodes
+package flownodes
 
 import "github.com/osmoview/flowdata"
 
