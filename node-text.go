@@ -1,13 +1,14 @@
 package flownodes
 
 type Text struct {
-	Text string
+	Text string `yaml:"text"`
 
 	port Port
 }
 
-func (t *Text) Init() {
+func (t *Text) Init(db DB) error {
 	t.port = Port{Name: "text", Type: PortString}
+	return nil
 }
 
 func (t *Text) Execute(c Ctx) (out Resp, err error) {

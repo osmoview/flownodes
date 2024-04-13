@@ -1,37 +1,41 @@
 package flownodes
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
+
+	"github.com/osmoview/flowdata"
 )
 
+var ErrNoDataSource = errors.New("no data source")
+var ErrUnexpectedDataType = errors.New("unexpected data type")
+
 const (
-	NodeScreen   = "screen"
-	NodeCameras  = "cameras"
-	NodeScript   = "script"
-	NodeText     = "text"
-	NodeFilter   = "filter"
-	NodeDetector = "detector"
+	NodeScreen  = "screen"
+	NodeCamera  = "camera"
+	NodeService = "service"
+	NodeText    = "text"
+	NodeFilter  = "filter"
 )
 
 // EntryNodes are the nodes from which the execution of analytics can begin
-var EntryNodes = []string{NodeCameras}
+var EntryNodes = []string{NodeCamera}
 
 // SourceNodes is a list of nodes that will be executed when the main entry node starts execution
-var SourceNodes = []string{NodeCameras, NodeText, NodeScript}
+var SourceNodes = []string{NodeCamera, NodeText, NodeService}
 
 var Nodes = map[string]Node{
-	NodeScreen:   &Screen{},
-	NodeCameras:  &Cameras{},
-	NodeScript:   &Script{},
-	NodeText:     &Text{},
-	NodeFilter:   &Filter{},
-	NodeDetector: &Detector{},
+	NodeScreen:  &Screen{},
+	NodeCamera:  &Camera{},
+	NodeService: &Service{},
+	NodeText:    &Text{},
+	NodeFilter:  &Filter{},
 }
 
 type Node interface {
 	// initialize node, set default values, etc
-	Init()
+	Init(db DB) error
 
 	// this function is called every time incoming data(`Ctx``) is received,
 	// and should returns response(Resp:map[string]any),
@@ -76,7 +80,7 @@ type Resp map[string]interface{}
 //
 
 const (
-	PortFrames  = "frames"
+	PortFrame   = "frame"
 	PortObjects = "objects"
 	PortString  = "string"
 	PortNumber  = "number"
@@ -88,4 +92,22 @@ const (
 type Port struct {
 	Name string
 	Type string
+}
+
+//
+// services storage and database interface
+//
+
+type DB interface {
+	GetService(id string) (RemoteService, error)
+	GetCamera(id string) (FrameReceiver, error)
+}
+
+type RemoteService interface {
+	Send(data, resp interface{}) error
+	GetPorts() (input, output []Port)
+}
+
+type FrameReceiver interface {
+	GetFrame() (*flowdata.Frame, error)
 }

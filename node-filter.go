@@ -9,16 +9,18 @@ import (
 const FilterAny = "*"
 
 type Filter struct {
-	Probs map[string]float64
+	Probs map[string]float64 `yaml:"probs"`
 
-	In  Port
-	Out Port
+	In  Port `yaml:"-"`
+	Out Port `yaml:"-"`
 }
 
-func (f *Filter) Init() {
+func (f *Filter) Init(db DB) error {
 	f.Probs = make(map[string]float64)
 	f.In = Port{Name: "objects", Type: PortObjects}
 	f.Out = Port{Name: "objects", Type: PortObjects}
+
+	return nil
 }
 
 func (f *Filter) Execute(c Ctx) (out Resp, err error) {
