@@ -37,7 +37,7 @@ type Node interface {
 	// initialize node, set default values, etc
 	Init(db DB) error
 
-	// this function is called every time incoming data(`Ctx``) is received,
+	// this function is called every time incoming data(`Ctx`) is received,
 	// and should returns response(Resp:map[string]any),
 	// where the key is a port name, and the value contains the data
 	Execute(c Ctx) (out Resp, err error)
@@ -90,8 +90,19 @@ const (
 // Port on the Node, contains name and type
 // should be impossible to connect ports of different types
 type Port struct {
-	Name string
-	Type string
+	// port name, like status, frame, objects, or something other,
+	// optional, if not specified, frontend should use port type as name
+	Name string `yaml:"name,omitempty"`
+
+	// port type defines the type of data that can be transmitted over this port
+	// frontend should prohibit the connection of ports of different types to each other
+	Type string `yaml:"type"`
+
+	// text description of the port
+	Desc string `yaml:"desc,omitempty"`
+
+	// if field flag enabled, so this is not a port, but a field for entering data
+	Field bool `yaml:"field,omitempty"`
 }
 
 //
