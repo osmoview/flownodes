@@ -12,11 +12,12 @@ var ErrNoDataSource = errors.New("no data source")
 var ErrUnexpectedDataType = errors.New("unexpected data type")
 
 const (
-	NodeScreen  = "screen"
-	NodeCamera  = "camera"
-	NodeService = "service"
-	NodeText    = "text"
-	NodeFilter  = "filter"
+	NodeScreen   = "screen"
+	NodeCamera   = "camera"
+	NodeService  = "service"
+	NodeText     = "text"
+	NodeReadFile = "readfile"
+	NodeFilter   = "filter"
 )
 
 // EntryNodes are the nodes from which the execution of analytics can begin
@@ -26,13 +27,14 @@ var EntryNodes = []string{NodeCamera}
 var SourceNodes = []string{NodeCamera, NodeText, NodeService}
 
 var Nodes = map[string]Node{
-	NodeScreen:  &Screen{},
-	NodeCamera:  &Camera{},
-	NodeService: &Service{},
-	NodeText:    &Text{},
-	NodeFilter:  &Filter{},
-	"cpu-temp":  &CPUtemp{},
-	"expr":      &Expression{},
+	NodeScreen:   &Screen{},
+	NodeCamera:   &Camera{},
+	NodeService:  &Service{},
+	NodeText:     &Text{},
+	NodeReadFile: &ReadFile{},
+	NodeFilter:   &Filter{},
+	"cpu-temp":   &CPUtemp{},
+	"expr":       &Expression{},
 }
 
 type Node interface {
@@ -88,6 +90,7 @@ const (
 	PortString  = "string"
 	PortNumber  = "number"
 	PortMap     = "map"
+	PortBytes   = "bytes"
 	PortAny     = "any"
 	PortEmpty   = ""
 )
