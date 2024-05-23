@@ -1,2 +1,6 @@
+github.com/expr-lang/expr v1.16.7 h1:gCIiHt5ODA0xIaDbD0DPKyZpM9Drph3b3lolYAYq2Kw=
+github.com/expr-lang/expr v1.16.7/go.mod h1:8/vRC7+7HBzESEqt5kKpYXxrxkr31SaO8r40VO/1IT4=
 github.com/osmoview/flowdata v0.0.4 h1:qHNi+9YjPJQzDGhITABWvF+AehAiGQb6int9ec1qDyE=
 github.com/osmoview/flowdata v0.0.4/go.mod h1:EGoHmzDlbUNMhZBP3ujO8Agw/vIxxTVrBR3XeF0XN+Y=
+github.com/ssimunic/gosensors v0.0.0-20170414000417-e7ab9a4e799b h1:A0dEqKvhRwdlwU914ZsPns8M+KYbM+VO/mZwQwcX8og=
+github.com/ssimunic/gosensors v0.0.0-20170414000417-e7ab9a4e799b/go.mod h1:COFpNRoa9A4pAl0UtyUp8wuzSxsS0StEQwsmYfYMtbI=

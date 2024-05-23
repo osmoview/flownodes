@@ -31,6 +31,8 @@ var Nodes = map[string]Node{
 	NodeService: &Service{},
 	NodeText:    &Text{},
 	NodeFilter:  &Filter{},
+	"cpu-temp":  &CPUtemp{},
+	"expr":      &Expression{},
 }
 
 type Node interface {
@@ -71,6 +73,7 @@ func reflectCopy(inode interface{}) interface{} {
 type Ctx interface {
 	GetData(port string) (data interface{}, ok bool)
 	MustGetData(port string) (data interface{})
+	ToMap() map[string]interface{}
 }
 
 type Resp map[string]interface{}
@@ -84,6 +87,8 @@ const (
 	PortObjects = "objects"
 	PortString  = "string"
 	PortNumber  = "number"
+	PortMap     = "map"
+	PortAny     = "any"
 	PortEmpty   = ""
 )
 
