@@ -111,6 +111,9 @@ type Port struct {
 
 	// if field flag enabled, so this is not a port, but a field for entering data
 	Field bool `yaml:"field,omitempty"`
+
+	// optional flag, if true, then port provide not necessary data
+	Optional bool `yaml:"optional"`
 }
 
 //
