@@ -73,6 +73,7 @@ func reflectCopy(inode interface{}) interface{} {
 //
 
 type Ctx interface {
+	GetID() string
 	GetData(port string) (data interface{}, ok bool)
 	MustGetData(port string) (data interface{})
 	ToMap() map[string]interface{}
