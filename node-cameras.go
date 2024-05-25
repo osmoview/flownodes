@@ -8,12 +8,12 @@ type Camera struct {
 	ID  string `yaml:"id"`
 	cam FrameReceiver
 
-	Frames Port `yaml:"-"`
+	frames Port
 }
 
 // Init cameras node, lookup camera by specified id from the `DB`
 func (node *Camera) Init(db DB) (err error) {
-	node.Frames = Port{Name: PortFrame, Type: PortFrame}
+	node.frames = Port{Name: PortFrame, Type: PortFrame}
 
 	if node.ID != "" {
 		node.cam, err = db.GetCamera(node.ID)
@@ -30,18 +30,18 @@ func (node *Camera) Execute(c Ctx) (out Resp, err error) {
 			return nil, ErrUnexpectedDataType
 		}
 
-		return Resp{PortFrame: frame}, nil
+		return Resp{node.frames.Name: frame}, nil
 	}
 
 	// getting a frame from the required camera if it exists
 	if node.cam != nil {
 		frame, err := node.cam.GetFrame()
-		return Resp{PortFrame: frame}, err
+		return Resp{node.frames.Name: frame}, err
 	}
 
-	return Resp{PortFrame: nil}, ErrNoDataSource
+	return Resp{node.frames.Name: nil}, ErrNoDataSource
 }
 
 func (node *Camera) GetPorts() (in, out []Port) {
-	return in, []Port{node.Frames}
+	return in, []Port{node.frames}
 }
