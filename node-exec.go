@@ -26,7 +26,7 @@ func (e *Exec) Init(db DB) error {
 }
 
 func (e *Exec) Execute(c Ctx) (Resp, error) {
-	args, err := e.parseArgs(c.ToMap())
+	args, err := e.parseArgs(c.DataMap())
 	if err != nil {
 		return nil, err
 	}

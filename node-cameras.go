@@ -24,7 +24,7 @@ func (node *Camera) Init(db DB) (err error) {
 
 func (node *Camera) Execute(c Ctx) (out Resp, err error) {
 	// check `entry` data as `flowdata.Frame`, if it exists, then return it
-	if data, ok := c.GetData("entry"); ok {
+	if data, ok := c.GetData(PortFrame); ok {
 		frame, ok := data.(*flowdata.Frame)
 		if !ok {
 			return nil, ErrUnexpectedDataType
@@ -36,6 +36,10 @@ func (node *Camera) Execute(c Ctx) (out Resp, err error) {
 	// getting a frame from the required camera if it exists
 	if node.cam != nil {
 		frame, err := node.cam.GetFrame()
+
+		// TODO: set source info from the FrameReceiver
+		// TODO: return source info as port
+
 		return Resp{node.frames.Name: frame}, err
 	}
 

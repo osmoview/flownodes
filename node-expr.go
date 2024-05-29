@@ -25,7 +25,7 @@ func (e *Expression) Init(db DB) error {
 }
 
 func (e *Expression) Execute(c Ctx) (Resp, error) {
-	m := c.ToMap()
+	m := c.DataMap()
 
 	program, err := expr.Compile(e.Expr, expr.Env(m))
 	if err != nil {
