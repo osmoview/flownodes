@@ -74,26 +74,40 @@ func reflectCopy(inode interface{}) interface{} {
 
 type Ctx interface {
 	GetID() string
-	GetData(port string) (data interface{}, ok bool)
-	MustGetData(port string) (data interface{})
-	ToMap() map[string]interface{}
+	SetSourceInfo(SourceInfo)
+	GetSourceInfo() SourceInfo
+	GetData(port string) (data any, ok bool)
+	MustGetData(port string) (data any)
+	DataMap() map[string]any
+	Abort()
 }
 
-type Resp map[string]interface{}
+type Resp map[string]any
+
+func (r Resp) GetData(key string) (v any, ok bool) {
+	v, ok = r[key]
+	return
+}
+
+func (r Resp) MustGetData(key string) (v any) {
+	v, _ = r[key]
+	return
+}
 
 //
 // ports
 //
 
 const (
-	PortFrame   = "frame"
-	PortObjects = "objects"
-	PortString  = "string"
-	PortNumber  = "number"
-	PortMap     = "map"
-	PortBytes   = "bytes"
-	PortAny     = "any"
-	PortEmpty   = ""
+	PortFrame      = "frame"
+	PortObjects    = "objects"
+	PortString     = "string"
+	PortNumber     = "number"
+	PortMap        = "map"
+	PortBytes      = "bytes"
+	PortAny        = "any"
+	PortSourceInfo = "sourceinfo"
+	PortEmpty      = ""
 )
 
 // Port on the Node, contains name and type
@@ -127,10 +141,18 @@ type DB interface {
 }
 
 type RemoteService interface {
-	Send(data, resp interface{}) error
+	Send(data, resp any) error
 	GetPorts() (input, output []Port)
 }
 
 type FrameReceiver interface {
 	GetFrame() (*flowdata.Frame, error)
+}
+
+// SourceInfo contins some basic information about camera or remote service
+type SourceInfo struct {
+	ID   string
+	Name string
+	Type string
+	// Addr string
 }
