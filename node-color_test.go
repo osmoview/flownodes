@@ -9,14 +9,14 @@ import (
 	"github.com/osmoview/flowdata"
 )
 
-func createTestImage(width, height int, col color.Color) image.Image {
+func createTestImageColor(width, height int, col color.Color) image.Image {
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 	draw.Draw(img, img.Bounds(), &image.Uniform{col}, image.Point{}, draw.Src)
 	return img
 }
 
 func TestColor_Execute(t *testing.T) {
-	testImage := createTestImage(100, 100, color.RGBA{255, 255, 0, 255})
+	testImage := createTestImageColor(100, 100, color.RGBA{255, 255, 0, 255})
 
 	testFrame := flowdata.Frame{
 		Image: testImage,
