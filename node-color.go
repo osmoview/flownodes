@@ -2,11 +2,13 @@ package flownodes
 
 import (
 	"errors"
-	"github.com/EdlinOrg/prominentcolor"
-	"github.com/osmoview/flowdata"
 	"image"
 	"image/draw"
 	"log"
+
+	"github.com/osmoview/flowdata"
+
+	"github.com/EdlinOrg/prominentcolor"
 )
 
 type Color struct {
@@ -68,17 +70,9 @@ func (col *Color) Execute(c Ctx) (out Resp, err error) {
 			continue
 		}
 
-		newObjects = append(newObjects, &flowdata.Object{
-			ID:        obj.ID,
-			Type:      obj.Type,
-			Name:      obj.Name,
-			Prob:      obj.Prob,
-			BBox:      obj.BBox,
-			Area:      obj.Area,
-			Color:     centroids[0].AsString(),
-			Data:      obj.Data,
-			Keypoints: obj.Keypoints,
-		})
+		newObject := obj.Copy()
+		newObject.Color = centroids[0].AsString()
+		newObjects = append(newObjects, newObject)
 	}
 
 	return Resp{col.objects.Name: newObjects}, nil

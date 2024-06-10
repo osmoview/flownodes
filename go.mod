@@ -5,8 +5,9 @@ go 1.22.2
 toolchain go1.22.3
 
 require (
+	github.com/EdlinOrg/prominentcolor v1.0.0
 	github.com/expr-lang/expr v1.16.9
-	github.com/osmoview/flowdata v0.0.7
+	github.com/osmoview/flowdata v0.0.8
 	github.com/osmoview/spot v0.0.2
 	github.com/ssimunic/gosensors v0.0.0-20170414000417-e7ab9a4e799b
 	gorm.io/driver/postgres v1.5.7
@@ -14,7 +15,6 @@ require (
 )
 
 require (
-	github.com/EdlinOrg/prominentcolor v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/pgx/v5 v5.6.0 // indirect

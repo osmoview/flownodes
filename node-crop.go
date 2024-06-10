@@ -2,13 +2,10 @@ package flownodes
 
 import (
 	"errors"
-	"github.com/osmoview/flowdata"
 	"image"
 	"image/draw"
 
-	// blank import to support some image formats
-	_ "image/jpeg"
-	_ "image/png"
+	"github.com/osmoview/flowdata"
 )
 
 type Crop struct {
