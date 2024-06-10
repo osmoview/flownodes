@@ -4,7 +4,6 @@ import (
 	"errors"
 	"image"
 	"image/draw"
-	"log"
 
 	"github.com/osmoview/flowdata"
 
@@ -25,22 +24,32 @@ func (col *Color) Init(db DB) (err error) {
 	return
 }
 
-func (col *Color) Execute(c Ctx) (out Resp, err error) {
+// getCtxData get frame, objects from Ctx
+func (col *Color) getCtxData(c Ctx) (*flowdata.Frame, []*flowdata.Object, error) {
 	var frame *flowdata.Frame
 
 	if data, ok := c.GetData(PortFrame); ok {
 		frame, ok = data.(*flowdata.Frame)
 		if !ok {
-			return nil, ErrUnexpectedDataType
+			return nil, nil, ErrUnexpectedDataType
 		}
 	}
 	if frame == nil {
-		return nil, errors.New("frame not found")
+		return nil, nil, errors.New("frame not found")
 	}
 
 	objects, ok := c.MustGetData(PortObjects).([]*flowdata.Object)
 	if !ok {
-		return nil, ErrUnexpectedDataType
+		return nil, nil, ErrUnexpectedDataType
+	}
+
+	return frame, objects, nil
+}
+
+func (col *Color) Execute(c Ctx) (out Resp, err error) {
+	frame, objects, err := col.getCtxData(c)
+	if err != nil {
+		return nil, err
 	}
 
 	newObjects := make([]*flowdata.Object, 0, len(objects))
@@ -51,23 +60,26 @@ func (col *Color) Execute(c Ctx) (out Resp, err error) {
 	height := bounds.Dy()
 
 	for _, obj := range objects {
+		if obj.IsZeroBBox() {
+			return nil, errors.New("checked bbox is zero")
+		}
+
 		x := int(obj.BBox[0] * float64(width))
 		y := int(obj.BBox[1] * float64(height))
 		w := int(obj.BBox[2] * float64(width))
 		h := int(obj.BBox[3] * float64(height))
 
-		croppedImg := image.NewRGBA(image.Rect(0, 0, w, h))
+		cropped := image.NewRGBA(image.Rect(0, 0, w, h))
 
-		draw.Draw(croppedImg, croppedImg.Bounds(), img, image.Point{X: x, Y: y}, draw.Src)
+		draw.Draw(cropped, cropped.Bounds(), img, image.Point{X: x, Y: y}, draw.Src)
 
-		centroids, err := prominentcolor.Kmeans(croppedImg)
+		centroids, err := prominentcolor.Kmeans(cropped)
 		if err != nil {
-			log.Println(err)
-			continue
+			return nil, err
 		}
 
 		if len(centroids) == 0 {
-			continue
+			return nil, errors.New("color cropped image not found")
 		}
 
 		newObject := obj.Copy()

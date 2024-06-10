@@ -20,40 +20,59 @@ func (cr *Crop) Init(db DB) (err error) {
 	return
 }
 
-func (cr *Crop) Execute(c Ctx) (out Resp, err error) {
+// getCtxData get frame, region from Ctx
+func (cr *Crop) getCtxData(c Ctx) (*flowdata.Frame, *flowdata.Region, error) {
 	var frame *flowdata.Frame
 	var region *flowdata.Region
 
 	if data, ok := c.GetData(PortFrame); ok {
 		frame, ok = data.(*flowdata.Frame)
 		if !ok {
-			return nil, ErrUnexpectedDataType
+			return nil, nil, ErrUnexpectedDataType
 		}
 	}
 	if frame == nil {
-		return nil, errors.New("frame not found")
+		return nil, nil, errors.New("frame not found")
 	}
 
 	if data, ok := c.GetData(PortRegion); ok {
 		region, ok = data.(*flowdata.Region)
 		if !ok {
-			return nil, ErrUnexpectedDataType
+			return nil, nil, ErrUnexpectedDataType
 		}
 	}
 	if region == nil {
-		return nil, errors.New("region not found")
+		return nil, nil, errors.New("region not found")
+	}
+
+	return frame, region, nil
+}
+
+func (cr *Crop) Execute(c Ctx) (out Resp, err error) {
+	frame, region, err := cr.getCtxData(c)
+	if err != nil {
+		return nil, err
 	}
 
 	img := frame.GetImage()
+	bounds := img.Bounds()
+	width := bounds.Dx()
+	height := bounds.Dy()
+
 	minX, minY, maxX, maxY := region.BBox()
 
-	rect := image.Rect(int(minX), int(minY), int(maxX), int(maxY))
+	rect := image.Rect(
+		int(minX*float64(width)),
+		int(minY*float64(height)),
+		int(maxX*float64(width)),
+		int(maxY*float64(height)),
+	)
 
-	croppedImg := image.NewRGBA(rect.Bounds())
+	cropped := image.NewRGBA(rect)
 
-	draw.Draw(croppedImg, rect.Bounds(), img, rect.Min, draw.Src)
+	draw.Draw(cropped, rect.Bounds(), img, rect.Min, draw.Src)
 
-	newFrame, err := flowdata.NewFrameImage(croppedImg)
+	newFrame, err := flowdata.NewFrameImage(cropped)
 	if err != nil {
 		return nil, err
 	}

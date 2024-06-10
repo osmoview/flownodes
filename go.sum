@@ -41,6 +41,8 @@ github.com/osmoview/flowdata v0.0.7 h1:fNWrEXnuMUnrOsJw97UpgiiAchD/vNiOji9f848l4
 github.com/osmoview/flowdata v0.0.7/go.mod h1:EGoHmzDlbUNMhZBP3ujO8Agw/vIxxTVrBR3XeF0XN+Y=
 github.com/osmoview/flowdata v0.0.8 h1:lWKC4gxjhtEXUSDuJCIng3zpug6C8WbhUNcp7VVBMOs=
 github.com/osmoview/flowdata v0.0.8/go.mod h1:EGoHmzDlbUNMhZBP3ujO8Agw/vIxxTVrBR3XeF0XN+Y=
+github.com/osmoview/flowdata v0.0.9 h1:xaz/ggkjgha0WY3DwFQwp0N+BZMqk7bv11uzBK3XDdU=
+github.com/osmoview/flowdata v0.0.9/go.mod h1:EGoHmzDlbUNMhZBP3ujO8Agw/vIxxTVrBR3XeF0XN+Y=
 github.com/osmoview/spot v0.0.2 h1:g3Vxsc8DrlZXVll67b1xCvkLKlCJy0Vb2AdJ4GdROwY=
 github.com/osmoview/spot v0.0.2/go.mod h1:uwg0hTHTx/ihQQ8GFAigxOjo9U8YuQf/jud7ggQlrOA=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
