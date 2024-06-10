@@ -2,90 +2,89 @@ package flownodes
 
 import (
 	"errors"
-	"fmt"
-	"image/color"
-	"log"
-
+	"github.com/EdlinOrg/prominentcolor"
 	"github.com/osmoview/flowdata"
-)
-
-var (
-	ErrCoordinatesOutsideImage = errors.New("coordinates outside the image")
+	"image"
+	"image/draw"
+	"log"
 )
 
 type Color struct {
 	// frame image
-	frame flowdata.Frame
+	frame Port
 	// objects Bbox in relative coordinates format [x,y,w,h]
-	objects []flowdata.Object
-
-	port Port
+	objects Port
 }
 
-func (col *Color) Init(db DB) error {
-	col.port = Port{Name: "objects", Type: PortObjects}
+func (col *Color) Init(db DB) (err error) {
+	col.frame = Port{Name: PortFrame, Type: PortFrame}
+	col.objects = Port{Name: PortObjects, Type: PortObjects}
 
-	return nil
+	return
 }
 
 func (col *Color) Execute(c Ctx) (out Resp, err error) {
-	img := col.frame.GetImage()
+	var frame *flowdata.Frame
 
+	if data, ok := c.GetData(PortFrame); ok {
+		frame, ok = data.(*flowdata.Frame)
+		if !ok {
+			return nil, ErrUnexpectedDataType
+		}
+	}
+
+	if frame == nil {
+		return nil, errors.New("frame not found")
+	}
+
+	objects, ok := c.MustGetData(PortObjects).([]*flowdata.Object)
+	if !ok {
+		return nil, ErrUnexpectedDataType
+	}
+
+	newObjects := make([]*flowdata.Object, 0, len(objects))
+
+	img := frame.GetImage()
 	bounds := img.Bounds()
 	width := bounds.Dx()
 	height := bounds.Dy()
 
-	for key := range col.objects {
-		// convert relative coordinates to absolute ones
-		x := int(col.objects[key].BBox[0] * float64(width))
-		y := int(col.objects[key].BBox[1] * float64(height))
-		w := int(col.objects[key].BBox[2] * float64(width))
-		h := int(col.objects[key].BBox[3] * float64(height))
+	for _, obj := range objects {
+		x := int(obj.BBox[0] * float64(width))
+		y := int(obj.BBox[1] * float64(height))
+		w := int(obj.BBox[2] * float64(width))
+		h := int(obj.BBox[3] * float64(height))
 
-		// check if the coordinates are outside the image bound
-		if x < 0 || y < 0 || x+w > width || y+h > height {
-			log.Println(ErrCoordinatesOutsideImage)
+		croppedImg := image.NewRGBA(image.Rect(0, 0, w, h))
+
+		draw.Draw(croppedImg, croppedImg.Bounds(), img, image.Point{X: x, Y: y}, draw.Src)
+
+		centroids, err := prominentcolor.Kmeans(croppedImg)
+		if err != nil {
+			log.Println(err)
 			continue
 		}
 
-		var r, g, b, a uint32
-		var cnt uint32
-
-		for i := x; i < x+w; i++ {
-			for j := y; j < y+h; j++ {
-				ri, gi, bi, ai := img.At(i, j).RGBA()
-
-				r += ri
-				g += gi
-				b += bi
-				a += ai
-
-				cnt++
-			}
+		if len(centroids) == 0 {
+			continue
 		}
 
-		rgba := color.RGBA{
-			R: uint8(r / cnt / 256),
-			G: uint8(g / cnt / 256),
-			B: uint8(b / cnt / 256),
-			A: uint8(a / cnt / 256),
-		}
-
-		col.objects[key].Color = col.rgbaToHex(rgba)
+		newObjects = append(newObjects, &flowdata.Object{
+			ID:        obj.ID,
+			Type:      obj.Type,
+			Name:      obj.Name,
+			Prob:      obj.Prob,
+			BBox:      obj.BBox,
+			Area:      obj.Area,
+			Color:     centroids[0].AsString(),
+			Data:      obj.Data,
+			Keypoints: obj.Keypoints,
+		})
 	}
 
-	return Resp{col.port.Name: col.objects}, nil
+	return Resp{col.objects.Name: newObjects}, nil
 }
 
 func (col *Color) GetPorts() (in, out []Port) {
-	return in, []Port{col.port}
-}
-
-// rgbaToHex convert a color rgba to a hex string
-func (col *Color) rgbaToHex(c color.RGBA) string {
-	if c.A == 255 {
-		return fmt.Sprintf("#%02X%02X%02X", c.R, c.G, c.B)
-	}
-
-	return fmt.Sprintf("#%02X%02X%02X%02X", c.R, c.G, c.B, c.A)
+	return []Port{col.frame, col.objects}, []Port{col.objects}
 }

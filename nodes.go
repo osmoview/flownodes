@@ -107,6 +107,7 @@ const (
 	PortBytes      = "bytes"
 	PortAny        = "any"
 	PortSourceInfo = "sourceinfo"
+	PortRegion     = "region"
 	PortEmpty      = ""
 )
 
