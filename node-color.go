@@ -32,7 +32,6 @@ func (col *Color) Execute(c Ctx) (out Resp, err error) {
 			return nil, ErrUnexpectedDataType
 		}
 	}
-
 	if frame == nil {
 		return nil, errors.New("frame not found")
 	}

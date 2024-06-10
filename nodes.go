@@ -18,6 +18,8 @@ const (
 	NodeText     = "text"
 	NodeReadFile = "readfile"
 	NodeFilter   = "filter"
+	NodeColor    = "color"
+	NodeCrop     = "crop"
 )
 
 // EntryNodes are the nodes from which the execution of analytics can begin
@@ -33,6 +35,8 @@ var Nodes = map[string]Node{
 	NodeText:     &Text{},
 	NodeReadFile: &ReadFile{},
 	NodeFilter:   &Filter{},
+	NodeColor:    &Color{},
+	NodeCrop:     &Crop{},
 	"cpu-temp":   &CPUtemp{},
 	"expr":       &Expression{},
 }
