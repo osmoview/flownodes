@@ -61,7 +61,7 @@ func (col *Color) Execute(c Ctx) (out Resp, err error) {
 
 	for _, obj := range objects {
 		if obj.IsZeroBBox() {
-			return nil, errors.New("checked bbox is zero")
+			continue
 		}
 
 		x := int(obj.BBox[0] * float64(width))

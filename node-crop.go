@@ -59,18 +59,19 @@ func (cr *Crop) Execute(c Ctx) (out Resp, err error) {
 	width := bounds.Dx()
 	height := bounds.Dy()
 
-	minX, minY, maxX, maxY := region.BBox()
+	bbox := region.BBox()
+	if region.IsZeroBBox(bbox) {
+		return nil, errors.New("checked bbox is zero")
+	}
 
-	rect := image.Rect(
-		int(minX*float64(width)),
-		int(minY*float64(height)),
-		int(maxX*float64(width)),
-		int(maxY*float64(height)),
-	)
+	x := int(bbox[0] * float64(width))
+	y := int(bbox[1] * float64(height))
+	w := int(bbox[2] * float64(width))
+	h := int(bbox[3] * float64(height))
 
-	cropped := image.NewRGBA(rect)
+	cropped := image.NewRGBA(image.Rect(0, 0, w, h))
 
-	draw.Draw(cropped, rect.Bounds(), img, rect.Min, draw.Src)
+	draw.Draw(cropped, cropped.Bounds(), img, image.Point{X: x, Y: y}, draw.Src)
 
 	newFrame, err := flowdata.NewFrameImage(cropped)
 	if err != nil {
