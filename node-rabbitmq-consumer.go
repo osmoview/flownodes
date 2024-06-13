@@ -26,7 +26,7 @@ type RabbitMQConsumer struct {
 }
 
 func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
-	rmqc.out = Port{Name: "data", Type: PortBytes}
+	rmqc.out = Port{Name: PortBytes, Type: PortBytes}
 
 	// init rabbitmq connection, channel
 	if err := rmqc.initRabbitMQ(); err != nil {
@@ -110,7 +110,7 @@ func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 	return nil
 }
 
-// readMsg
+// readMsg read a messages from ctx
 func (rmqc *RabbitMQConsumer) readMsg() {
 	var forever chan struct{}
 
@@ -124,6 +124,7 @@ func (rmqc *RabbitMQConsumer) readMsg() {
 	<-forever
 }
 
+// Close connection rabbitmq
 func (rmqc *RabbitMQConsumer) Close() {
 	rmqc.conn.Close()
 	rmqc.ch.Close()
