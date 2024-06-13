@@ -1,9 +1,6 @@
 package flownodes
 
 import (
-	"fmt"
-	"time"
-
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -33,13 +30,26 @@ func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
 		return err
 	}
 
-	// prepare to read message
+	return
+}
+
+// initRabbitMQ initializes the rabbit mq
+func (rmqc *RabbitMQConsumer) initRabbitMQ() (err error) {
+	conn, err := amqp.Dial(rmqc.Url)
+	if err != nil {
+		return err
+	}
+	rmqc.conn = conn
+
+	channel, err := rmqc.conn.Channel()
+	if err != nil {
+		return err
+	}
+	rmqc.ch = channel
+
 	if err := rmqc.prepareForReadMsg(); err != nil {
 		return err
 	}
-
-	// goroutine to check status connection in rabbitmq
-	go rmqc.checkConnection()
 
 	// add goroutine to read msg from RabbitMQ in background
 	go rmqc.readMsg()
@@ -47,34 +57,7 @@ func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
 	return
 }
 
-// initRabbitMQ initializes the rabbit mq
-func (rmqc *RabbitMQConsumer) initRabbitMQ() (err error) {
-	rmqc.conn, err = amqp.Dial(rmqc.Url)
-	if err != nil {
-		return err
-	}
-
-	rmqc.ch, err = rmqc.conn.Channel()
-	if err != nil {
-		return err
-	}
-
-	return
-}
-
-// checkConnection
-func (rmqc *RabbitMQConsumer) checkConnection() {
-	for {
-		if rmqc.conn.IsClosed() || rmqc.ch.IsClosed() {
-			fmt.Println("connection is closed!!!")
-		}
-		if rmqc.ch.IsClosed() {
-			fmt.Println("channel is closed!!!")
-		}
-		time.Sleep(5 * time.Second)
-	}
-}
-
+// prepareForReadMsg queue declare for read messages
 func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 	q, err := rmqc.ch.QueueDeclare(
 		rmqc.Queue,
@@ -111,16 +94,17 @@ func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 
 // readMsg read a messages from ctx
 func (rmqc *RabbitMQConsumer) readMsg() {
-	var forever chan struct{}
-
 	go func() {
 		for d := range rmqc.delivery {
 			rmqc.msg = d.Body
 			d.Ack(false)
 		}
 	}()
+}
 
-	<-forever
+// recovery if something happened error connect
+func (rmqc *RabbitMQConsumer) recovery() error {
+	return rmqc.initRabbitMQ()
 }
 
 // Close connection rabbitmq
@@ -130,6 +114,12 @@ func (rmqc *RabbitMQConsumer) Close() {
 }
 
 func (rmqc *RabbitMQConsumer) Execute(c Ctx) (out Resp, err error) {
+	if rmqc.conn.IsClosed() || rmqc.ch.IsClosed() {
+		if err := rmqc.recovery(); err != nil {
+			return nil, err
+		}
+	}
+
 	if len(rmqc.msg) == 0 {
 		return nil, nil
 	}

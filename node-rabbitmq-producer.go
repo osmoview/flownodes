@@ -3,7 +3,6 @@ package flownodes
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -31,43 +30,29 @@ func (rmqp *RabbitMQProducer) Init(db DB) (err error) {
 		return err
 	}
 
+	return
+}
+
+// initRabbitMQ initializes the rabbit mq
+func (rmqp *RabbitMQProducer) initRabbitMQ() error {
+	conn, err := amqp.Dial(rmqp.Url)
+	if err != nil {
+		return err
+	}
+	rmqp.conn = conn
+
+	channel, err := rmqp.conn.Channel()
+	if err != nil {
+		return err
+	}
+	rmqp.ch = channel
+
 	// prepare to write message
 	if err := rmqp.prepareForWriteMsg(); err != nil {
 		return err
 	}
 
-	// goroutine to check status connection in rabbitmq
-	go rmqp.checkConnection()
-
-	return
-}
-
-// initRabbitMQ initializes the rabbit mq
-func (rmqp *RabbitMQProducer) initRabbitMQ() (err error) {
-	rmqp.conn, err = amqp.Dial(rmqp.Url)
-	if err != nil {
-		return err
-	}
-
-	rmqp.ch, err = rmqp.conn.Channel()
-	if err != nil {
-		return err
-	}
-
-	return
-}
-
-// checkConnection check if connection is established to return connection
-func (rmqp *RabbitMQProducer) checkConnection() {
-	for {
-		if rmqp.conn.IsClosed() || rmqp.ch.IsClosed() {
-			fmt.Println("connection is closed!!!")
-		}
-		if rmqp.ch.IsClosed() {
-			fmt.Println("channel is closed!!!")
-		}
-		time.Sleep(5 * time.Second)
-	}
+	return nil
 }
 
 // prepareForWriteMsg queue declare for write messages
@@ -85,6 +70,11 @@ func (rmqp *RabbitMQProducer) prepareForWriteMsg() error {
 	}
 
 	return nil
+}
+
+// recovery if something happened error connect
+func (rmqp *RabbitMQProducer) recovery() error {
+	return rmqp.initRabbitMQ()
 }
 
 // Close connection rabbitmq
@@ -127,11 +117,15 @@ func (rmqp *RabbitMQProducer) Execute(c Ctx) (out Resp, err error) {
 		false,
 		amqp.Publishing{
 			DeliveryMode: amqp.Persistent,
-			ContentType:  "text/plain",
+			ContentType:  "application/json",
 			Body:         body,
 		})
 	if err != nil {
-		return nil, err
+		if rmqp.conn.IsClosed() || rmqp.ch.IsClosed() {
+			if err := rmqp.recovery(); err != nil {
+				return nil, err
+			}
+		}
 	}
 
 	return nil, nil
