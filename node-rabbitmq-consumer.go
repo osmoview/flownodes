@@ -65,7 +65,6 @@ func (rmqc *RabbitMQConsumer) initRabbitMQ() (err error) {
 // checkConnection
 func (rmqc *RabbitMQConsumer) checkConnection() {
 	for {
-		fmt.Println("check is connected")
 		if rmqc.conn.IsClosed() || rmqc.ch.IsClosed() {
 			fmt.Println("connection is closed!!!")
 		}

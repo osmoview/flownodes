@@ -60,7 +60,6 @@ func (rmqp *RabbitMQProducer) initRabbitMQ() (err error) {
 // checkConnection check if connection is established to return connection
 func (rmqp *RabbitMQProducer) checkConnection() {
 	for {
-		fmt.Println("check is connected")
 		if rmqp.conn.IsClosed() || rmqp.ch.IsClosed() {
 			fmt.Println("connection is closed!!!")
 		}
