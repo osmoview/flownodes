@@ -8,24 +8,24 @@ import (
 )
 
 type RabbitMQConsumer struct {
-	// url amqp connect to rabbitmq
-	url string `yaml:"url" env:"OSMO_RABBITMQ_URL"`
+	// Url amqp connect to rabbitmq
+	Url string `yaml:"url" env:"OSMO_RABBITMQ_URL"`
+	// Queue name where will be read messages
+	Queue string `yaml:"queue"`
 
 	// msg current message
 	msg []byte
 	// conn connection to rabbitmq
-	conn     *amqp.Connection
-	ch       *amqp.Channel
+	conn *amqp.Connection
+	ch   *amqp.Channel
+	// delivery is channel from which messages come
 	delivery <-chan amqp.Delivery
 
-	// queue name queue to read messages
-	queue Port
 	// out bytes from queue rabbitmq
 	out Port
 }
 
 func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
-	rmqc.queue = Port{Name: "queue", Type: PortString}
 	rmqc.out = Port{Name: "data", Type: PortBytes}
 
 	// init rabbitmq connection, channel
@@ -49,7 +49,7 @@ func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
 
 // initRabbitMQ initializes the rabbit mq
 func (rmqc *RabbitMQConsumer) initRabbitMQ() (err error) {
-	rmqc.conn, err = amqp.Dial(rmqc.url)
+	rmqc.conn, err = amqp.Dial(rmqc.Url)
 	if err != nil {
 		return err
 	}
@@ -65,6 +65,7 @@ func (rmqc *RabbitMQConsumer) initRabbitMQ() (err error) {
 // checkConnection
 func (rmqc *RabbitMQConsumer) checkConnection() {
 	for {
+		fmt.Println("check is connected")
 		if rmqc.conn.IsClosed() || rmqc.ch.IsClosed() {
 			fmt.Println("connection is closed!!!")
 		}
@@ -77,7 +78,7 @@ func (rmqc *RabbitMQConsumer) checkConnection() {
 
 func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 	q, err := rmqc.ch.QueueDeclare(
-		"",
+		rmqc.Queue,
 		true,
 		false,
 		false,
@@ -129,9 +130,12 @@ func (rmqc *RabbitMQConsumer) Close() {
 }
 
 func (rmqc *RabbitMQConsumer) Execute(c Ctx) (out Resp, err error) {
-	return nil, nil
+	if len(rmqc.msg) == 0 {
+		return nil, nil
+	}
+	return Resp{rmqc.out.Name: rmqc.msg}, nil
 }
 
 func (rmqc *RabbitMQConsumer) GetPorts() (in, out []Port) {
-	return []Port{rmqc.queue}, []Port{rmqc.out}
+	return in, []Port{rmqc.out}
 }
