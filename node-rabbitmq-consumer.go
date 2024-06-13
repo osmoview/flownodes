@@ -51,8 +51,8 @@ func (rmqc *RabbitMQConsumer) initRabbitMQ() (err error) {
 		return err
 	}
 
-	// add goroutine to read msg from RabbitMQ in background
-	go rmqc.readMsg()
+	// call function to read msg from RabbitMQ in background
+	rmqc.readMsg()
 
 	return
 }
