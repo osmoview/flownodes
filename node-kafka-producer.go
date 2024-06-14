@@ -38,6 +38,7 @@ func (kp *KafkaProducer) Init(db DB) (err error) {
 func (kp *KafkaProducer) initKafka() (err error) {
 	// init config kafka
 	cfg := sarama.NewConfig()
+	cfg.Producer.Return.Successes = true
 
 	// init kafka client
 	client, err := sarama.NewClient([]string{kp.Url}, cfg)
