@@ -6,16 +6,20 @@ import (
 
 type KafkaConsumer struct {
 	// Url amqp connect to kafka: host:port
-	Url   string `yaml:"url" env:"OSMO_KAFKA_URL"`
+	Url string `yaml:"url" env:"OSMO_KAFKA_URL"`
+	// Topic will be read from kafka
 	Topic string `yaml:"topic"`
-	// Key name where will be read messages
+	// Key will be read messages from topic
 	Key string `yaml:"key"`
 
 	// msg current message
 	msg []byte
 
-	client    sarama.Client
-	consumer  sarama.Consumer
+	// client config for kafka
+	client sarama.Client
+	// consumer connect
+	consumer sarama.Consumer
+	// partition connect
 	partition sarama.PartitionConsumer
 
 	// out bytes from queue kafka
@@ -67,11 +71,6 @@ func (kc *KafkaConsumer) initKafka() (err error) {
 	return
 }
 
-// prepareForReadMsg queue declare for read messages
-func (kc *KafkaConsumer) prepareForReadMsg() error {
-	return nil
-}
-
 // readMsg read a messages from ctx
 func (kc *KafkaConsumer) readMsg() {
 	go func() {
@@ -83,6 +82,7 @@ func (kc *KafkaConsumer) readMsg() {
 	}()
 }
 
+// isConnected check is broker connected
 func (kc *KafkaConsumer) isConnected() bool {
 	// check connected brokers
 	brokerList := kc.client.Brokers()
