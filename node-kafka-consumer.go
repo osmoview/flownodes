@@ -1,6 +1,8 @@
 package flownodes
 
 import (
+	"log"
+
 	"github.com/IBM/sarama"
 )
 
@@ -21,6 +23,8 @@ type KafkaConsumer struct {
 	consumer sarama.Consumer
 	// partition connect
 	partition sarama.PartitionConsumer
+	// errorChan chan errors from kafka
+	errorChan <-chan *sarama.ConsumerError
 
 	// out bytes from queue kafka
 	out Port
@@ -65,8 +69,14 @@ func (kc *KafkaConsumer) initKafka() (err error) {
 	}
 	kc.partition = partitionConsumer
 
+	// init errors channel
+	kc.errorChan = partitionConsumer.Errors()
+
 	// call function to read msg from kafka in background
 	kc.readMsg()
+
+	// call function to handle errors from kafka consumer in background
+	kc.handleErrors()
 
 	return
 }
@@ -78,6 +88,15 @@ func (kc *KafkaConsumer) readMsg() {
 			if string(msg.Key) == kc.Key {
 				kc.msg = msg.Value
 			}
+		}
+	}()
+}
+
+// handleErrors handle errors from kafka consumer
+func (kc *KafkaConsumer) handleErrors() {
+	go func() {
+		for err := range kc.errorChan {
+			log.Println(err)
 		}
 	}()
 }
