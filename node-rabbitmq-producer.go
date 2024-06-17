@@ -3,9 +3,18 @@ package flownodes
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
+	"github.com/osmoview/flowdata"
+
 	amqp "github.com/rabbitmq/amqp091-go"
+)
+
+const (
+	ContentTypeJSON   = "application/json"
+	ContentTypeText   = "text/plain"
+	ContentTypeBinary = "application/octet-stream"
 )
 
 type RabbitMQProducer struct {
@@ -21,12 +30,13 @@ type RabbitMQProducer struct {
 	// timeoutPublishMsg max wait timeout send message
 	timeoutPublishMsg time.Duration
 
-	// in bytes to send msg to rabbitmq
-	in Port
+	// in data send to rabbitmq
+	in []Port
 }
 
 func (rmqp *RabbitMQProducer) Init(db DB) (err error) {
-	rmqp.in = Port{Name: PortObjects, Type: PortObjects}
+	// initialize ports
+	rmqp.initPorts()
 
 	if rmqp.timeoutPublishMsg == 0 {
 		rmqp.timeoutPublishMsg = 5 * time.Second
@@ -38,6 +48,16 @@ func (rmqp *RabbitMQProducer) Init(db DB) (err error) {
 	}
 
 	return
+}
+
+// initPorts initializes input ports
+func (rmqp *RabbitMQProducer) initPorts() {
+	rmqp.in = append(rmqp.in, Port{Name: PortFrame, Type: PortFrame})
+	rmqp.in = append(rmqp.in, Port{Name: PortObjects, Type: PortObjects})
+	rmqp.in = append(rmqp.in, Port{Name: PortString, Type: PortString})
+	rmqp.in = append(rmqp.in, Port{Name: PortNumber, Type: PortNumber})
+	rmqp.in = append(rmqp.in, Port{Name: PortBytes, Type: PortBytes})
+	rmqp.in = append(rmqp.in, Port{Name: PortAny, Type: PortAny})
 }
 
 // initRabbitMQ initializes the rabbit mq
@@ -90,23 +110,8 @@ func (rmqp *RabbitMQProducer) Close() {
 	rmqp.ch.Close()
 }
 
-// getCtxData get data from ctx
-func (rmqp *RabbitMQProducer) getCtxData(c Ctx) ([]byte, error) {
-	data, ok := c.GetData(PortObjects)
-	if !ok {
-		return nil, ErrUnexpectedDataType
-	}
-
-	body, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
-}
-
 // publish send message to rabbitmq
-func (rmqp *RabbitMQProducer) publish(body []byte) error {
+func (rmqp *RabbitMQProducer) publish(body []byte, contentType string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), rmqp.timeoutPublishMsg)
 	defer cancel()
 
@@ -118,24 +123,106 @@ func (rmqp *RabbitMQProducer) publish(body []byte) error {
 		false,      // immediate
 		amqp.Publishing{ // msg (publishing)
 			DeliveryMode: amqp.Persistent,
-			ContentType:  "application/json",
+			ContentType:  contentType,
 			Body:         body,
 		})
 }
 
+// getCtxData get data from ctx
+func (rmqp *RabbitMQProducer) getCtxData(c Ctx) ([]byte, string, error) {
+	var data interface{}
+	var contentType string
+
+	if d, ok := c.GetData(PortFrame); ok {
+		res, ok := d.(*flowdata.Frame)
+		if !ok {
+			return nil, contentType, ErrUnexpectedDataType
+		}
+		data = res
+		contentType = ContentTypeJSON
+	}
+
+	if d, ok := c.GetData(PortObjects); ok {
+		res, ok := d.([]*flowdata.Object)
+		if !ok {
+			return nil, contentType, ErrUnexpectedDataType
+		}
+		data = res
+		contentType = ContentTypeJSON
+	}
+
+	if d, ok := c.GetData(PortString); ok {
+		res, ok := d.(string)
+		if !ok {
+			return nil, contentType, ErrUnexpectedDataType
+		}
+		data = res
+		contentType = ContentTypeText
+	}
+
+	if d, ok := c.GetData(PortNumber); ok {
+		res, ok := d.(float64)
+		if !ok {
+			return nil, contentType, ErrUnexpectedDataType
+		}
+		data = res
+		contentType = ContentTypeText
+	}
+
+	if d, ok := c.GetData(PortBytes); ok {
+		res, ok := d.([]byte)
+		if !ok {
+			return nil, contentType, ErrUnexpectedDataType
+		}
+		data = res
+		contentType = ContentTypeBinary
+	}
+
+	if d, ok := c.GetData(PortAny); ok {
+		res, ok := d.([]byte)
+		if !ok {
+			return nil, contentType, ErrUnexpectedDataType
+		}
+		data = res
+		contentType = ContentTypeBinary
+	}
+
+	var body []byte
+
+	if contentType == ContentTypeJSON {
+		b, err := json.Marshal(data)
+		if err != nil {
+			return nil, contentType, err
+		}
+		body = b
+	}
+
+	if contentType == ContentTypeText {
+		body = []byte(fmt.Sprintf("%v", data))
+	}
+
+	if contentType == ContentTypeBinary {
+		if b, ok := data.([]byte); ok {
+			body = b
+		}
+	}
+
+	return body, contentType, nil
+}
+
 func (rmqp *RabbitMQProducer) Execute(c Ctx) (out Resp, err error) {
-	body, err := rmqp.getCtxData(c)
+	body, ct, err := rmqp.getCtxData(c)
 	if err != nil {
 		return nil, err
 	}
 
-	err = rmqp.publish(body)
+	err = rmqp.publish(body, ct)
 	if err != nil {
 		if rmqp.conn.IsClosed() || rmqp.ch.IsClosed() {
 			if err := rmqp.recovery(); err != nil {
 				return nil, err
 			}
-			err := rmqp.publish(body)
+			err := rmqp.publish(body, ct)
 			if err != nil {
 				return nil, err
 			}
@@ -146,5 +233,5 @@ func (rmqp *RabbitMQProducer) Execute(c Ctx) (out Resp, err error) {
 }
 
 func (rmqp *RabbitMQProducer) GetPorts() (in, out []Port) {
-	return []Port{rmqp.in}, out
+	return rmqp.in, out
 }
