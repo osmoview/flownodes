@@ -52,7 +52,7 @@ func (rmqc *RabbitMQConsumer) initRabbitMQ() (err error) {
 	}
 
 	// call function to read msg from RabbitMQ in background
-	rmqc.readMsg()
+	go rmqc.readMsg()
 
 	return
 }
@@ -60,12 +60,12 @@ func (rmqc *RabbitMQConsumer) initRabbitMQ() (err error) {
 // prepareForReadMsg queue declare for read messages
 func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 	q, err := rmqc.ch.QueueDeclare(
-		rmqc.Queue,
-		true,
-		false,
-		false,
-		false,
-		nil,
+		rmqc.Queue, // queue name
+		true,       // durable
+		false,      // auto delete message
+		false,      // exclusive queue
+		false,      // noWait
+		nil,        // args
 	)
 	if err != nil {
 		return err
@@ -77,13 +77,13 @@ func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 	}
 
 	rmqc.delivery, err = rmqc.ch.Consume(
-		q.Name,
-		"",
-		false,
-		false,
-		false,
-		false,
-		nil,
+		q.Name, // queue name
+		"",     // consumer
+		false,  // autoAck
+		false,  // exclusive queue
+		false,  // noLocal
+		false,  // noWait
+		nil,    // args
 	)
 	if err != nil {
 		return err
@@ -94,12 +94,10 @@ func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 
 // readMsg read a messages from ctx
 func (rmqc *RabbitMQConsumer) readMsg() {
-	go func() {
-		for d := range rmqc.delivery {
-			rmqc.msg = d.Body
-			d.Ack(false)
-		}
-	}()
+	for d := range rmqc.delivery {
+		rmqc.msg = d.Body
+		d.Ack(false)
+	}
 }
 
 // recovery if something happened error connect

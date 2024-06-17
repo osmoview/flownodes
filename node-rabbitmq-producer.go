@@ -2,7 +2,7 @@ package flownodes
 
 import (
 	"context"
-	"errors"
+	"encoding/json"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -12,18 +12,25 @@ type RabbitMQProducer struct {
 	// Url amqp connect to rabbitmq
 	Url string `yaml:"url" env:"OSMO_RABBITMQ_URL"`
 	// Queue name where will be read messages
-	Queue string `yaml:"queue"`
+	Queue string `yaml:"OSMO_RABBITMQ_QUEUE"`
 
 	// conn connection to rabbitmq
 	conn *amqp.Connection
 	ch   *amqp.Channel
+
+	// timeoutPublishMsg max wait timeout send message
+	timeoutPublishMsg time.Duration
 
 	// in bytes to send msg to rabbitmq
 	in Port
 }
 
 func (rmqp *RabbitMQProducer) Init(db DB) (err error) {
-	rmqp.in = Port{Name: PortBytes, Type: PortBytes}
+	rmqp.in = Port{Name: PortObjects, Type: PortObjects}
+
+	if rmqp.timeoutPublishMsg == 0 {
+		rmqp.timeoutPublishMsg = 5 * time.Second
+	}
 
 	// init rabbitmq connection, channel
 	if err := rmqp.initRabbitMQ(); err != nil {
@@ -58,12 +65,12 @@ func (rmqp *RabbitMQProducer) initRabbitMQ() error {
 // prepareForWriteMsg queue declare for write messages
 func (rmqp *RabbitMQProducer) prepareForWriteMsg() error {
 	_, err := rmqp.ch.QueueDeclare(
-		rmqp.Queue,
-		true,
-		false,
-		false,
-		false,
-		nil,
+		rmqp.Queue, // queue name
+		true,       // durable
+		false,      // auto-delete message
+		false,      // exclusive queue
+		false,      // noWait
+		nil,        // args
 	)
 	if err != nil {
 		return err
@@ -85,19 +92,35 @@ func (rmqp *RabbitMQProducer) Close() {
 
 // getCtxData get data from ctx
 func (rmqp *RabbitMQProducer) getCtxData(c Ctx) ([]byte, error) {
-	var body []byte
-
-	if data, ok := c.GetData(PortBytes); ok {
-		body, ok = data.([]byte)
-		if !ok {
-			return nil, ErrUnexpectedDataType
-		}
+	data, ok := c.GetData(PortObjects)
+	if !ok {
+		return nil, ErrUnexpectedDataType
 	}
-	if len(body) == 0 {
-		return nil, errors.New("msg bytes not found")
+
+	body, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
 	}
 
 	return body, nil
+}
+
+// publish send message to rabbitmq
+func (rmqp *RabbitMQProducer) publish(body []byte) error {
+	ctx, cancel := context.WithTimeout(context.Background(), rmqp.timeoutPublishMsg)
+	defer cancel()
+
+	return rmqp.ch.PublishWithContext(
+		ctx,        // context
+		"",         // exchange
+		rmqp.Queue, // queue
+		false,      // mandatory
+		false,      // immediate
+		amqp.Publishing{ // msg (publishing)
+			DeliveryMode: amqp.Persistent,
+			ContentType:  "application/json",
+			Body:         body,
+		})
 }
 
 func (rmqp *RabbitMQProducer) Execute(c Ctx) (out Resp, err error) {
@@ -106,23 +129,14 @@ func (rmqp *RabbitMQProducer) Execute(c Ctx) (out Resp, err error) {
 		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	err = rmqp.ch.PublishWithContext(
-		ctx,
-		"",
-		rmqp.Queue,
-		false,
-		false,
-		amqp.Publishing{
-			DeliveryMode: amqp.Persistent,
-			ContentType:  "application/json",
-			Body:         body,
-		})
+	err = rmqp.publish(body)
 	if err != nil {
 		if rmqp.conn.IsClosed() || rmqp.ch.IsClosed() {
 			if err := rmqp.recovery(); err != nil {
+				return nil, err
+			}
+			err := rmqp.publish(body)
+			if err != nil {
 				return nil, err
 			}
 		}
