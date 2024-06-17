@@ -1,6 +1,12 @@
 package flownodes
 
 import (
+	"encoding/json"
+	"log"
+	"strconv"
+
+	"github.com/osmoview/flowdata"
+
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -8,10 +14,12 @@ type RabbitMQConsumer struct {
 	// Url amqp connect to rabbitmq
 	Url string `yaml:"url" env:"OSMO_RABBITMQ_URL"`
 	// Queue name where will be read messages
-	Queue string `yaml:"queue"`
+	Queue string `yaml:"queue" env:"OSMO_RABBITMQ_QUEUE"`
+	// DataType type of data in queue: frame, objects, ect...
+	DataType string `yaml:"data_type"`
 
 	// msg current message
-	msg []byte
+	msg interface{}
 	// conn connection to rabbitmq
 	conn *amqp.Connection
 	ch   *amqp.Channel
@@ -19,11 +27,12 @@ type RabbitMQConsumer struct {
 	delivery <-chan amqp.Delivery
 
 	// out bytes from queue rabbitmq
-	out Port
+	out []Port
 }
 
 func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
-	rmqc.out = Port{Name: PortBytes, Type: PortBytes}
+	// initialize ports
+	rmqc.initPorts()
 
 	// init rabbitmq connection, channel
 	if err := rmqc.initRabbitMQ(); err != nil {
@@ -31,6 +40,16 @@ func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
 	}
 
 	return
+}
+
+// initPorts initializes output ports
+func (rmqc *RabbitMQConsumer) initPorts() {
+	rmqc.out = append(rmqc.out, Port{Name: PortFrame, Type: PortFrame})
+	rmqc.out = append(rmqc.out, Port{Name: PortObjects, Type: PortObjects})
+	rmqc.out = append(rmqc.out, Port{Name: PortString, Type: PortString})
+	rmqc.out = append(rmqc.out, Port{Name: PortNumber, Type: PortNumber})
+	rmqc.out = append(rmqc.out, Port{Name: PortBytes, Type: PortBytes})
+	rmqc.out = append(rmqc.out, Port{Name: PortAny, Type: PortAny})
 }
 
 // initRabbitMQ initializes the rabbit mq
@@ -71,7 +90,11 @@ func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 		return err
 	}
 
-	err = rmqc.ch.Qos(1, 0, false)
+	err = rmqc.ch.Qos(
+		1,     // prefetchCount
+		0,     // prefetchSize
+		false, // global
+	)
 	if err != nil {
 		return err
 	}
@@ -95,9 +118,55 @@ func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 // readMsg read a messages from ctx
 func (rmqc *RabbitMQConsumer) readMsg() {
 	for d := range rmqc.delivery {
-		rmqc.msg = d.Body
+		err := rmqc.parseMsg(d.ContentType, d.Body)
+		if err != nil {
+			log.Println(err)
+			d.Ack(false)
+			continue
+		}
 		d.Ack(false)
 	}
+}
+
+// parseMsg parse a message bytes to need format
+func (rmqc *RabbitMQConsumer) parseMsg(contentType string, body []byte) error {
+	if contentType == ContentTypeJSON {
+		if rmqc.DataType == PortFrame {
+			var frame *flowdata.Frame
+			if err := json.Unmarshal(body, &frame); err != nil {
+				return err
+			}
+			rmqc.msg = frame
+		}
+		if rmqc.DataType == PortObjects {
+			var objects []*flowdata.Object
+			if err := json.Unmarshal(body, &objects); err != nil {
+				return err
+			}
+			rmqc.msg = objects
+		}
+	}
+
+	if contentType == ContentTypeText {
+		if rmqc.DataType == PortString {
+			rmqc.msg = string(body)
+		}
+		if rmqc.DataType == PortNumber {
+			num, err := strconv.ParseFloat(string(body), 64)
+			if err != nil {
+				return err
+			}
+			rmqc.msg = num
+		}
+	}
+
+	if contentType == ContentTypeBinary {
+		if rmqc.DataType == PortBytes || rmqc.DataType == PortAny {
+			rmqc.msg = body
+		}
+	}
+
+	return nil
 }
 
 // recovery if something happened error connect
@@ -111,6 +180,61 @@ func (rmqc *RabbitMQConsumer) Close() {
 	rmqc.ch.Close()
 }
 
+// getRespData get response data
+func (rmqc *RabbitMQConsumer) getRespData() (out Resp, err error) {
+	var resp Resp
+
+	if rmqc.DataType == PortFrame {
+		res, ok := rmqc.msg.(*flowdata.Frame)
+		if !ok {
+			return nil, ErrUnexpectedDataType
+		}
+		resp = Resp{PortFrame: res}
+	}
+
+	if rmqc.DataType == PortObjects {
+		res, ok := rmqc.msg.([]*flowdata.Object)
+		if !ok {
+			return nil, ErrUnexpectedDataType
+		}
+		resp = Resp{PortObjects: res}
+	}
+
+	if rmqc.DataType == PortString {
+		res, ok := rmqc.msg.(string)
+		if !ok {
+			return nil, ErrUnexpectedDataType
+		}
+		resp = Resp{PortString: res}
+	}
+
+	if rmqc.DataType == PortNumber {
+		res, ok := rmqc.msg.(float64)
+		if !ok {
+			return nil, ErrUnexpectedDataType
+		}
+		resp = Resp{PortNumber: res}
+	}
+
+	if rmqc.DataType == PortBytes {
+		res, ok := rmqc.msg.([]byte)
+		if !ok {
+			return nil, ErrUnexpectedDataType
+		}
+		resp = Resp{PortBytes: res}
+	}
+
+	if rmqc.DataType == PortAny {
+		res, ok := rmqc.msg.([]byte)
+		if !ok {
+			return nil, ErrUnexpectedDataType
+		}
+		resp = Resp{PortAny: res}
+	}
+
+	return resp, nil
+}
+
 func (rmqc *RabbitMQConsumer) Execute(c Ctx) (out Resp, err error) {
 	if rmqc.conn.IsClosed() || rmqc.ch.IsClosed() {
 		if err := rmqc.recovery(); err != nil {
@@ -118,12 +242,9 @@ func (rmqc *RabbitMQConsumer) Execute(c Ctx) (out Resp, err error) {
 		}
 	}
 
-	if len(rmqc.msg) == 0 {
-		return nil, nil
-	}
-	return Resp{rmqc.out.Name: rmqc.msg}, nil
+	return rmqc.getRespData()
 }
 
 func (rmqc *RabbitMQConsumer) GetPorts() (in, out []Port) {
-	return in, []Port{rmqc.out}
+	return in, rmqc.out
 }
