@@ -12,6 +12,12 @@ var ErrNoDataSource = errors.New("no data source")
 var ErrUnexpectedDataType = errors.New("unexpected data type")
 
 const (
+	ContentTypeJSON   = "application/json"
+	ContentTypeText   = "text/plain"
+	ContentTypeBinary = "application/octet-stream"
+)
+
+const (
 	NodeScreen   = "screen"
 	NodeCamera   = "camera"
 	NodeService  = "service"

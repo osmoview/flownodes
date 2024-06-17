@@ -11,24 +11,17 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-const (
-	ContentTypeJSON   = "application/json"
-	ContentTypeText   = "text/plain"
-	ContentTypeBinary = "application/octet-stream"
-)
-
 type RabbitMQProducer struct {
 	// Url amqp connect to rabbitmq
 	Url string `yaml:"url" env:"OSMO_RABBITMQ_URL"`
 	// Queue name where will be read messages
 	Queue string `yaml:"queue" env:"OSMO_RABBITMQ_QUEUE"`
+	// DurWaitPublish max wait timeout send message
+	DurWaitPublish time.Duration
 
 	// conn connection to rabbitmq
 	conn *amqp.Connection
 	ch   *amqp.Channel
-
-	// timeoutPublishMsg max wait timeout send message
-	timeoutPublishMsg time.Duration
 
 	// in data send to rabbitmq
 	in []Port
@@ -38,8 +31,8 @@ func (rmqp *RabbitMQProducer) Init(db DB) (err error) {
 	// initialize ports
 	rmqp.initPorts()
 
-	if rmqp.timeoutPublishMsg == 0 {
-		rmqp.timeoutPublishMsg = 5 * time.Second
+	if rmqp.DurWaitPublish == 0 {
+		rmqp.DurWaitPublish = 5 * time.Second
 	}
 
 	// init rabbitmq connection, channel
@@ -74,17 +67,8 @@ func (rmqp *RabbitMQProducer) initRabbitMQ() error {
 	}
 	rmqp.ch = channel
 
-	// prepare to write message
-	if err := rmqp.prepareForWriteMsg(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// prepareForWriteMsg queue declare for write messages
-func (rmqp *RabbitMQProducer) prepareForWriteMsg() error {
-	_, err := rmqp.ch.QueueDeclare(
+	// queue declare for write messages
+	_, err = rmqp.ch.QueueDeclare(
 		rmqp.Queue, // queue name
 		true,       // durable
 		false,      // auto-delete message
@@ -112,7 +96,7 @@ func (rmqp *RabbitMQProducer) Close() {
 
 // publish send message to rabbitmq
 func (rmqp *RabbitMQProducer) publish(body []byte, contentType string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), rmqp.timeoutPublishMsg)
+	ctx, cancel := context.WithTimeout(context.Background(), rmqp.DurWaitPublish)
 	defer cancel()
 
 	return rmqp.ch.PublishWithContext(
