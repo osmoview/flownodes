@@ -12,7 +12,7 @@ type RabbitMQProducer struct {
 	// Url amqp connect to rabbitmq
 	Url string `yaml:"url" env:"OSMO_RABBITMQ_URL"`
 	// Queue name where will be read messages
-	Queue string `yaml:"OSMO_RABBITMQ_QUEUE"`
+	Queue string `yaml:"queue" env:"OSMO_RABBITMQ_QUEUE"`
 
 	// conn connection to rabbitmq
 	conn *amqp.Connection
