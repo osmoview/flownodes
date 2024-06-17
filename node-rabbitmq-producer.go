@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/osmoview/flowdata"
@@ -16,6 +17,8 @@ type RabbitMQProducer struct {
 	Url string `yaml:"url" env:"OSMO_RABBITMQ_URL"`
 	// Queue name where will be read messages
 	Queue string `yaml:"queue" env:"OSMO_RABBITMQ_QUEUE"`
+	// DurCheckConnect timeout to check connection
+	DurCheckConnect time.Duration
 	// DurWaitPublish max wait timeout send message
 	DurWaitPublish time.Duration
 
@@ -31,6 +34,10 @@ func (rmqp *RabbitMQProducer) Init(db DB) (err error) {
 	// initialize ports
 	rmqp.initPorts()
 
+	if rmqp.DurCheckConnect == 0 {
+		rmqp.DurCheckConnect = 30 * time.Second
+	}
+
 	if rmqp.DurWaitPublish == 0 {
 		rmqp.DurWaitPublish = 5 * time.Second
 	}
@@ -39,6 +46,9 @@ func (rmqp *RabbitMQProducer) Init(db DB) (err error) {
 	if err := rmqp.initRabbitMQ(); err != nil {
 		return err
 	}
+
+	// call function to check connection rabbitmq in background
+	rmqp.checkConnection()
 
 	return
 }
@@ -81,6 +91,19 @@ func (rmqp *RabbitMQProducer) initRabbitMQ() error {
 	}
 
 	return nil
+}
+
+// checkConnection check connection rabbitmq and recovery
+func (rmqp *RabbitMQProducer) checkConnection() {
+	for {
+		if rmqp.conn.IsClosed() || rmqp.ch.IsClosed() {
+			err := rmqp.initRabbitMQ()
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		time.Sleep(rmqp.DurCheckConnect)
+	}
 }
 
 // recovery if something happened error connect

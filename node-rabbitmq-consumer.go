@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/osmoview/flowdata"
 
@@ -17,6 +18,8 @@ type RabbitMQConsumer struct {
 	Queue string `yaml:"queue" env:"OSMO_RABBITMQ_QUEUE"`
 	// DataType type of data in queue: frame, objects, ect...
 	DataType string `yaml:"data_type"`
+	// DurCheckConnect timeout to check connection
+	DurCheckConnect time.Duration
 
 	// msg current message
 	msg interface{}
@@ -34,10 +37,17 @@ func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
 	// initialize ports
 	rmqc.initPorts()
 
+	if rmqc.DurCheckConnect == 0 {
+		rmqc.DurCheckConnect = 30 * time.Second
+	}
+
 	// init rabbitmq connection, channel
 	if err := rmqc.initRabbitMQ(); err != nil {
 		return err
 	}
+
+	// call function to check connection rabbitmq in background
+	rmqc.checkConnection()
 
 	return
 }
@@ -70,7 +80,7 @@ func (rmqc *RabbitMQConsumer) initRabbitMQ() (err error) {
 		return err
 	}
 
-	// call function to read msg from RabbitMQ in background
+	// call function to read msg from rabbitMQ in background
 	go rmqc.readMsg()
 
 	return
@@ -167,6 +177,19 @@ func (rmqc *RabbitMQConsumer) parseMsg(contentType string, body []byte) error {
 	}
 
 	return nil
+}
+
+// checkConnection check connection rabbitmq and recovery
+func (rmqc *RabbitMQConsumer) checkConnection() {
+	for {
+		if rmqc.conn.IsClosed() || rmqc.ch.IsClosed() {
+			err := rmqc.initRabbitMQ()
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		time.Sleep(rmqc.DurCheckConnect)
+	}
 }
 
 // recovery if something happened error connect
