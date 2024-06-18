@@ -3,6 +3,7 @@ package flownodes
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -10,6 +11,12 @@ import (
 	"github.com/osmoview/flowdata"
 
 	amqp "github.com/rabbitmq/amqp091-go"
+)
+
+var (
+	ErrUrlRabbitmqNotFound      = errors.New("url amqp not found")
+	ErrQueueRabbitmqNotFound    = errors.New("queue not found")
+	ErrDataTypeRabbitmqNotFound = errors.New("data type not found")
 )
 
 type RabbitMQProducer struct {
@@ -105,8 +112,7 @@ func (rmqp *RabbitMQProducer) initRabbitMQ() error {
 func (rmqp *RabbitMQProducer) checkConnection() {
 	for {
 		if rmqp.conn.IsClosed() || rmqp.ch.IsClosed() {
-			err := rmqp.initRabbitMQ()
-			if err != nil {
+			if err := rmqp.initRabbitMQ(); err != nil {
 				log.Println(err)
 			}
 		}
@@ -237,8 +243,7 @@ func (rmqp *RabbitMQProducer) Execute(c Ctx) (out Resp, err error) {
 			if err := rmqp.recovery(); err != nil {
 				return nil, err
 			}
-			err := rmqp.publish(body, ct)
-			if err != nil {
+			if err := rmqp.publish(body, ct); err != nil {
 				return nil, err
 			}
 		}

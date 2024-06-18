@@ -45,6 +45,10 @@ func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
 		return ErrQueueRabbitmqNotFound
 	}
 
+	if rmqc.DataType == "" {
+		return ErrDataTypeRabbitmqNotFound
+	}
+
 	if rmqc.DurCheckConnect == 0 {
 		rmqc.DurCheckConnect = 30 * time.Second
 	}
@@ -190,8 +194,7 @@ func (rmqc *RabbitMQConsumer) parseMsg(contentType string, body []byte) error {
 func (rmqc *RabbitMQConsumer) checkConnection() {
 	for {
 		if rmqc.conn.IsClosed() || rmqc.ch.IsClosed() {
-			err := rmqc.initRabbitMQ()
-			if err != nil {
+			if err := rmqc.initRabbitMQ(); err != nil {
 				log.Println(err)
 			}
 		}

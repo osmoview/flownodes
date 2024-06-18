@@ -10,8 +10,6 @@ import (
 
 var ErrNoDataSource = errors.New("no data source")
 var ErrUnexpectedDataType = errors.New("unexpected data type")
-var ErrUrlRabbitmqNotFound = errors.New("url amqp not found")
-var ErrQueueRabbitmqNotFound = errors.New("queue not found")
 
 const (
 	ContentTypeJSON   = "application/json"
@@ -20,14 +18,18 @@ const (
 )
 
 const (
-	NodeScreen   = "screen"
-	NodeCamera   = "camera"
-	NodeService  = "service"
-	NodeText     = "text"
-	NodeReadFile = "readfile"
-	NodeFilter   = "filter"
-	NodeColor    = "color"
-	NodeCrop     = "crop"
+	NodeScreen           = "screen"
+	NodeCamera           = "camera"
+	NodeService          = "service"
+	NodeText             = "text"
+	NodeReadFile         = "readfile"
+	NodeFilter           = "filter"
+	NodeColor            = "color"
+	NodeCrop             = "crop"
+	NodeRabbitMQProducer = "rabbitmq-producer"
+	NodeRabbitMQConsumer = "rabbitmq-consumer"
+	NodeKafkaProducer    = "kafka-producer"
+	NodeKafkaConsumer    = "kafka-consumer"
 )
 
 // EntryNodes are the nodes from which the execution of analytics can begin
@@ -37,16 +39,20 @@ var EntryNodes = []string{NodeCamera}
 var SourceNodes = []string{NodeCamera, NodeText, NodeService}
 
 var Nodes = map[string]Node{
-	NodeScreen:   &Screen{},
-	NodeCamera:   &Camera{},
-	NodeService:  &Service{},
-	NodeText:     &Text{},
-	NodeReadFile: &ReadFile{},
-	NodeFilter:   &Filter{},
-	NodeColor:    &Color{},
-	NodeCrop:     &Crop{},
-	"cpu-temp":   &CPUtemp{},
-	"expr":       &Expression{},
+	NodeScreen:           &Screen{},
+	NodeCamera:           &Camera{},
+	NodeService:          &Service{},
+	NodeText:             &Text{},
+	NodeReadFile:         &ReadFile{},
+	NodeFilter:           &Filter{},
+	NodeColor:            &Color{},
+	NodeCrop:             &Crop{},
+	NodeRabbitMQProducer: &RabbitMQProducer{},
+	NodeRabbitMQConsumer: &RabbitMQConsumer{},
+	NodeKafkaProducer:    &KafkaProducer{},
+	NodeKafkaConsumer:    &KafkaConsumer{},
+	"cpu-temp":           &CPUtemp{},
+	"expr":               &Expression{},
 }
 
 type Node interface {
