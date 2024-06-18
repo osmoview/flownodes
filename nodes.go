@@ -10,6 +10,8 @@ import (
 
 var ErrNoDataSource = errors.New("no data source")
 var ErrUnexpectedDataType = errors.New("unexpected data type")
+var ErrUrlRabbitmqNotFound = errors.New("url amqp not found")
+var ErrQueueRabbitmqNotFound = errors.New("queue not found")
 
 const (
 	ContentTypeJSON   = "application/json"

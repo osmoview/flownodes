@@ -37,6 +37,14 @@ func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {
 	// initialize ports
 	rmqc.initPorts()
 
+	if rmqc.Url == "" {
+		return ErrUrlRabbitmqNotFound
+	}
+
+	if rmqc.Queue == "" {
+		return ErrQueueRabbitmqNotFound
+	}
+
 	if rmqc.DurCheckConnect == 0 {
 		rmqc.DurCheckConnect = 30 * time.Second
 	}
@@ -128,8 +136,7 @@ func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 // readMsg read a messages from ctx
 func (rmqc *RabbitMQConsumer) readMsg() {
 	for d := range rmqc.delivery {
-		err := rmqc.parseMsg(d.ContentType, d.Body)
-		if err != nil {
+		if err := rmqc.parseMsg(d.ContentType, d.Body); err != nil {
 			log.Println(err)
 			d.Ack(false)
 			continue

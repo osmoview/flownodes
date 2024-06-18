@@ -34,6 +34,14 @@ func (rmqp *RabbitMQProducer) Init(db DB) (err error) {
 	// initialize ports
 	rmqp.initPorts()
 
+	if rmqp.Url == "" {
+		return ErrUrlRabbitmqNotFound
+	}
+
+	if rmqp.Queue == "" {
+		return ErrQueueRabbitmqNotFound
+	}
+
 	if rmqp.DurCheckConnect == 0 {
 		rmqp.DurCheckConnect = 30 * time.Second
 	}
