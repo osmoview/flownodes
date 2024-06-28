@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/osmoview/flowdata"
-	"github.com/osmoview/spot/events"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -64,11 +63,11 @@ func (db *Database) initDB() (err error) {
 		return err
 	}
 
-	return db.gorm.AutoMigrate(&events.Event{})
+	return db.gorm.AutoMigrate(&flowdata.Event{})
 }
 
 func (db *Database) Execute(c Ctx) (Resp, error) {
-	e := &events.Event{
+	e := &flowdata.Event{
 		ID:      c.GetID(),
 		Source:  c.GetSourceInfo().ID,
 		Status:  fmt.Sprint(c.MustGetData(db.status.Name)),
@@ -84,7 +83,7 @@ func (db *Database) Execute(c Ctx) (Resp, error) {
 	return Resp{}, db.gorm.Create(e).Error
 }
 
-func (db *Database) saveFrame(v any, e *events.Event) error {
+func (db *Database) saveFrame(v any, e *flowdata.Event) error {
 	frame, ok := v.(*flowdata.Frame)
 	if !ok {
 		return ErrUnexpectedDataType
