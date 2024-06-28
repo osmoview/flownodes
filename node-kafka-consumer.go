@@ -11,6 +11,10 @@ import (
 	"github.com/IBM/sarama"
 )
 
+func init() {
+	RegisterNode("kafka-consumer", &KafkaConsumer{})
+}
+
 type KafkaConsumer struct {
 	// Url amqp connect to kafka: host:port
 	Url string `yaml:"url" env:"OSMO_KAFKA_URL"`
@@ -294,4 +298,8 @@ func (kc *KafkaConsumer) Execute(c Ctx) (out Resp, err error) {
 
 func (kc *KafkaConsumer) GetPorts() (in, out []Port) {
 	return in, kc.out
+}
+
+func (kc *KafkaConsumer) GetForm() flowdata.Form {
+	return flowdata.Form{}
 }

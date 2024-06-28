@@ -8,52 +8,20 @@ import (
 	"github.com/osmoview/flowdata"
 )
 
-var ErrNoDataSource = errors.New("no data source")
-var ErrUnexpectedDataType = errors.New("unexpected data type")
-
 const (
 	ContentTypeJSON   = "application/json"
 	ContentTypeText   = "text/plain"
 	ContentTypeBinary = "application/octet-stream"
 )
 
-const (
-	NodeScreen           = "screen"
-	NodeCamera           = "camera"
-	NodeService          = "service"
-	NodeText             = "text"
-	NodeReadFile         = "readfile"
-	NodeFilter           = "filter"
-	NodeColor            = "color"
-	NodeCrop             = "crop"
-	NodeRabbitMQProducer = "rabbitmq-producer"
-	NodeRabbitMQConsumer = "rabbitmq-consumer"
-	NodeKafkaProducer    = "kafka-producer"
-	NodeKafkaConsumer    = "kafka-consumer"
-)
-
-// EntryNodes are the nodes from which the execution of analytics can begin
-var EntryNodes = []string{NodeCamera}
+var ErrNoDataSource = errors.New("no data source")
+var ErrUnexpectedDataType = errors.New("unexpected data type")
 
 // SourceNodes is a list of nodes that will be executed when the main entry node starts execution
-var SourceNodes = []string{NodeCamera, NodeText, NodeService}
+var SourceNodes = []string{}
 
-var Nodes = map[string]Node{
-	NodeScreen:           &Screen{},
-	NodeCamera:           &Camera{},
-	NodeService:          &Service{},
-	NodeText:             &Text{},
-	NodeReadFile:         &ReadFile{},
-	NodeFilter:           &Filter{},
-	NodeColor:            &Color{},
-	NodeCrop:             &Crop{},
-	NodeRabbitMQProducer: &RabbitMQProducer{},
-	NodeRabbitMQConsumer: &RabbitMQConsumer{},
-	NodeKafkaProducer:    &KafkaProducer{},
-	NodeKafkaConsumer:    &KafkaConsumer{},
-	"cpu-temp":           &CPUtemp{},
-	"expr":               &Expression{},
-}
+// Nodes contains all available(registered) nodes
+var Nodes = map[string]Node{}
 
 type Node interface {
 	// initialize node, set default values, etc
@@ -66,6 +34,8 @@ type Node interface {
 
 	// get input and output node ports
 	GetPorts() (in, out []Port)
+
+	GetForm() (form flowdata.Form)
 }
 
 func RegisterNode(t string, node Node) {
@@ -134,20 +104,17 @@ const (
 type Port struct {
 	// port name, like status, frame, objects, or something other,
 	// optional, if not specified, frontend should use port type as name
-	Name string `yaml:"name,omitempty"`
+	Name string `yaml:"name,omitempty" json:"name"`
 
 	// port type defines the type of data that can be transmitted over this port
 	// frontend should prohibit the connection of ports of different types to each other
-	Type string `yaml:"type"`
+	Type string `yaml:"type" json:"type"`
 
 	// text description of the port
-	Desc string `yaml:"desc,omitempty"`
+	Desc string `yaml:"desc,omitempty" json:"desc,omitempty"`
 
-	// if field flag enabled, so this is not a port, but a field for entering data
-	Field bool `yaml:"field,omitempty"`
-
-	// optional flag, if true, then port provide not necessary data
-	Optional bool `yaml:"optional"`
+	// required flag
+	Required bool `yaml:"required" json:"required,omitempty"`
 }
 
 //

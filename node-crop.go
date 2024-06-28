@@ -8,16 +8,23 @@ import (
 	"github.com/osmoview/flowdata"
 )
 
+func init() {
+	RegisterNode("crop", &Crop{})
+}
+
 type Crop struct {
 	frame  Port
 	region Port
 }
 
 func (cr *Crop) Init(db DB) (err error) {
+	cr.initPorts()
+	return
+}
+
+func (cr *Crop) initPorts() {
 	cr.frame = Port{Name: PortFrame, Type: PortFrame}
 	cr.region = Port{Name: PortRegion, Type: PortRegion}
-
-	return
 }
 
 // getCtxData get frame, region from Ctx
@@ -82,5 +89,10 @@ func (cr *Crop) Execute(c Ctx) (out Resp, err error) {
 }
 
 func (cr *Crop) GetPorts() (in, out []Port) {
+	cr.initPorts()
 	return []Port{cr.frame, cr.region}, []Port{cr.frame}
+}
+
+func (cr *Crop) GetForm() flowdata.Form {
+	return flowdata.Form{}
 }

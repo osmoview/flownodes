@@ -6,6 +6,10 @@ import (
 	"github.com/osmoview/flowdata"
 )
 
+func init() {
+	RegisterNode("filter", &Filter{})
+}
+
 const FilterAny = "*"
 
 type Filter struct {
@@ -17,10 +21,14 @@ type Filter struct {
 
 func (f *Filter) Init(db DB) error {
 	f.Probs = make(map[string]float64)
-	f.In = Port{Name: "objects", Type: PortObjects}
-	f.Out = Port{Name: "objects", Type: PortObjects}
+	f.initPorts()
 
 	return nil
+}
+
+func (f *Filter) initPorts() {
+	f.In = Port{Name: "objects", Type: PortObjects}
+	f.Out = Port{Name: "objects", Type: PortObjects}
 }
 
 func (f *Filter) Execute(c Ctx) (out Resp, err error) {
@@ -50,5 +58,18 @@ func (f *Filter) Execute(c Ctx) (out Resp, err error) {
 }
 
 func (f *Filter) GetPorts() (in []Port, out []Port) {
+	f.initPorts()
 	return []Port{f.In}, []Port{f.Out}
+}
+
+func (f *Filter) GetForm() flowdata.Form {
+	return flowdata.Form{
+		{
+			Name:  "probs",
+			Label: flowdata.L10n{"en": "Threshold", "ru": "Порог"},
+			Type:  flowdata.FieldTypeMapNumbers,
+			Value: map[string]float64{"*": 0.35},
+			Help:  flowdata.L10n{"en": "Filter threshold"},
+		},
+	}
 }

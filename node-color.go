@@ -10,6 +10,10 @@ import (
 	"github.com/EdlinOrg/prominentcolor"
 )
 
+func init() {
+	RegisterNode("color", &Color{})
+}
+
 type Color struct {
 	// frame image
 	frame Port
@@ -18,10 +22,13 @@ type Color struct {
 }
 
 func (col *Color) Init(db DB) (err error) {
+	col.initPorts()
+	return
+}
+
+func (col *Color) initPorts() {
 	col.frame = Port{Name: PortFrame, Type: PortFrame}
 	col.objects = Port{Name: PortObjects, Type: PortObjects}
-
-	return
 }
 
 // getCtxData get frame, objects from Ctx
@@ -91,5 +98,10 @@ func (col *Color) Execute(c Ctx) (out Resp, err error) {
 }
 
 func (col *Color) GetPorts() (in, out []Port) {
+	col.initPorts()
 	return []Port{col.frame, col.objects}, []Port{col.objects}
+}
+
+func (col *Color) GetForm() flowdata.Form {
+	return flowdata.Form{}
 }

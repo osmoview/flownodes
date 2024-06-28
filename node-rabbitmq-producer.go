@@ -13,6 +13,10 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+func init() {
+	RegisterNode("rabbitmq-producer", &RabbitMQProducer{})
+}
+
 var (
 	ErrUrlRabbitmqNotFound      = errors.New("url amqp not found")
 	ErrQueueRabbitmqNotFound    = errors.New("queue not found")
@@ -254,4 +258,8 @@ func (rmqp *RabbitMQProducer) Execute(c Ctx) (out Resp, err error) {
 
 func (rmqp *RabbitMQProducer) GetPorts() (in, out []Port) {
 	return rmqp.in, out
+}
+
+func (rmqc *RabbitMQProducer) GetForm() flowdata.Form {
+	return flowdata.Form{}
 }

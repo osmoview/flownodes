@@ -11,6 +11,10 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+func init() {
+	RegisterNode("rabbitmq-consumer", &RabbitMQConsumer{})
+}
+
 type RabbitMQConsumer struct {
 	// Url amqp connect to rabbitmq
 	Url string `yaml:"url" env:"OSMO_RABBITMQ_URL"`
@@ -280,4 +284,8 @@ func (rmqc *RabbitMQConsumer) Execute(c Ctx) (out Resp, err error) {
 
 func (rmqc *RabbitMQConsumer) GetPorts() (in, out []Port) {
 	return in, rmqc.out
+}
+
+func (rmqc *RabbitMQConsumer) GetForm() flowdata.Form {
+	return flowdata.Form{}
 }

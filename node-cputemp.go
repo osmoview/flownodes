@@ -4,8 +4,14 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/osmoview/flowdata"
 	"github.com/ssimunic/gosensors"
 )
+
+func init() {
+	RegisterNode("cpu-temp", &CPUtemp{})
+	SourceNodes = append(SourceNodes, "cpu-temp")
+}
 
 type CPUtemp struct {
 	Chip string `yaml:"chip"`
@@ -15,8 +21,12 @@ type CPUtemp struct {
 }
 
 func (t *CPUtemp) Init(db DB) error {
-	t.port = Port{Name: "temp", Type: PortNumber}
+	t.initPorts()
 	return nil
+}
+
+func (t *CPUtemp) initPorts() {
+	t.port = Port{Name: "temp", Type: PortNumber}
 }
 
 func (t *CPUtemp) Execute(c Ctx) (out Resp, err error) {
@@ -49,5 +59,13 @@ func (t *CPUtemp) Execute(c Ctx) (out Resp, err error) {
 }
 
 func (t *CPUtemp) GetPorts() (in, out []Port) {
+	t.initPorts()
 	return nil, []Port{t.port}
+}
+
+func (t *CPUtemp) GetForm() flowdata.Form {
+	return flowdata.Form{
+		{Name: "chip", Help: flowdata.L10n{"en": "Name of the sensor chip"}},
+		{Name: "key", Help: flowdata.L10n{"en": "Sensor key"}},
+	}
 }

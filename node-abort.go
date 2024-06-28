@@ -1,17 +1,15 @@
 package flownodes
 
-const NodeAbortName = "abort"
+import "github.com/osmoview/flowdata"
 
 func init() {
-	RegisterNode(NodeAbortName, &Abort{})
+	RegisterNode("abort", &Abort{})
 }
 
 type Abort struct {
-	port Port
 }
 
 func (node *Abort) Init(db DB) error {
-	node.port = Port{Name: "abort", Type: PortAny}
 	return nil
 }
 
@@ -21,5 +19,9 @@ func (node *Abort) Execute(c Ctx) (out Resp, err error) {
 }
 
 func (node *Abort) GetPorts() (in, out []Port) {
-	return []Port{node.port}, []Port{}
+	return []Port{{Name: "abort", Type: PortAny}}, []Port{}
+}
+
+func (node *Abort) GetForm() flowdata.Form {
+	return flowdata.Form{}
 }

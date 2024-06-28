@@ -16,11 +16,10 @@ import (
 var (
 	DatabaseEventsFramesExt = ".jpg"
 	DatabaseEventsFramesDir = "data/events/" // default dir
-	NodeDatabaseName        = "database"
 )
 
 func init() {
-	RegisterNode(NodeDatabaseName, &Database{})
+	RegisterNode("database", &Database{})
 }
 
 type Database struct {
@@ -40,15 +39,19 @@ type Database struct {
 }
 
 func (db *Database) Init(_ DB) (err error) {
-	db.status = Port{Name: "status", Type: PortString}
-	db.frames = Port{Name: PortFrame, Type: PortFrame}
-	db.objects = Port{Name: PortObjects, Type: PortObjects}
+	db.initPorts()
 
 	if db.Dir == "" {
 		db.Dir = DatabaseEventsFramesDir
 	}
 
 	return db.initDB()
+}
+
+func (db *Database) initPorts() {
+	db.status = Port{Name: "status", Type: PortString}
+	db.frames = Port{Name: PortFrame, Type: PortFrame}
+	db.objects = Port{Name: PortObjects, Type: PortObjects}
 }
 
 func (db *Database) initDB() (err error) {
@@ -81,10 +84,6 @@ func (db *Database) Execute(c Ctx) (Resp, error) {
 	return Resp{}, db.gorm.Create(e).Error
 }
 
-func (db *Database) GetPorts() (in, out []Port) {
-	return []Port{db.frames, db.objects, db.status}, []Port{}
-}
-
 func (db *Database) saveFrame(v any, e *events.Event) error {
 	frame, ok := v.(*flowdata.Frame)
 	if !ok {
@@ -98,4 +97,16 @@ func (db *Database) saveFrame(v any, e *events.Event) error {
 	os.MkdirAll(dir, 0755) // no need to check error, write file return it
 
 	return os.WriteFile(fn, frame.GetBytes(), 0755)
+}
+
+func (db *Database) GetPorts() (in, out []Port) {
+	db.initPorts()
+	return []Port{db.frames, db.objects, db.status}, []Port{}
+}
+
+func (db *Database) GetForm() flowdata.Form {
+	return flowdata.Form{
+		{Name: "dsn", Help: flowdata.L10n{"en": "Database DSN"}, Level: flowdata.FieldLevelMaster, Hook: flowdata.FieldHookDatabase},
+		{Name: "dir", Help: flowdata.L10n{"en": "Frames directory"}, Level: flowdata.FieldLevelMaster, Value: DatabaseEventsFramesDir},
+	}
 }

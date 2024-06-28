@@ -1,5 +1,14 @@
 package flownodes
 
+import "github.com/osmoview/flowdata"
+
+const NodeService = "service"
+
+func init() {
+	RegisterNode(NodeService, &Service{})
+	SourceNodes = append(SourceNodes, NodeService)
+}
+
 // Service is a universal node for interacting with remote services
 type Service struct {
 	ID  string `yaml:"id"`
@@ -40,4 +49,14 @@ func (node *Service) Execute(c Ctx) (out Resp, err error) {
 
 func (node *Service) GetPorts() (in, out []Port) {
 	return node.Input, node.Output
+}
+
+func (node *Service) GetForm() flowdata.Form {
+	return flowdata.Form{{
+		Name:    "id",
+		Label:   flowdata.L10n{"en": "Service", "ru": "Сервис"},
+		Type:    flowdata.FieldTypeSelect,
+		Options: []flowdata.FormFieldOption{},
+		Hook:    flowdata.FieldHookServices,
+	}}
 }

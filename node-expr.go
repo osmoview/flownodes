@@ -4,7 +4,13 @@ import (
 	"log"
 
 	"github.com/expr-lang/expr"
+
+	"github.com/osmoview/flowdata"
 )
+
+func init() {
+	RegisterNode("expr", &Expression{})
+}
 
 // Expression node use package 'github.com/expr-lang/expr' to implement simple custom logic.
 // At the input, in the "data" port, it takes a value of any type,
@@ -19,9 +25,13 @@ type Expression struct {
 }
 
 func (e *Expression) Init(db DB) error {
+	e.initPorts()
+	return nil
+}
+
+func (e *Expression) initPorts() {
 	e.in = Port{Name: "*", Type: PortMap}
 	e.out = Port{Name: "data", Type: PortAny}
-	return nil
 }
 
 func (e *Expression) Execute(c Ctx) (Resp, error) {
@@ -43,5 +53,23 @@ func (e *Expression) Execute(c Ctx) (Resp, error) {
 }
 
 func (e *Expression) GetPorts() (in, out []Port) {
+	e.initPorts()
 	return []Port{e.in}, []Port{e.out}
+}
+
+func (e *Expression) GetForm() flowdata.Form {
+	return flowdata.Form{
+		{
+			Name:  "expr",
+			Help:  flowdata.L10n{"en": "Expression string"},
+			Label: flowdata.L10n{"en": "Expression", "ru": "Условие"},
+			Level: flowdata.FieldLevelMaster,
+		},
+		{
+			Name:  "url",
+			Type:  flowdata.FieldTypeURL,
+			Value: "https://github.com/expr-lang/expr",
+			Level: flowdata.FieldLevelMaster,
+		},
+	}
 }

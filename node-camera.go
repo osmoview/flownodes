@@ -4,6 +4,13 @@ import (
 	"github.com/osmoview/flowdata"
 )
 
+const NodeCameraName = "camera"
+
+func init() {
+	RegisterNode(NodeCameraName, &Camera{})
+	SourceNodes = append(SourceNodes, NodeCameraName)
+}
+
 type Camera struct {
 	ID  string `yaml:"id"`
 	cam FrameReceiver
@@ -13,7 +20,8 @@ type Camera struct {
 
 // Init cameras node, lookup camera by specified id from the `DB`
 func (node *Camera) Init(db DB) (err error) {
-	node.frames = Port{Name: PortFrame, Type: PortFrame}
+	_, out := node.GetPorts()
+	node.frames = out[0]
 
 	if node.ID != "" {
 		node.cam, err = db.GetCamera(node.ID)
@@ -47,5 +55,15 @@ func (node *Camera) Execute(c Ctx) (out Resp, err error) {
 }
 
 func (node *Camera) GetPorts() (in, out []Port) {
-	return in, []Port{node.frames}
+	return in, []Port{{Name: PortFrame, Type: PortFrame}}
+}
+
+func (node *Camera) GetForm() flowdata.Form {
+	return flowdata.Form{{
+		Name:    "id",
+		Label:   flowdata.L10n{"en": "Camera", "ru": "Камера"},
+		Type:    flowdata.FieldTypeSelect,
+		Options: []flowdata.FormFieldOption{},
+		Hook:    flowdata.FieldHookCameras,
+	}}
 }

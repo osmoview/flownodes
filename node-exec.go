@@ -4,14 +4,17 @@ import (
 	"bytes"
 	"os/exec"
 	"text/template"
+
+	"github.com/osmoview/flowdata"
 )
 
 func init() {
 	RegisterNode("exec", &Exec{})
+	SourceNodes = append(SourceNodes, "exec")
 }
 
 type Exec struct {
-	Exec string `yaml:"exec"`
+	Exec string `yaml:"exec" json:"exec"`
 
 	in     Port
 	stdout Port
@@ -19,10 +22,14 @@ type Exec struct {
 }
 
 func (e *Exec) Init(db DB) error {
+	e.initPorts()
+	return nil
+}
+
+func (e *Exec) initPorts() {
 	e.in = Port{Name: "*", Type: PortMap}
 	e.stdout = Port{Name: "stdout", Type: PortString}
 	e.stderr = Port{Name: "stderr", Type: PortString}
-	return nil
 }
 
 func (e *Exec) Execute(c Ctx) (Resp, error) {
@@ -39,6 +46,8 @@ func (e *Exec) Execute(c Ctx) (Resp, error) {
 	cmd.Stderr = &stderr
 
 	err = cmd.Run()
+
+	// TODO: kill timeout
 
 	// returns stdout, stderr, and an error if this occurred during execution
 	return Resp{e.stdout.Name: stdout.String(), e.stderr.Name: stderr.String()}, err
@@ -61,5 +70,15 @@ func (e *Exec) parseArgs(data map[string]any) (args string, err error) {
 }
 
 func (e *Exec) GetPorts() (in, out []Port) {
+	e.initPorts()
 	return []Port{e.in}, []Port{e.stdout, e.stderr}
+}
+
+func (e *Exec) GetForm() flowdata.Form {
+	return flowdata.Form{{
+		Name:  "exec",
+		Label: flowdata.L10n{"en": "Execute", "ru": "Запустить"},
+		Help:  flowdata.L10n{"en": "some command to execute, ie: date"},
+		Level: flowdata.FieldLevelMaster,
+	}}
 }

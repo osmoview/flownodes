@@ -12,6 +12,10 @@ import (
 	"github.com/IBM/sarama"
 )
 
+func init() {
+	RegisterNode("kafka-producer", &KafkaProducer{})
+}
+
 var (
 	ErrUrlKafkaNotFound      = errors.New("url kafka not found")
 	ErrTopicKafkaNotFound    = errors.New("topic kafka not found")
@@ -266,4 +270,8 @@ func (kp *KafkaProducer) Execute(c Ctx) (out Resp, err error) {
 
 func (kp *KafkaProducer) GetPorts() (in, out []Port) {
 	return kp.in, out
+}
+
+func (kc *KafkaProducer) GetForm() flowdata.Form {
+	return flowdata.Form{}
 }
