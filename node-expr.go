@@ -66,10 +66,10 @@ func (e *Expression) GetForm() flowdata.Form {
 			Level: flowdata.FieldLevelMaster,
 		},
 		{
-			Name:  "url",
-			Type:  flowdata.FieldTypeURL,
-			Value: "https://github.com/expr-lang/expr",
-			Level: flowdata.FieldLevelMaster,
+			Name:    "url",
+			Type:    flowdata.FieldTypeURL,
+			Default: "https://github.com/expr-lang/expr",
+			Level:   flowdata.FieldLevelMaster,
 		},
 	}
 }

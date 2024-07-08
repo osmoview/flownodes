@@ -65,11 +65,11 @@ func (f *Filter) GetPorts() (in []Port, out []Port) {
 func (f *Filter) GetForm() flowdata.Form {
 	return flowdata.Form{
 		{
-			Name:  "probs",
-			Label: flowdata.L10n{"en": "Threshold", "ru": "Порог"},
-			Type:  flowdata.FieldTypeMapNumbers,
-			Value: map[string]float64{"*": 0.35},
-			Help:  flowdata.L10n{"en": "Filter threshold"},
+			Name:    "probs",
+			Label:   flowdata.L10n{"en": "Threshold", "ru": "Порог"},
+			Type:    flowdata.FieldTypeMapNumbers,
+			Default: map[string]float64{"*": 0.35},
+			Help:    flowdata.L10n{"en": "Filter threshold"},
 		},
 	}
 }

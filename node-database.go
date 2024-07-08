@@ -106,6 +106,6 @@ func (db *Database) GetPorts() (in, out []Port) {
 func (db *Database) GetForm() flowdata.Form {
 	return flowdata.Form{
 		{Name: "dsn", Help: flowdata.L10n{"en": "Database DSN"}, Level: flowdata.FieldLevelMaster, Hook: flowdata.FieldHookDatabase},
-		{Name: "dir", Help: flowdata.L10n{"en": "Frames directory"}, Level: flowdata.FieldLevelMaster, Value: DatabaseEventsFramesDir},
+		{Name: "dir", Help: flowdata.L10n{"en": "Frames directory"}, Level: flowdata.FieldLevelMaster, Default: DatabaseEventsFramesDir},
 	}
 }

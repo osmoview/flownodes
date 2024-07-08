@@ -6,7 +6,7 @@ require (
 	github.com/EdlinOrg/prominentcolor v1.0.0
 	github.com/IBM/sarama v1.43.2
 	github.com/expr-lang/expr v1.16.9
-	github.com/osmoview/flowdata v0.0.13
+	github.com/osmoview/flowdata v0.0.14
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/ssimunic/gosensors v0.0.0-20170414000417-e7ab9a4e799b
 	gorm.io/driver/postgres v1.5.9
@@ -40,8 +40,8 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/pixiv/go-libjpeg v0.0.0-20190822045933-3da21a74767d // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
-	golang.org/x/crypto v0.24.0 // indirect
-	golang.org/x/net v0.26.0 // indirect
+	golang.org/x/crypto v0.25.0 // indirect
+	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 )
