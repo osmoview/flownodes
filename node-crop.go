@@ -2,6 +2,7 @@ package flownodes
 
 import (
 	"errors"
+	"fmt"
 	"image"
 	"image/draw"
 
@@ -23,8 +24,8 @@ func (cr *Crop) Init(db DB) (err error) {
 }
 
 func (cr *Crop) initPorts() {
-	cr.frame = Port{Name: PortFrame, Type: PortFrame}
-	cr.region = Port{Name: PortRegion, Type: PortRegion}
+	cr.frame = Port{Name: PortFrame, Type: PortFrame, Required: true}
+	cr.region = Port{Name: PortRegion, Type: PortRegion, Required: true}
 }
 
 // getCtxData get frame, region from Ctx
@@ -66,9 +67,9 @@ func (cr *Crop) Execute(c Ctx) (out Resp, err error) {
 	width := bounds.Dx()
 	height := bounds.Dy()
 
-	bbox := region.BBox()
-	if region.IsZeroBBox(bbox) {
-		return nil, errors.New("checked bbox is zero")
+	bbox, ok := region.BBox()
+	if !ok {
+		return nil, fmt.Errorf("%s is invalid region", region.Name)
 	}
 
 	x := int(bbox[0] * float64(width))
