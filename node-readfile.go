@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/osmoview/flowdata"
+	"github.com/osmoview/settings"
 )
 
 func init() {
@@ -14,7 +15,8 @@ func init() {
 type ReadFile struct {
 	Path string `yaml:"path"`
 
-	port Port
+	input  Port
+	output Port
 }
 
 func (r *ReadFile) Init(db DB) error {
@@ -23,21 +25,27 @@ func (r *ReadFile) Init(db DB) error {
 }
 
 func (r *ReadFile) initPorts() {
-	r.port = Port{Name: "data", Type: PortBytes}
+	r.input = Port{Name: "*", Type: PortMap}
+	r.output = Port{Name: "data", Type: PortBytes}
 }
 
 func (r *ReadFile) Execute(c Ctx) (out Resp, err error) {
-	b, err := os.ReadFile(r.Path)
+	fp, err := settings.Map(c.DataMap()).SubstituteTo(r.Path)
 	if err != nil {
 		return nil, err
 	}
 
-	return Resp{r.port.Name: b}, nil
+	b, err := os.ReadFile(fp)
+	if err != nil {
+		return nil, err
+	}
+
+	return Resp{r.output.Name: b}, nil
 }
 
 func (r *ReadFile) GetPorts() (in, out []Port) {
 	r.initPorts()
-	return nil, []Port{r.port}
+	return []Port{r.input}, []Port{r.output}
 }
 
 func (r *ReadFile) GetForm() flowdata.Form {
