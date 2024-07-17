@@ -14,6 +14,7 @@ const (
 	ContentTypeBinary = "application/octet-stream"
 )
 
+var ErrNodeNotFound = errors.New("node not found")
 var ErrNoDataSource = errors.New("no data source")
 var ErrUnexpectedDataType = errors.New("unexpected data type")
 
@@ -46,7 +47,7 @@ func RegisterNode(t string, node Node) {
 func LookupNode(t string) (Node, error) {
 	inode, ok := Nodes[t]
 	if !ok {
-		return nil, fmt.Errorf("node '%s' not found", t)
+		return nil, fmt.Errorf("%s %w", t, ErrNodeNotFound)
 	}
 
 	return reflectCopy(inode).(Node), nil
