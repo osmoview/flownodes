@@ -65,6 +65,7 @@ type Ctx interface {
 	GetID() string
 	SetSourceInfo(SourceInfo)
 	GetSourceInfo() SourceInfo
+	GetFlowInfo() SourceInfo
 	GetData(port string) (data any, ok bool)
 	MustGetData(port string) (data any)
 	DataMap() map[string]any
@@ -136,10 +137,20 @@ type FrameReceiver interface {
 	GetFrame() (*flowdata.Frame, error)
 }
 
+//
+// source info
+//
+
+const (
+	TypeCamera  = "camera"
+	TypeService = "service"
+	TypeFlow    = "flow"
+)
+
 // SourceInfo contins some basic information about camera or remote service
 type SourceInfo struct {
-	ID   string
-	Name string
-	Type string
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Type string `json:"type"`
 	// Addr string
 }
