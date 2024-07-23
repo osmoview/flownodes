@@ -13,12 +13,13 @@ import (
 )
 
 var (
+	DatabaseNode            = "database"
 	DatabaseEventsFramesExt = ".jpg"
 	DatabaseEventsFramesDir = "data/events/" // default dir
 )
 
 func init() {
-	RegisterNode("database", &Database{})
+	RegisterNode(DatabaseNode, &Database{})
 }
 
 type Database struct {
@@ -68,10 +69,11 @@ func (db *Database) initDB() (err error) {
 
 func (db *Database) Execute(c Ctx) (Resp, error) {
 	e := &flowdata.Event{
-		ID:      c.GetID(),
-		Source:  c.GetSourceInfo().ID,
-		Status:  fmt.Sprint(c.MustGetData(db.status.Name)),
-		Objects: c.MustGetData(db.objects.Name).([]*flowdata.Object),
+		ID:         c.GetID(),
+		DataSource: c.GetSourceInfo().ID,
+		Flow:       c.GetFlowInfo().ID,
+		Status:     fmt.Sprint(c.MustGetData(db.status.Name)),
+		Objects:    c.MustGetData(db.objects.Name).([]*flowdata.Object),
 	}
 
 	if frame, ok := c.GetData(db.frames.Name); ok && db.Dir != "" {
@@ -89,7 +91,7 @@ func (db *Database) saveFrame(v any, e *flowdata.Event) error {
 		return ErrUnexpectedDataType
 	}
 
-	dir := filepath.Join(db.Dir, e.Source)
+	dir := filepath.Join(db.Dir, e.DataSource)
 	fn := filepath.Join(dir, e.ID) + DatabaseEventsFramesExt
 
 	// nolint:errcheck
