@@ -35,7 +35,7 @@ func (s *Screen) Execute(c Ctx) (out Resp, err error) {
 	log.Println("status:", c.MustGetData("status"))
 	log.Printf("objects: %+v", c.MustGetData("objects"))
 
-	return nil, nil
+	return c.DataMap(), nil
 }
 
 func (s *Screen) GetPorts() (in, out []Port) {
