@@ -18,6 +18,9 @@ var ErrNodeNotFound = errors.New("node not found")
 var ErrNoDataSource = errors.New("no data source")
 var ErrUnexpectedDataType = errors.New("unexpected data type")
 
+// EntryNode contains default ID of the entry node, 'entry' by default
+var EntryNode = "entry"
+
 // SourceNodes is a list of nodes that will be executed when the main entry node starts execution
 var SourceNodes = []string{}
 
@@ -142,9 +145,9 @@ type FrameReceiver interface {
 //
 
 const (
-	TypeCamera  = "camera"
-	TypeService = "service"
-	TypeFlow    = "flow"
+	SourceTypeCamera  = "camera"
+	SourceTypeService = "service"
+	SourceTypeFlow    = "flow"
 )
 
 // SourceInfo contins some basic information about camera or remote service
