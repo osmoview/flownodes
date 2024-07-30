@@ -46,3 +46,7 @@ func (s *Screen) GetPorts() (in, out []Port) {
 func (s *Screen) GetForm() flowdata.Form {
 	return flowdata.Form{}
 }
+
+func (s *Screen) GetGroup() string {
+	return GroupResults
+}

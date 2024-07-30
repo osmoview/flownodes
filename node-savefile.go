@@ -92,3 +92,7 @@ func (r *SaveFile) GetForm() flowdata.Form {
 		},
 	}
 }
+
+func (r *SaveFile) GetGroup() string {
+	return GroupFiles
+}

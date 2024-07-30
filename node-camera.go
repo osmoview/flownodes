@@ -67,3 +67,7 @@ func (node *Camera) GetForm() flowdata.Form {
 		Hook:    flowdata.FieldHookCameras,
 	}}
 }
+
+func (node *Camera) GetGroup() string {
+	return GroupDataSources
+}

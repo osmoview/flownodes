@@ -97,3 +97,7 @@ func (cr *Crop) GetPorts() (in, out []Port) {
 func (cr *Crop) GetForm() flowdata.Form {
 	return flowdata.Form{}
 }
+
+func (cr *Crop) GetGroup() string {
+	return GroupFrames
+}

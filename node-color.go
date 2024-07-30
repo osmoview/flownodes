@@ -105,3 +105,7 @@ func (col *Color) GetPorts() (in, out []Port) {
 func (col *Color) GetForm() flowdata.Form {
 	return flowdata.Form{}
 }
+
+func (col *Color) GetGroup() string {
+	return GroupObjects
+}

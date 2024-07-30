@@ -111,3 +111,7 @@ func (db *Database) GetForm() flowdata.Form {
 		{Name: "dir", Help: flowdata.L10n{"en": "Frames directory"}, Level: flowdata.FieldLevelMaster, Default: DatabaseEventsFramesDir},
 	}
 }
+
+func (db *Database) GetGroup() string {
+	return GroupResults
+}

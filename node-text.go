@@ -38,3 +38,7 @@ func (t *Text) GetForm() flowdata.Form {
 		{Name: "text", Label: flowdata.L10n{"en": "Text", "ru": "Текст"}},
 	}
 }
+
+func (t *Text) GetGroup() string {
+	return GroupSimple
+}

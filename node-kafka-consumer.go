@@ -303,3 +303,7 @@ func (kc *KafkaConsumer) GetPorts() (in, out []Port) {
 func (kc *KafkaConsumer) GetForm() flowdata.Form {
 	return flowdata.Form{}
 }
+
+func (KafkaConsumer) GetGroup() string {
+	return ""
+}

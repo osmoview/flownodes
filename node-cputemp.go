@@ -69,3 +69,7 @@ func (t *CPUtemp) GetForm() flowdata.Form {
 		{Name: "key", Help: flowdata.L10n{"en": "Sensor key"}},
 	}
 }
+
+func (col *CPUtemp) GetGroup() string {
+	return ""
+}

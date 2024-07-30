@@ -60,3 +60,7 @@ func (node *Service) GetForm() flowdata.Form {
 		Hook:    flowdata.FieldHookServices,
 	}}
 }
+
+func (node *Service) GetGroup() string {
+	return GroupServices
+}

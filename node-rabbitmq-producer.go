@@ -263,3 +263,7 @@ func (rmqp *RabbitMQProducer) GetPorts() (in, out []Port) {
 func (rmqc *RabbitMQProducer) GetForm() flowdata.Form {
 	return flowdata.Form{}
 }
+
+func (RabbitMQProducer) GetGroup() string {
+	return ""
+}

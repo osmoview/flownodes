@@ -73,3 +73,7 @@ func (e *Expression) GetForm() flowdata.Form {
 		},
 	}
 }
+
+func (e *Expression) GetGroup() string {
+	return GroupSimple
+}

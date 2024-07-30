@@ -58,3 +58,7 @@ func (r *ReadFile) GetForm() flowdata.Form {
 		},
 	}
 }
+
+func (r *ReadFile) GetGroup() string {
+	return GroupFiles
+}

@@ -97,3 +97,7 @@ func (e *Exec) GetForm() flowdata.Form {
 		Level: flowdata.FieldLevelMaster,
 	}}
 }
+
+func (e *Exec) GetGroup() string {
+	return GroupFiles
+}

@@ -51,3 +51,7 @@ func (r *Time) GetForm() flowdata.Form {
 		},
 	}
 }
+
+func (t *Time) GetGroup() string {
+	return GroupSimple
+}

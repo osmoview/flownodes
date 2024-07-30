@@ -275,3 +275,7 @@ func (kp *KafkaProducer) GetPorts() (in, out []Port) {
 func (kc *KafkaProducer) GetForm() flowdata.Form {
 	return flowdata.Form{}
 }
+
+func (KafkaProducer) GetGroup() string {
+	return ""
+}

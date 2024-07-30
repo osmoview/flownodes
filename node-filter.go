@@ -73,3 +73,7 @@ func (f *Filter) GetForm() flowdata.Form {
 		},
 	}
 }
+
+func (f *Filter) GetGroup() string {
+	return GroupObjects
+}

@@ -25,3 +25,7 @@ func (node *Abort) GetPorts() (in, out []Port) {
 func (node *Abort) GetForm() flowdata.Form {
 	return flowdata.Form{}
 }
+
+func (node *Abort) GetGroup() string {
+	return GroupSimple
+}
