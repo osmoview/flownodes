@@ -2,7 +2,6 @@ package flownodes
 
 import (
 	"encoding/json"
-	"log"
 	"strconv"
 	"time"
 
@@ -145,7 +144,7 @@ func (rmqc *RabbitMQConsumer) prepareForReadMsg() error {
 func (rmqc *RabbitMQConsumer) readMsg() {
 	for d := range rmqc.delivery {
 		if err := rmqc.parseMsg(d.ContentType, d.Body); err != nil {
-			log.Println(err)
+			log.Error(err)
 			d.Ack(false)
 			continue
 		}
@@ -199,7 +198,7 @@ func (rmqc *RabbitMQConsumer) checkConnection() {
 	for {
 		if rmqc.conn.IsClosed() || rmqc.ch.IsClosed() {
 			if err := rmqc.initRabbitMQ(); err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		}
 		time.Sleep(rmqc.DurCheckConnect)

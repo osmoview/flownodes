@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/osmoview/flowdata"
@@ -117,7 +116,7 @@ func (rmqp *RabbitMQProducer) checkConnection() {
 	for {
 		if rmqp.conn.IsClosed() || rmqp.ch.IsClosed() {
 			if err := rmqp.initRabbitMQ(); err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		}
 		time.Sleep(rmqp.DurCheckConnect)

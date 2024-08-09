@@ -1,8 +1,6 @@
 package flownodes
 
 import (
-	"log"
-
 	"github.com/expr-lang/expr"
 
 	"github.com/osmoview/flowdata"
@@ -39,13 +37,13 @@ func (e *Expression) Execute(c Ctx) (Resp, error) {
 
 	program, err := expr.Compile(e.Expr, expr.Env(m))
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return nil, err
 	}
 
 	out, err := expr.Run(program, m)
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return nil, err
 	}
 

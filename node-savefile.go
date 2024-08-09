@@ -19,7 +19,7 @@ func init() {
 type SaveFile struct {
 	Path string `yaml:"path"`
 
-	save Port
+	data Port
 	args Port
 }
 
@@ -29,7 +29,7 @@ func (r *SaveFile) Init(db DB) error {
 }
 
 func (r *SaveFile) initPorts() {
-	r.save = Port{Name: "save", Type: PortAny, Required: true}
+	r.data = Port{Name: "data", Type: PortAny, Required: true}
 	r.args = Port{Name: "*", Type: PortMap}
 }
 
@@ -39,9 +39,9 @@ func (r *SaveFile) Execute(c Ctx) (out Resp, err error) {
 		return nil, err
 	}
 
-	data, ok := c.GetData("save")
+	data, ok := c.GetData("data")
 	if !ok {
-		return nil, fmt.Errorf("port `save` has no data, nothing to save")
+		return nil, fmt.Errorf("port `data` has no data, nothing to save")
 	}
 
 	switch d := data.(type) {
@@ -79,7 +79,7 @@ func (r *SaveFile) saveByExt(fp string, data any) error {
 
 func (r *SaveFile) GetPorts() (in, out []Port) {
 	r.initPorts()
-	return []Port{r.save, r.args}, []Port{}
+	return []Port{r.data, r.args}, []Port{}
 }
 
 func (r *SaveFile) GetForm() flowdata.Form {
@@ -87,7 +87,7 @@ func (r *SaveFile) GetForm() flowdata.Form {
 		{
 			Name:  "path",
 			Label: flowdata.L10n{"en": "Path", "ru": "Путь к файлу"},
-			Help:  flowdata.L10n{"en": "Path to the file to read", "ru": "Путь к файлу для чтения"},
+			Help:  flowdata.L10n{"en": "Path to the file where to save the data", "ru": "Путь к файлу куда сохранять данные"},
 			Level: flowdata.FieldLevelMaster,
 		},
 	}

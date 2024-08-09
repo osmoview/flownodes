@@ -2,7 +2,6 @@ package flownodes
 
 import (
 	"encoding/json"
-	"log"
 	"strconv"
 	"time"
 
@@ -133,7 +132,7 @@ func (kc *KafkaConsumer) readMsg() {
 	for msg := range kc.partition.Messages() {
 		if string(msg.Key) == kc.Key {
 			if err := kc.parseMsg(string(msg.Headers[0].Value), msg.Value); err != nil {
-				log.Println(err)
+				log.Error(err)
 				continue
 			}
 		}
@@ -143,7 +142,7 @@ func (kc *KafkaConsumer) readMsg() {
 // handleErrors handle errors from kafka consumer
 func (kc *KafkaConsumer) handleErrors() {
 	for err := range kc.errorChan {
-		log.Println(err)
+		log.Error(err)
 	}
 }
 
@@ -212,7 +211,7 @@ func (kc *KafkaConsumer) checkConnection() {
 	for {
 		if !kc.isConnected() {
 			if err := kc.initKafka(); err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		}
 		time.Sleep(kc.DurCheckConnect)

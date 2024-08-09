@@ -1,6 +1,9 @@
 package flownodes
 
-import "github.com/osmoview/flowdata"
+import (
+	"github.com/osmoview/flowdata"
+	"github.com/osmoview/settings"
+)
 
 const TextNode = "text"
 
@@ -12,7 +15,8 @@ func init() {
 type Text struct {
 	Text string `yaml:"text"`
 
-	port Port
+	in  Port
+	out Port
 }
 
 func (t *Text) Init(db DB) error {
@@ -21,16 +25,23 @@ func (t *Text) Init(db DB) error {
 }
 
 func (t *Text) initPorts() {
-	t.port = Port{Name: "text", Type: PortString}
+	t.in = Port{Name: "*", Type: PortMap}
+	t.out = Port{Name: "text", Type: PortString}
 }
 
 func (t *Text) Execute(c Ctx) (out Resp, err error) {
-	return Resp{t.port.Name: t.Text}, nil
+	// substite data to the text line
+	s, err := settings.Map(c.DataMap()).SubstituteTo(t.Text)
+	if err != nil {
+		return nil, err
+	}
+
+	return Resp{t.out.Name: s}, nil
 }
 
 func (t *Text) GetPorts() (in, out []Port) {
 	t.initPorts()
-	return nil, []Port{t.port}
+	return []Port{t.in}, []Port{t.out}
 }
 
 func (t *Text) GetForm() flowdata.Form {

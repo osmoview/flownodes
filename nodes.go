@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/osmoview/flowdata"
+	"github.com/osmoview/logger"
 )
 
 const (
@@ -39,6 +40,8 @@ var (
 )
 
 var (
+	log = logger.New("FLOWNODES")
+
 	// EntryNode contains default ID of the entry node, 'entry' by default
 	EntryNode = "entry"
 
@@ -127,6 +130,10 @@ type RemoteService interface {
 
 type FrameReceiver interface {
 	GetFrame() (*flowdata.Frame, error)
+}
+
+type Executor interface {
+	Execute(c Ctx) (out Resp, err error)
 }
 
 //

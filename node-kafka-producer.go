@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/osmoview/flowdata"
@@ -130,7 +129,7 @@ func (kp *KafkaProducer) checkConnection() {
 	for {
 		if !kp.isConnected() {
 			if err := kp.initKafka(); err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		}
 		time.Sleep(kp.DurCheckConnect)

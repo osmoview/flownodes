@@ -2,7 +2,6 @@ package flownodes
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -78,7 +77,7 @@ func (db *Database) Execute(c Ctx) (Resp, error) {
 
 	if frame, ok := c.GetData(db.frames.Name); ok && db.Dir != "" {
 		if err := db.saveFrame(frame, e); err != nil {
-			log.Printf("failed to save frame image: %v", err)
+			log.Errorf("failed to save frame image: %v", err)
 		}
 	}
 

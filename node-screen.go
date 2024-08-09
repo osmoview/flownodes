@@ -1,8 +1,6 @@
 package flownodes
 
 import (
-	"log"
-
 	"github.com/osmoview/flowdata"
 )
 
@@ -31,9 +29,9 @@ func (s *Screen) initPorts() {
 }
 
 func (s *Screen) Execute(c Ctx) (out Resp, err error) {
-	log.Println("result")
-	log.Println("status:", c.MustGetData("status"))
-	log.Printf("objects: %+v", c.MustGetData("objects"))
+	log.Head("RESULT").Debug("frame id", c.GetID())
+	log.Head("status").Debug(c.MustGetData("status"))
+	log.Head("objects").Debugf("%+v", c.MustGetData("objects"))
 
 	return c.DataMap(), nil
 }
