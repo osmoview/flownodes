@@ -18,7 +18,7 @@ var (
 )
 
 func init() {
-	RegisterNode(DatabaseNode, &Database{})
+	RegisterNode(DatabaseNode, NewDatabaseNode)
 }
 
 type Database struct {
@@ -35,6 +35,10 @@ type Database struct {
 	status  Port
 	frames  Port
 	objects Port
+}
+
+func NewDatabaseNode() Node {
+	return &Database{}
 }
 
 func (db *Database) Init(_ DB) (err error) {

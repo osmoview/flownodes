@@ -3,10 +3,14 @@ package flownodes
 import "github.com/osmoview/flowdata"
 
 func init() {
-	RegisterNode("abort", &Abort{})
+	RegisterNode("abort", NewAbortNode)
 }
 
 type Abort struct {
+}
+
+func NewAbortNode() Node {
+	return &Abort{}
 }
 
 func (node *Abort) Init(db DB) error {

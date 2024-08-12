@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	RegisterNode("rabbitmq-producer", &RabbitMQProducer{})
+	RegisterNode("rabbitmq-producer", NewRabbitMQProducerNode)
 }
 
 var (
@@ -38,6 +38,10 @@ type RabbitMQProducer struct {
 
 	// in data send to rabbitmq
 	in []Port
+}
+
+func NewRabbitMQProducerNode() Node {
+	return &RabbitMQProducer{}
 }
 
 func (rmqp *RabbitMQProducer) Init(db DB) (err error) {

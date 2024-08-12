@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	RegisterNode("kafka-producer", &KafkaProducer{})
+	RegisterNode("kafka-producer", NewKafkaProducer)
 }
 
 var (
@@ -39,6 +39,10 @@ type KafkaProducer struct {
 
 	// in data send to kafka
 	in []Port
+}
+
+func NewKafkaProducer() Node {
+	return &KafkaProducer{}
 }
 
 func (kp *KafkaProducer) Init(db DB) (err error) {

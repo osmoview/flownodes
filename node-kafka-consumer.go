@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	RegisterNode("kafka-consumer", &KafkaConsumer{})
+	RegisterNode("kafka-consumer", NewKafkaConsumer)
 }
 
 type KafkaConsumer struct {
@@ -40,6 +40,10 @@ type KafkaConsumer struct {
 
 	// out data read from kafka
 	out []Port
+}
+
+func NewKafkaConsumer() Node {
+	return &KafkaConsumer{}
 }
 
 func (kc *KafkaConsumer) Init(db DB) (err error) {

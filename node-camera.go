@@ -7,7 +7,7 @@ import (
 const NodeCameraName = "camera"
 
 func init() {
-	RegisterNode(NodeCameraName, &Camera{})
+	RegisterNode(NodeCameraName, NewCameraNode)
 	SourceNodes = append(SourceNodes, NodeCameraName)
 }
 
@@ -16,6 +16,10 @@ type Camera struct {
 	cam FrameReceiver
 
 	frames Port
+}
+
+func NewCameraNode() Node {
+	return &Camera{}
 }
 
 // Init cameras node, lookup camera by specified id from the `DB`

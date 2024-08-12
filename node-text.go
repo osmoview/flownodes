@@ -8,7 +8,7 @@ import (
 const TextNode = "text"
 
 func init() {
-	RegisterNode(TextNode, &Text{})
+	RegisterNode(TextNode, NewTextNode)
 	SourceNodes = append(SourceNodes, TextNode)
 }
 
@@ -17,6 +17,10 @@ type Text struct {
 
 	in  Port
 	out Port
+}
+
+func NewTextNode() Node {
+	return &Text{}
 }
 
 func (t *Text) Init(db DB) error {

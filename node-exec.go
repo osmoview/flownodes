@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	RegisterNode("exec", &Exec{})
+	RegisterNode("exec", NewExecNode)
 	SourceNodes = append(SourceNodes, "exec")
 }
 
@@ -24,6 +24,10 @@ type Exec struct {
 	in     Port
 	stdout Port
 	stderr Port
+}
+
+func NewExecNode() Node {
+	return &Exec{}
 }
 
 func (e *Exec) Init(db DB) error {

@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	RegisterNode("gjson", &GJSON{})
+	RegisterNode("gjson", NewGjsonNode)
 }
 
 type GJSON struct {
@@ -17,6 +17,10 @@ type GJSON struct {
 
 	in  Port
 	out Port
+}
+
+func NewGjsonNode() Node {
+	return &GJSON{}
 }
 
 func (e *GJSON) Init(db DB) error {

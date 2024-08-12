@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	RegisterNode("rabbitmq-consumer", &RabbitMQConsumer{})
+	RegisterNode("rabbitmq-consumer", NewRabbitMQConsumer)
 }
 
 type RabbitMQConsumer struct {
@@ -34,6 +34,10 @@ type RabbitMQConsumer struct {
 
 	// out bytes from queue rabbitmq
 	out []Port
+}
+
+func NewRabbitMQConsumer() Node {
+	return &RabbitMQConsumer{}
 }
 
 func (rmqc *RabbitMQConsumer) Init(db DB) (err error) {

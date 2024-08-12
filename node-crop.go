@@ -10,12 +10,16 @@ import (
 )
 
 func init() {
-	RegisterNode("crop", &Crop{})
+	RegisterNode("crop", NewCropNode)
 }
 
 type Crop struct {
 	frame  Port
 	region Port
+}
+
+func NewCropNode() Node {
+	return &Crop{}
 }
 
 func (cr *Crop) Init(db DB) (err error) {

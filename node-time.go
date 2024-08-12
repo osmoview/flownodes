@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	RegisterNode("time", &Time{})
+	RegisterNode("time", NewTimeNode)
 	SourceNodes = append(SourceNodes, "time")
 }
 
@@ -15,6 +15,10 @@ type Time struct {
 	Layout string `yaml:"layout"`
 
 	output Port
+}
+
+func NewTimeNode() Node {
+	return &Time{}
 }
 
 func (r *Time) Init(db DB) error {

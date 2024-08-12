@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	RegisterNode("savefile", &SaveFile{})
+	RegisterNode("savefile", NewSaveFileNode)
 	SourceNodes = append(SourceNodes, "savefile")
 }
 
@@ -21,6 +21,10 @@ type SaveFile struct {
 
 	data Port
 	args Port
+}
+
+func NewSaveFileNode() Node {
+	return &SaveFile{}
 }
 
 func (r *SaveFile) Init(db DB) error {

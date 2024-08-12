@@ -7,13 +7,13 @@ import (
 )
 
 func init() {
-	RegisterNode("expr", &Expression{})
+	RegisterNode("expr", NewExprNode)
 }
 
-// Expression node use package 'github.com/expr-lang/expr' to implement simple custom logic.
+// Expr node use package 'github.com/expr-lang/expr' to implement simple custom logic.
 // At the input, in the "data" port, it takes a value of any type,
 // then presents the data in the form of a 'Map' and transmits it to the "github.com/expr-lang/expr" packet
-type Expression struct {
+type Expr struct {
 	// Expr string, for example:
 	// 'data > 50', to check that a some number is greater than the required value
 	Expr string `yaml:"expr"`
@@ -22,17 +22,21 @@ type Expression struct {
 	out Port
 }
 
-func (e *Expression) Init(db DB) error {
+func NewExprNode() Node {
+	return &Expr{}
+}
+
+func (e *Expr) Init(db DB) error {
 	e.initPorts()
 	return nil
 }
 
-func (e *Expression) initPorts() {
+func (e *Expr) initPorts() {
 	e.in = Port{Name: "*", Type: PortMap}
 	e.out = Port{Name: "data", Type: PortAny}
 }
 
-func (e *Expression) Execute(c Ctx) (Resp, error) {
+func (e *Expr) Execute(c Ctx) (Resp, error) {
 	m := c.DataMap()
 
 	program, err := expr.Compile(e.Expr, expr.Env(m))
@@ -50,12 +54,12 @@ func (e *Expression) Execute(c Ctx) (Resp, error) {
 	return Resp{e.out.Name: out}, nil
 }
 
-func (e *Expression) GetPorts() (in, out []Port) {
+func (e *Expr) GetPorts() (in, out []Port) {
 	e.initPorts()
 	return []Port{e.in}, []Port{e.out}
 }
 
-func (e *Expression) GetForm() flowdata.Form {
+func (e *Expr) GetForm() flowdata.Form {
 	return flowdata.Form{
 		{
 			Name:  "expr",
@@ -72,6 +76,6 @@ func (e *Expression) GetForm() flowdata.Form {
 	}
 }
 
-func (e *Expression) GetGroup() string {
+func (e *Expr) GetGroup() string {
 	return GroupSimple
 }

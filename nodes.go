@@ -3,7 +3,6 @@ package flownodes
 import (
 	"errors"
 	"fmt"
-	"reflect"
 
 	"github.com/osmoview/flowdata"
 	"github.com/osmoview/logger"
@@ -49,7 +48,7 @@ var (
 	SourceNodes = []string{}
 
 	// Nodes contains all available(registered) nodes
-	Nodes = map[string]Node{}
+	Nodes = map[string]func() Node{}
 )
 
 type Node interface {
@@ -69,22 +68,20 @@ type Node interface {
 	GetGroup() string
 }
 
-func RegisterNode(t string, node Node) {
-	Nodes[t] = node
+func RegisterNode(t string, f func() Node) {
+	Nodes[t] = f
 }
 
 // LookupNode by type and returns new instance of it
 func LookupNode(t string) (Node, error) {
-	inode, ok := Nodes[t]
+	log.Debug("lookup node", t)
+
+	f, ok := Nodes[t]
 	if !ok {
 		return nil, fmt.Errorf("%s %w", t, ErrNodeNotFound)
 	}
 
-	return reflectCopy(inode).(Node), nil
-}
-
-func reflectCopy(inode interface{}) interface{} {
-	return reflect.New(reflect.TypeOf(inode).Elem()).Interface()
+	return f(), nil
 }
 
 //

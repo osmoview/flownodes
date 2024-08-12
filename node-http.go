@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	RegisterNode("http", &HTTP{})
+	RegisterNode("http", NewHTTPNode)
 	SourceNodes = append(SourceNodes, "http")
 }
 
@@ -24,10 +24,14 @@ type HTTP struct {
 	outError Port
 }
 
+func NewHTTPNode() Node {
+	return &HTTP{Method: "GET"}
+}
+
 func (e *HTTP) Init(db DB) error {
 	e.initPorts()
 	if e.Method == "" {
-		e.Method = "get"
+		e.Method = "GET"
 	}
 
 	return nil

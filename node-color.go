@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	RegisterNode("color", &Color{})
+	RegisterNode("color", NewColorNode)
 }
 
 type Color struct {
@@ -19,6 +19,10 @@ type Color struct {
 	frame Port
 	// objects Bbox in relative coordinates format [x,y,w,h]
 	objects Port
+}
+
+func NewColorNode() Node {
+	return &Color{}
 }
 
 func (col *Color) Init(db DB) (err error) {

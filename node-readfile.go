@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	RegisterNode("readfile", &ReadFile{})
+	RegisterNode("readfile", NewReadFileNode)
 	SourceNodes = append(SourceNodes, "readfile")
 }
 
@@ -17,6 +17,10 @@ type ReadFile struct {
 
 	input  Port
 	output Port
+}
+
+func NewReadFileNode() Node {
+	return &ReadFile{}
 }
 
 func (r *ReadFile) Init(db DB) error {

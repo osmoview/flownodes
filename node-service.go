@@ -5,7 +5,7 @@ import "github.com/osmoview/flowdata"
 const NodeService = "service"
 
 func init() {
-	RegisterNode(NodeService, &Service{})
+	RegisterNode(NodeService, NewServiceNode)
 	SourceNodes = append(SourceNodes, NodeService)
 }
 
@@ -16,6 +16,10 @@ type Service struct {
 
 	Input  []Port `yaml:"-"`
 	Output []Port `yaml:"-"`
+}
+
+func NewServiceNode() Node {
+	return &Service{}
 }
 
 func (node *Service) Init(db DB) (err error) {

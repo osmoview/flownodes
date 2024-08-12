@@ -7,13 +7,17 @@ import (
 const NodeScreen = "screen"
 
 func init() {
-	RegisterNode(NodeScreen, &Screen{})
+	RegisterNode(NodeScreen, NewScreenNode)
 }
 
 type Screen struct {
 	status  Port
 	frames  Port
 	objects Port
+}
+
+func NewScreenNode() Node {
+	return &Screen{}
 }
 
 func (s *Screen) Init(db DB) error {

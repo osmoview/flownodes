@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	RegisterNode("filter", &Filter{})
+	RegisterNode("filter", NewFilterNode)
 }
 
 const FilterAny = "*"
@@ -17,6 +17,10 @@ type Filter struct {
 
 	In  Port `yaml:"-"`
 	Out Port `yaml:"-"`
+}
+
+func NewFilterNode() Node {
+	return &Filter{}
 }
 
 func (f *Filter) Init(db DB) error {
