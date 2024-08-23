@@ -57,6 +57,10 @@ const (
 // RegisterNode add new node to the global nodes storage
 func RegisterNode(node string, n NodeCreator) {
 	Nodes[node] = n
+
+	if n.GetDriver().IsDataSource {
+		SourceNodes = append(SourceNodes, node)
+	}
 }
 
 // LookupNode by type and returns new instance of it

@@ -11,8 +11,8 @@ group: results
 
 # ports
 input:
-  - type: frames
-    name: frames
+  - type: frame
+    name: frame
   - type: objects
     name: objects
   - type: status

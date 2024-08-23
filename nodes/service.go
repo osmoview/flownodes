@@ -1,8 +1,6 @@
 package nodes
 
 import (
-	"log"
-
 	"github.com/osmoview/flownodes"
 )
 
@@ -15,7 +13,6 @@ type Service struct {
 // Init should load client to the service by id
 func (node *Service) Init(storage flownodes.Storage) (err error) {
 	if node.ID != "" {
-		log.Println("getservice", node.ID)
 		node.service, err = storage.GetService(node.ID)
 	}
 

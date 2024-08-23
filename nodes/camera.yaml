@@ -7,6 +7,8 @@ label:
 node: camera
 lang: go
 
+is_datasource: true
+
 group: frames
 
 # ports

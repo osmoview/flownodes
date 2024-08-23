@@ -22,6 +22,8 @@ type NodeDriver struct {
 	Node string `yaml:"node" json:"node"`
 	Lang string `yaml:"lang,omitempty" json:"lang,omitempty"`
 
+	IsDataSource bool `yaml:"is_datasource,omitempty" json:"is_datasource,omitempty"`
+
 	Desc  flowdata.L10n `yaml:"desc,omitempty" json:"desc,omitempty"`
 	Label flowdata.L10n `yaml:"label,omitempty" json:"label,omitempty"`
 	Group string        `yaml:"group,omitempty" json:"group,omitempty"`
