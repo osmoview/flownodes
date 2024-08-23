@@ -1,0 +1,28 @@
+id: legacy-detector
+desc:
+  en: Node for compatibility with the old services API
+
+label:
+  en: Legacy Detector
+  ru: Старый детектор
+
+node: legacy-detector
+is_datasource: true
+
+lang: go
+
+group: services
+
+# ports
+input:
+
+output:
+
+form:
+
+run:
+  file: legacy-detector.go
+  target: LegacyDetector
+  init: Init
+  run: Run
+  gopath: ./gopath
