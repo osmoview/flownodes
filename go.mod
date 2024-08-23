@@ -5,7 +5,7 @@ go 1.22.3
 toolchain go1.22.6
 
 require (
-	github.com/osmoview/flowdata v0.0.18
+	github.com/osmoview/flowdata v0.0.19
 	github.com/osmoview/logger v0.0.4
 	gopkg.in/yaml.v3 v3.0.1
 )
