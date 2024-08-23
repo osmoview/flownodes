@@ -1,0 +1,37 @@
+id: saveevent
+
+label:
+  en: Create Event
+  ru: Создать Событие
+
+node: saveevent
+lang: go
+
+group: results
+
+# ports
+input:
+  - type: frames
+    name: frames
+  - type: objects
+    name: objects
+  - type: status
+    name: status
+output:
+
+form:
+  - name: dir
+    label:
+      en: Directory
+      ru: Директория
+    help:
+      en: The path to the directory where to save the event images
+      ru: Путь до директории куда сохранять изображения событий
+    default: 'data/events'
+
+run:
+  file: saveevent.go
+  target: SaveEvent
+  init: Init
+  run: Run
+  gopath: ./gopath

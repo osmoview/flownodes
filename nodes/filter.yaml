@@ -1,0 +1,38 @@
+id: filter
+
+label:
+  en: Filter
+  ru: Фильтр
+
+node: filter
+lang: go
+
+group: objects
+
+# ports
+input:
+  - type: objects
+    name: objects
+output:
+  - type: objects
+    name: objects
+
+form:
+  - name: prob
+    type: number
+    label:
+      en: Probability
+      ru: Вероятность
+    help:
+      en: Objects probability threshold
+      ru: Порог вероятности для объектов
+    default: 0.5
+    min: 0.0
+    max: 1.0
+
+run:
+  file: filter.go
+  target: Filter
+  # init: Init
+  run: Run
+  gopath: ./gopath

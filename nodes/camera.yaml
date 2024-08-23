@@ -1,0 +1,33 @@
+id: camera
+
+label:
+  en: Camera
+  ru: Камера
+
+node: camera
+lang: go
+
+group: frames
+
+# ports
+input:
+output:
+  - type: frame
+    name: frame
+
+form:
+  - name: id
+    type: string
+    label:
+      en: ID
+      ru: ИД
+    help:
+      en: Datasource ID
+      ru: Идентификатор источника данных
+
+run:
+  file: camera.go
+  target: Camera
+  init: Init
+  run: Run
+  gopath: ./gopath

@@ -1,0 +1,33 @@
+id: text
+desc:
+  en: Text Node
+
+label:
+  en: Text
+  ru: Текст
+
+node: text
+
+lang: go
+
+group: simple
+
+# ports
+input:
+output:
+  - type: string
+    name: text
+
+form:
+  - name: text
+    type: string
+    label:
+      en: Text
+      ru: Текст
+
+run:
+  file: text.go
+
+  target: Text
+  # init: Init
+  run: Run

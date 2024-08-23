@@ -1,0 +1,22 @@
+id: abort
+node: abort
+lang: go
+
+label:
+  en: Abort
+  ru: Прервать
+
+group: results
+
+# ports
+input:
+  - type: any
+    name: abort
+output:
+
+form:
+
+run:
+  file: abort.go
+  target: Abort
+  run: Run

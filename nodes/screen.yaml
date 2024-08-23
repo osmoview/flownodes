@@ -1,0 +1,32 @@
+id: screen
+desc:
+  en: Display on the screen
+
+label:
+  en: Screen
+  ru: На экран
+
+node: screen
+
+lang: go
+
+group: results
+
+# ports
+input:
+  - type: frames
+    name: frames
+  - type: objects
+    name: objects
+  - type: status
+    name: status
+output:
+
+form:
+
+run:
+  file: screen.go
+  target: Screen
+  # init: Init
+  run: Run
+  gopath: ./gopath

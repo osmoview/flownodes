@@ -1,0 +1,31 @@
+id: service
+
+label:
+  en: Service
+  ru: Сервис
+
+node: service
+lang: go
+
+group: services
+
+# ports dynamically filled from the selected service
+input:
+output:
+
+form:
+  - name: id
+    type: string
+    label:
+      en: ID
+      ru: ИД
+    help:
+      en: Datasource ID
+      ru: Идентификатор сервиса
+
+run:
+  file: service.go
+  target: Service
+  init: Init
+  run: Run
+  gopath: ./gopath
