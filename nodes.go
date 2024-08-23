@@ -3,6 +3,7 @@ package flownodes
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/osmoview/flowdata"
 	"github.com/osmoview/logger"
@@ -125,14 +126,31 @@ type Data map[string]any
 
 // GetData from the map by the key
 func (m Data) GetData(key string) (v any, ok bool) {
-	v, ok = m[key]
-	return
+	if v, ok = m[key]; ok {
+		return v, ok
+	}
+
+	return m.GetCaseInsensitive(key)
 }
 
 // MustGetData same as GetData, but do not returns second boolean variable
-func (m Data) MustGetData(key string) (v any) {
-	v, _ = m[key]
-	return
+func (m Data) MustGetData(key string) any {
+	if v, ok := m[key]; ok {
+		return v
+	}
+
+	v, _ := m.GetCaseInsensitive(key)
+	return v
+}
+
+func (m Data) GetCaseInsensitive(key string) (v any, ok bool) {
+	for k, v := range m {
+		if strings.EqualFold(k, key) {
+			return v, true
+		}
+	}
+
+	return nil, false
 }
 
 // BindTo marshal-unmarshal data map to the struct by the yaml,
