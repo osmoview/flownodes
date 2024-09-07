@@ -17,7 +17,7 @@ type NodeDriver struct {
 	ID string `yaml:"id" json:"id"`
 
 	// path to the config file
-	// Path string `yaml:"-" json:"path"`
+	Path string `yaml:"-" json:"path"`
 
 	Node string `yaml:"node" json:"node"`
 	Lang string `yaml:"lang,omitempty" json:"lang,omitempty"`
@@ -34,8 +34,16 @@ type NodeDriver struct {
 
 	// run map may contains any instruction required to the run this node
 	// Run map[string]any `yaml:"run" json:"run"`
+	// Run NodeDriverRun `yaml:"run" json:"run"`
 
 	Errors []string `yaml:"-" json:"errors"`
+}
+
+type NodeDriverRun struct {
+	File   string `yaml:"file" json:"file"`
+	Target string `yaml:"target" json:"target"`
+	Init   string `yaml:"init,omitempty" json:"init"`
+	Run    string `yaml:"run" json:"run"`
 }
 
 func (n NodeDriver) IsValid() error {
@@ -51,3 +59,7 @@ func (n NodeDriver) IsValid() error {
 
 	return nil
 }
+
+// func (n NodeDriver) BindRunTo(x any) error {
+// 	yaml.Marshal(n.Run)
+// }
