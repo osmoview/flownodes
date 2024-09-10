@@ -16,6 +16,9 @@ group: simple
 
 # ports
 input:
+  - type: map
+    name: '*'
+
 output:
   - type: string
     name: text
