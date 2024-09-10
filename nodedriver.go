@@ -19,7 +19,8 @@ type NodeDriver struct {
 	// path to the config file
 	Path string `yaml:"-" json:"path"`
 
-	Node string `yaml:"node" json:"node"`
+	// INFO: node field is deprecated, use ID instead
+	// Node string `yaml:"node" json:"-"`
 	Lang string `yaml:"lang,omitempty" json:"lang,omitempty"`
 
 	IsDataSource bool `yaml:"is_datasource,omitempty" json:"is_datasource,omitempty"`
@@ -32,6 +33,7 @@ type NodeDriver struct {
 	Output []Port        `yaml:"output,omitempty" json:"output,omitempty"`
 	Form   flowdata.Form `yaml:"form,omitempty" json:"form,omitempty"`
 
+	// INFO: Run section is deprecated, each interpreter should parse it itself
 	// run map may contains any instruction required to the run this node
 	// Run map[string]any `yaml:"run" json:"run"`
 	// Run NodeDriverRun `yaml:"run" json:"run"`
@@ -48,10 +50,7 @@ type NodeDriverRun struct {
 
 func (n NodeDriver) IsValid() error {
 	if n.ID == "" {
-		return fmt.Errorf("no id")
-	}
-	if n.Node == "" {
-		return fmt.Errorf("'node' is required")
+		return fmt.Errorf("'id' is required and should be unique")
 	}
 	if n.Lang == "" {
 		return fmt.Errorf("'lang' is required")
