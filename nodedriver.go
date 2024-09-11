@@ -17,7 +17,10 @@ type NodeDriver struct {
 	ID string `yaml:"id" json:"id"`
 
 	// path to the config file
-	Path string `yaml:"-" json:"path"`
+	Path string `yaml:"-" json:"path,omitempty"`
+
+	// human readable node driver name
+	Name string `yaml:"name,omitempty" json:"name,omitempty"`
 
 	// INFO: node field is deprecated, use ID instead
 	// Node string `yaml:"node" json:"-"`
@@ -38,7 +41,7 @@ type NodeDriver struct {
 	// Run map[string]any `yaml:"run" json:"run"`
 	// Run NodeDriverRun `yaml:"run" json:"run"`
 
-	Errors []string `yaml:"-" json:"errors"`
+	Errors []string `yaml:"-" json:"errors,omitempty"`
 }
 
 type NodeDriverRun struct {
