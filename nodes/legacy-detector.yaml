@@ -1,4 +1,6 @@
 id: legacy-detector
+name: Legacy Detector
+
 desc:
   en: Node for compatibility with the old services API
 
@@ -7,7 +9,6 @@ label:
   ru: Старый детектор
 
 node: legacy-detector
-is_datasource: true
 
 lang: go
 

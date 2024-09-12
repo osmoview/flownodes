@@ -20,7 +20,7 @@ type NodeDriver struct {
 	Path string `yaml:"-" json:"path,omitempty"`
 
 	// human readable node driver name
-	Name string `yaml:"name,omitempty" json:"name,omitempty"`
+	Name string `yaml:"name" json:"name"`
 
 	// INFO: node field is deprecated, use ID instead
 	// Node string `yaml:"node" json:"-"`

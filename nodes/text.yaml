@@ -1,10 +1,12 @@
 id: text
-desc:
-  en: Text Node
+name: Text
 
 label:
   en: Text
   ru: Текст
+
+desc:
+  en: Text Node
 
 node: text
 

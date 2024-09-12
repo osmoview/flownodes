@@ -1,10 +1,12 @@
 id: screen
-desc:
-  en: Display on the screen
+name: Screen
 
 label:
   en: Screen
   ru: На экран
+
+desc:
+  en: Display on the screen
 
 node: screen
 
