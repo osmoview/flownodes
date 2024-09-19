@@ -169,6 +169,10 @@ func (m Data) BindTo(x any) error {
 	return yaml.Unmarshal(b, x)
 }
 
+func (m *Data) Set(k string, v any) {
+	(*m)[k] = v
+}
+
 //
 // services and datasources storage
 //
