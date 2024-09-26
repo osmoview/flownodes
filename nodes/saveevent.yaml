@@ -16,7 +16,7 @@ input:
     name: frame
   - type: objects
     name: objects
-  - type: status
+  - type: text
     name: status
 output:
 
