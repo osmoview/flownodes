@@ -9,9 +9,9 @@ import (
 type Screen struct{}
 
 type ScreenData struct {
-	Frame   *flowdata.Frame
-	Objects []*flowdata.Object
-	Status  string
+	Frame   *flowdata.Frame    `json:"frame"`
+	Objects []*flowdata.Object `json:"objects"`
+	Status  string             `json:"status"`
 }
 
 func (node *Screen) Run(data ScreenData) ScreenData {

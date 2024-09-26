@@ -7,11 +7,11 @@ import (
 const FilterAny = "*"
 
 type Filter struct {
-	Probs map[string]float64 `yaml:"probs"`
+	Probs map[string]float64 `yaml:"probs" json:"probs"`
 }
 
 type FilterData struct {
-	Objects []*flowdata.Object
+	Objects []*flowdata.Object `json:"objects"`
 }
 
 func (f *Filter) Run(req FilterData) (resp FilterData) {
