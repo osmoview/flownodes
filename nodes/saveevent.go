@@ -57,11 +57,16 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
 }
 
 func (node *SaveEvent) saveFrame(frame *flowdata.Frame, e *flowdata.Event) error {
+	imgdata, err := frame.GetBytes()
+	if err != nil {
+		return err
+	}
+
 	dir := filepath.Join(node.Dir, e.DataSource)
 	fn := filepath.Join(dir, e.ID) + JPEGExt
 
 	// nolint:errcheck
 	os.MkdirAll(dir, 0755) // no need to check error, write file return it
 
-	return os.WriteFile(fn, frame.GetBytes(), 0755)
+	return os.WriteFile(fn, imgdata, 0755)
 }
