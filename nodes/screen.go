@@ -1,7 +1,7 @@
 package nodes
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/osmoview/flowdata"
 )
@@ -15,6 +15,6 @@ type ScreenData struct {
 }
 
 func (node *Screen) Run(data ScreenData) ScreenData {
-	log.Printf("%+v", data)
+	fmt.Printf("RESULT: %+v\n", data)
 	return data
 }
