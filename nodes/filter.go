@@ -7,6 +7,7 @@ import (
 const FilterAny = "*"
 
 type Filter struct {
+	Prob  float64            `yaml:"prob" json:"prob"`
 	Probs map[string]float64 `yaml:"probs" json:"probs"`
 }
 
@@ -15,6 +16,7 @@ type FilterData struct {
 }
 
 func (f *Filter) Run(req FilterData) (resp FilterData) {
+
 	resp.Objects = make([]*flowdata.Object, 0, len(req.Objects))
 
 	for _, o := range req.Objects {
@@ -23,7 +25,7 @@ func (f *Filter) Run(req FilterData) (resp FilterData) {
 			prob, ok = f.Probs[FilterAny]
 		}
 
-		if !ok || prob > o.Prob {
+		if (ok && prob < o.Prob) || o.Prob < f.Prob {
 			continue
 		}
 
