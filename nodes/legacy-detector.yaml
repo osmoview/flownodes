@@ -16,10 +16,18 @@ group: services
 
 # ports
 input:
+  - type: frame
+    name: frame
+  - type: frames
+    name: frames
 
 output:
 
 form:
+
+classes:
+  input: []
+  output: []
 
 run:
   file: legacy-detector.go

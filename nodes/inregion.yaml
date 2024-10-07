@@ -1,0 +1,40 @@
+id: inregion
+name: InRegion
+
+desc:
+  en: Filter objects includes in the specified region
+  ru: Отфильтровать объекты входящие в указанный регион
+
+label:
+  en: In Region
+  ru: В регионе
+
+lang: go
+
+group: objects
+
+# ports
+input:
+  - type: objects
+    name: objects
+
+output:
+  - type: objects
+    name: objects
+
+form:
+  - name: region
+    type: select
+    hook: regions
+    options: []
+
+classes:
+  input: []
+  output: []
+
+run:
+  file: inregion.go
+  target: InRegion
+  init: Init
+  run: Run
+  gopath: ./gopath

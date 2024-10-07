@@ -7,7 +7,9 @@ import (
 const FilterAny = "*"
 
 type Filter struct {
-	Prob  float64            `yaml:"prob" json:"prob"`
+	Prob    float64  `yaml:"prob" json:"prob"`
+	Classes []string `yaml:"classes" json:"classes"`
+
 	Probs map[string]float64 `yaml:"probs" json:"probs"`
 }
 

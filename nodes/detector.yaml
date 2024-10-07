@@ -1,0 +1,34 @@
+id: detector
+name: Detector
+
+label:
+  en: Detector
+  ru: Детектор
+
+lang: go
+
+group: services
+
+# ports
+input:
+  - type: frame
+    name: frame
+  - type: frames
+    name: frames
+
+output:
+  - type: objects
+    name: objects
+
+form:
+
+classes:
+  input: []
+  output: []
+
+run:
+  file: detector.go
+  target: Detector
+  init: Init
+  run: Run
+  gopath: ./gopath

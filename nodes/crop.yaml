@@ -1,0 +1,35 @@
+id: crop
+name: Crop
+
+label:
+  en: Crop
+  ru: Вырезать
+
+lang: go
+
+group: frames
+
+# ports
+input:
+  - type: frame
+    name: frame
+    required: true
+  - type: objects
+    name: objects
+
+output:
+  - type: frames
+    name: frames
+
+form:
+  - name: region
+    type: select
+    hook: regions
+    options: []
+
+run:
+  file: crop.go
+  target: Crop
+  init: Init
+  run: Run
+  gopath: ./gopath
