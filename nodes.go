@@ -189,6 +189,8 @@ type RemoteService interface {
 
 type FrameReceiver interface {
 	GetFrame() (*flowdata.Frame, error)
+	GetRegions(name string) []flowdata.Region
+	GetLines(name string) []flowdata.Line
 }
 
 //
