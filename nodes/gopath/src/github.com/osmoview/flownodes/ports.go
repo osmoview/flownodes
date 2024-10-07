@@ -1,6 +1,9 @@
 package flownodes
 
 const (
+	// TODO: is is not all types/names of ports
+	// TODO: MAYBE: separate port types and port names
+
 	PortFrame      = "frame"
 	PortObjects    = "objects"
 	PortString     = "string"
@@ -11,6 +14,9 @@ const (
 	PortSourceInfo = "sourceinfo"
 	PortRegion     = "region"
 	PortEmpty      = ""
+
+	// PortAsterisk usually used when no requirements for specific incoming data
+	PortAsterisk = "*"
 )
 
 // Port on the Node, contains name and type

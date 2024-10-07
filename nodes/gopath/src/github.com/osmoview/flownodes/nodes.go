@@ -3,8 +3,25 @@ package flownodes
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/osmoview/flowdata"
+	"github.com/osmoview/logger"
+	"gopkg.in/yaml.v3"
+)
+
+var (
+	log = logger.New("FLOWNODES")
+
+	// EntryNode contains default ID of the entry node, 'entry' by default
+	EntryNode = "entry"
+
+	// SourceNodes is a list of nodes that will be executed when the main entry node starts execution
+	SourceNodes = []string{}
+
+	// Nodes contains all available(registered) nodes
+	// WARN: maybe required to add sync.Mutex to access to the Nodes map
+	Nodes = map[string]NodeCreator{}
 )
 
 var (
@@ -38,6 +55,50 @@ const (
 	GroupFiles         = "files"
 )
 
+// RegisterNode add new node to the global nodes storage
+func RegisterNode(node string, n NodeCreator) {
+	Nodes[node] = n
+
+	if n.GetDriver().IsDataSource {
+		SourceNodes = append(SourceNodes, node)
+	}
+}
+
+// LookupNode by type and returns new instance of it
+func LookupNode(node string) (NodeCreator, error) {
+	log.Debug("lookup node", node)
+
+	n, ok := Nodes[node]
+	if !ok {
+		return nil, fmt.Errorf("%s %w", node, ErrNodeNotFound)
+	}
+
+	return n, nil
+}
+
+//
+// nodes interfaces
+//
+
+// NodeEnvironmnent is an interface for different virtual machines, interpreters or other solutions to run and execute custom nodes
+type NodesEnvironment interface {
+	NewNodeCreator(conf string) (NodeCreator, error)
+}
+
+// NodeCreater describe interface to any entity that should creates new nodes
+type NodeCreator interface {
+	GetDriver() NodeDriver
+	NewNode(data Data, storage Storage, db Database) (Runner, error)
+}
+
+// Runner interface required Run function to execute flow ctx with incoming transaction data
+type Runner interface {
+	// this function is called every time incoming data(`Ctx`) is received,
+	// and should returns response(Data:map[string]any),
+	// where the key is a port name, and the value contains the data
+	Run(c Ctx) (out Data, err error)
+}
+
 //
 // context and response
 //
@@ -65,20 +126,51 @@ type Data map[string]any
 
 // GetData from the map by the key
 func (m Data) GetData(key string) (v any, ok bool) {
-	v, ok = m[key]
-	return
+	if v, ok = m[key]; ok {
+		return v, ok
+	}
+
+	return m.GetCaseInsensitive(key)
 }
 
 // MustGetData same as GetData, but do not returns second boolean variable
-func (m Data) MustGetData(key string) (v any) {
-	v, _ = m[key]
-	return
+func (m Data) MustGetData(key string) any {
+	if v, ok := m[key]; ok {
+		return v
+	}
+
+	v, _ := m.GetCaseInsensitive(key)
+	return v
+}
+
+func (m Data) GetCaseInsensitive(key string) (v any, ok bool) {
+	for k, v := range m {
+		if strings.EqualFold(k, key) {
+			return v, true
+		}
+	}
+
+	return nil, false
 }
 
 // BindTo marshal-unmarshal data map to the struct by the yaml,
 // yaml used, because node data stored in the yaml format
 func (m Data) BindTo(x any) error {
-	return fmt.Errorf("not implemented")
+	// no data no bind
+	if len(m) == 0 {
+		return nil
+	}
+
+	b, err := yaml.Marshal(m)
+	if err != nil {
+		return err
+	}
+
+	return yaml.Unmarshal(b, x)
+}
+
+func (m *Data) Set(k string, v any) {
+	(*m)[k] = v
 }
 
 //
@@ -97,6 +189,8 @@ type RemoteService interface {
 
 type FrameReceiver interface {
 	GetFrame() (*flowdata.Frame, error)
+	GetRegions(name string) []flowdata.Region
+	GetLines(name string) []flowdata.Line
 }
 
 //

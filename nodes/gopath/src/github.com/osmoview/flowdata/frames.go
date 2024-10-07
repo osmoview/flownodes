@@ -1,33 +1,57 @@
 package flowdata
 
 import (
+	"errors"
 	"image"
 	"image/color"
 	"strconv"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/oliamb/cutter"
 )
 
 var DefaultFrameTimeLayout = "2006-01-02_15:04:05"
 var HeadersFrameTimeLayout = "2006-01-02 15:04:05.999999999 -0700 MST"
 
+var ErrNoFrameData = errors.New("no frame data")
+
+const ContentTypeImageJPEG = "image/jpeg"
+
 // Frame contains image data and time when that image was received.
 // it can contain only `bytes` or `image` or both of it.
 // required to be a careful with reassigning an image data
 type Frame struct {
+	// uniquey frame ID
+	ID string `json:"id"`
+
 	// time when frame received
-	Time time.Time
+	Time time.Time `json:"time"`
 
 	// presentation of an image in the image.Image interface
-	Image image.Image
+	Image image.Image `json:"-"`
 
 	// raw bytes of the image(jpeg usually)
-	Bytes []byte
+	Bytes []byte `json:"bytes"`
 
 	// image info
-	Info image.Config
+	Info ImageInfo `json:"info"`
 
 	// video position in ms
-	Position int
+	Position int `json:"position"`
+
+	// original image, exist for crop images
+	Original *Frame `json:"-"`
+
+	// if image based on the some bbox, it required to restore objects bboxes from the crop imaged to original
+	BBox BBox `json:"-"`
+}
+
+type ImageInfo struct {
+	Width  int `json:"width,omitempty"`
+	Height int `json:"height,omitempty"`
+
+	colorModel color.Model
 
 	// TODO: support different image types
 	// image format, default: jpeg
@@ -42,9 +66,10 @@ func NewFrameBytes(data []byte) (*Frame, error) {
 	}
 
 	return &Frame{
+		ID:    uuid.NewString(),
 		Time:  time.Now(),
 		Bytes: data,
-		Info:  info,
+		Info:  ImageInfo{Width: info.Width, Height: info.Height, colorModel: info.ColorModel},
 	}, nil
 }
 
@@ -52,9 +77,10 @@ func NewFrameImage(img image.Image) (*Frame, error) {
 	b := img.Bounds().Max
 
 	return &Frame{
+		ID:    uuid.NewString(),
 		Time:  time.Now(),
 		Image: img,
-		Info:  image.Config{ColorModel: img.ColorModel(), Width: b.X, Height: b.Y},
+		Info:  ImageInfo{Width: b.X, Height: b.Y, colorModel: img.ColorModel()},
 	}, nil
 }
 
@@ -65,6 +91,11 @@ func (f *Frame) GetImage() image.Image {
 	}
 
 	return f
+}
+
+// GetID returns the ID. generated when frame was created
+func (f *Frame) GetID() string {
+	return f.ID
 }
 
 // GetTime returns time when image received
@@ -99,20 +130,20 @@ func (f *Frame) GetSize() (w, h int) {
 }
 
 // GetBytes return slice from `bytes` field, if it exists, overwise encode image to the jpeg
-func (f *Frame) GetBytes() []byte {
+func (f *Frame) GetBytes() (imgdata []byte, err error) {
 	// if bytes exists then just return it
 	if len(f.Bytes) > 0 {
-		return f.Bytes
+		return f.Bytes, nil
 	}
 
 	// if image exists encode it to the jpeg
 	if f.Image != nil {
-		f.Bytes, _ = EncodeJPEG(f.Image)
-		return f.Bytes
+		f.Bytes, err = EncodeJPEG(f.Image)
+		return f.Bytes, err
 	}
 
 	// if nothing exists, then do not return anything
-	return nil
+	return imgdata, ErrNoFrameData
 }
 
 // Bounds of image received from jpeg.DecodeConfig
@@ -148,7 +179,48 @@ func (f *Frame) ColorModel() color.Model {
 		return f.Image.ColorModel()
 	}
 
-	return f.Info.ColorModel
+	return f.Info.colorModel
+}
+
+type SubImager interface {
+	SubImage(r image.Rectangle) image.Image
+}
+
+func (f *Frame) Crop(bbox BBox) (frame *Frame, err error) {
+	width, height := f.GetSize()
+
+	x := int(bbox[0] * float64(width))
+	y := int(bbox[1] * float64(height))
+	w := int(bbox[2] * float64(width))
+	h := int(bbox[3] * float64(height))
+
+	defer func() {
+		if frame != nil {
+			frame.Original = f
+			frame.BBox = bbox
+		}
+	}()
+
+	rect := image.Rect(x, y, x+w, y+h)
+
+	frameImage := f.GetImage()
+
+	// if image compatible with SubImager interface
+	sub, ok := frameImage.(SubImager)
+	if ok {
+		return NewFrameImage(sub.SubImage(rect))
+	}
+
+	bboxImage, err := cutter.Crop(frameImage, cutter.Config{
+		Anchor: image.Point{X: x, Y: y},
+		Width:  w,
+		Height: h,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return NewFrameImage(bboxImage)
 }
 
 type RespContext interface {
@@ -157,13 +229,22 @@ type RespContext interface {
 }
 
 func (f *Frame) WriteResponse(c RespContext) error {
-	bytes := f.GetBytes()
+	bytes, err := f.GetBytes()
+	if err != nil {
+		return err
+	}
 
-	c.Set("Content-Type", "image/jpeg")
+	c.Set("Content-Type", ContentTypeImageJPEG)
 	c.Set("Content-Length", strconv.Itoa(len(bytes)))
 	c.Set("X-Time", f.Time.Format(HeadersFrameTimeLayout))
 	c.Set("X-Time_ms", strconv.Itoa(int(f.Time.UnixMilli())))
 	c.Set("X-Position", strconv.Itoa(f.Position))
+	c.Set("X-ID", f.ID)
 
 	return c.Send(bytes)
+}
+
+func (f *Frame) FormDataFile() (filedata []byte, filename, contentType string, err error) {
+	filedata, err = f.GetBytes()
+	return filedata, f.ID, ContentTypeImageJPEG, err
 }

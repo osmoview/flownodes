@@ -27,12 +27,14 @@ const (
 	FieldHookCameras  = "cameras"
 	FieldHookServices = "services"
 	FieldHookDatabase = "database"
+	FieldHookClasses  = "classes"
+	FieldHookRegions  = "regions"
 )
 
 // FormGroup contains multiple fields and group it by some purpose
 type FormGroup struct {
 	// name of the form group
-	Name string `yaml:"name" json:"name"`
+	Group string `yaml:"group" json:"group"`
 
 	// map of localization labels, for example: {"en":"Threshold", "es":"Umbral", ...}, if it is null, then recommend use name as label
 	Label L10n `yaml:"l10n,omitempty" json:"l10n,omitempty"`
@@ -69,6 +71,9 @@ type FormField struct {
 
 	// some hook to execute after the form is built
 	Hook string `yaml:"hook,omitempty" json:"-"`
+
+	Creatable bool `yaml:"creatable,omitempty" json:"creatable,omitempty"`
+	Multiple  bool `yaml:"multiple,omitempty" json:"multiple,omitempty"`
 }
 
 type FormFieldOption struct {
@@ -79,14 +84,22 @@ type FormFieldOption struct {
 type L10n map[string]string
 
 // Get should extract from the l10n map required value by key
-// if not exist, try to get default language, if not then returns a key
-func (m L10n) Get(key string) string {
+// if not exist, try to get default language, if not then returns a key or default value
+func (m L10n) Get(key string, def ...string) string {
 	if v, ok := m[key]; ok {
 		return v
 	}
 
 	if v, ok := m[DefaultLangKey]; ok {
 		return v
+	}
+
+	// check each passed default values, returns not empty first one,
+	// ie: label.Get("en", node.Name, node.ID) - returns label by en key, if it not exists, returns node.Name value, and if not exists too, then check node.ID
+	for _, s := range def {
+		if s != "" {
+			return s
+		}
 	}
 
 	return key
