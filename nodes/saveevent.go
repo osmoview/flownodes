@@ -20,6 +20,8 @@ type SaveEvent struct {
 	// Dir specified the path to the directory to save images,
 	// if empty, used default dir
 	Dir string `yaml:"dir" env:"OSMO_DATABASE_DIR"`
+
+	db flownodes.Database
 }
 
 type SaveEventData struct {
@@ -28,7 +30,7 @@ type SaveEventData struct {
 	Status  string
 }
 
-func (node *SaveEvent) Init() {
+func (node *SaveEvent) Init(db flownodes.Database) {
 	if dir := os.Getenv("OSMO_DATABASE_DIR"); dir != "" {
 		node.Dir = dir
 	}
@@ -36,6 +38,8 @@ func (node *SaveEvent) Init() {
 	if node.Dir == "" {
 		node.Dir = DefaultEventsDir
 	}
+
+	node.db = db
 }
 
 func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
@@ -53,7 +57,7 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
 		}
 	}
 
-	return c.Database().Add(e)
+	return node.db.Add(e)
 }
 
 func (node *SaveEvent) saveFrame(frame *flowdata.Frame, e *flowdata.Event) error {

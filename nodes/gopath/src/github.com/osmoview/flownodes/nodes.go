@@ -6,13 +6,10 @@ import (
 	"strings"
 
 	"github.com/osmoview/flowdata"
-	"github.com/osmoview/logger"
 	"gopkg.in/yaml.v3"
 )
 
 var (
-	log = logger.New("FLOWNODES")
-
 	// EntryNode contains default ID of the entry node, 'entry' by default
 	EntryNode = "entry"
 
@@ -66,8 +63,6 @@ func RegisterNode(node string, n NodeCreator) {
 
 // LookupNode by type and returns new instance of it
 func LookupNode(node string) (NodeCreator, error) {
-	log.Debug("lookup node", node)
-
 	n, ok := Nodes[node]
 	if !ok {
 		return nil, fmt.Errorf("%s %w", node, ErrNodeNotFound)

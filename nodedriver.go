@@ -32,9 +32,9 @@ type NodeDriver struct {
 	Label flowdata.L10n `yaml:"label,omitempty" json:"label,omitempty"`
 	Group string        `yaml:"group,omitempty" json:"group,omitempty"`
 
-	Input  []Port        `yaml:"input,omitempty" json:"input,omitempty"`
-	Output []Port        `yaml:"output,omitempty" json:"output,omitempty"`
-	Form   flowdata.Form `yaml:"form,omitempty" json:"form,omitempty"`
+	Input  []Port               `yaml:"input,omitempty" json:"input,omitempty"`
+	Output []Port               `yaml:"output,omitempty" json:"output,omitempty"`
+	Form   []flowdata.FormField `yaml:"form,omitempty" json:"form,omitempty"`
 
 	// INFO: Run section is deprecated, each interpreter should parse it itself
 	// run map may contains any instruction required to the run this node

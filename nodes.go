@@ -117,8 +117,8 @@ type Ctx interface {
 	Abort()
 
 	// get storage
-	Storage() Storage
-	Database() Database
+	// Storage() Storage
+	// Database() Database
 }
 
 // Data is just a `map[string]any`, for example, it used as response from the node
