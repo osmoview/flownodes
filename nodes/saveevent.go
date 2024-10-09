@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -20,6 +21,10 @@ type SaveEvent struct {
 	// Dir specified the path to the directory to save images,
 	// if empty, used default dir
 	Dir string `yaml:"dir" env:"OSMO_DATABASE_DIR"`
+
+	// timeout in seconds between save events
+	Timeout  int `yaml:"timeout"`
+	saveTime time.Time
 
 	db flownodes.Database
 }
@@ -39,10 +44,22 @@ func (node *SaveEvent) Init(db flownodes.Database) {
 		node.Dir = DefaultEventsDir
 	}
 
+	if node.Timeout == 0 {
+		node.Timeout = 10
+	}
+
 	node.db = db
 }
 
 func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
+	t := time.Now()
+
+	if node.saveTime.After(t) {
+		return nil
+	}
+
+	node.saveTime = t.Add(time.Duration(node.Timeout) * time.Second)
+
 	e := &flowdata.Event{
 		ID:         uuid.NewString(),
 		DataSource: c.GetSourceInfo().ID,

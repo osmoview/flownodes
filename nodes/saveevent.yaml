@@ -30,6 +30,16 @@ form:
       ru: Путь до директории куда сохранять изображения событий
     default: 'data/events'
 
+  - name: timeout
+    type: number
+    label:
+      en: Timeout
+      ru: Таймаут
+    help:
+      en: Timeout between events
+      ru: Таймаут между сохранением событий
+    default: 10
+
 run:
   file: saveevent.go
   target: SaveEvent
