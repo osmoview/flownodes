@@ -17,6 +17,9 @@ type Runner interface {
 	// and should returns response(Data:map[string]any),
 	// where the key is a port name, and the value contains the data
 	Run(c Ctx) (out Data, err error)
+
+	// close should stop interpreter and clear memory
+	Close() error
 }
 
 // RegisterInterpreter add new interpreter for the specified language
