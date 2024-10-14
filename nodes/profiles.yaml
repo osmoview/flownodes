@@ -1,0 +1,51 @@
+id: profiles
+name: Search Profiles
+
+label:
+  en: Search Profiles
+  ru: Найти профили
+
+lang: go
+
+group: objects
+
+# ports
+input:
+  - type: objects
+    name: objects
+output:
+  - type: objects
+    name: objects
+
+form:
+  - name: profiles_type
+    label:
+      en: Profiles Type
+      ru: Тип профиля
+
+  - name: min_threshold
+    type: number
+    label:
+      en: Min.Threshold
+      ru: Нижний порог
+    help:
+      en: Minimum threshold for comparing vectors
+      ru: Минимальный порог сравнения векторов
+    default: 0.6
+
+  - name: max_threshold
+    type: number
+    label:
+      en: Max.Threshold
+      ru: Верхний порог
+    help:
+      en: Maximum threshold for comparing vectors
+      ru: Максимальный порог сравнения векторов
+    default: 1.0
+
+run:
+  file: profiles.go
+  target: Profiles
+  init: Init
+  run: Run
+  gopath: ./gopath
