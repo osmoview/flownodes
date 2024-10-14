@@ -5,7 +5,6 @@ label:
   en: Create Event
   ru: Создать Событие
 
-node: saveevent
 lang: go
 
 group: results
