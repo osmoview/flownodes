@@ -18,6 +18,11 @@ type Object struct {
 	Keypoints Keypoints `json:"keypoints,omitempty"`
 
 	Objects []*Object `json:"objects,omitempty"`
+
+	ExternalID  string    `json:"external_id,omitempty"`
+	Vector      Vector    `json:"vector,omitempty"`
+	VectorMatch []float32 `json:"vector_match,omitempty"`
+	Profile     *Profile  `json:"profile,omitempty"`
 }
 
 func (o *Object) String() string {
