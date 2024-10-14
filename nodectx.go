@@ -83,6 +83,7 @@ type Database interface {
 	Add(x DatabaseTableModel) error
 	Get(x DatabaseTableModel) error
 	Del(x DatabaseTableModel) error
+	Range(x DatabaseTableModel, f func(v DatabaseTableModel) bool) error
 }
 
 type DatabaseTableModel interface {
