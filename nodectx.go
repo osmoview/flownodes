@@ -47,7 +47,6 @@ const (
 // DataMap() returns all data as map[string]any
 type Ctx interface {
 	GetID() string
-	SetSourceInfo(SourceInfo)
 	GetSourceInfo() SourceInfo
 	GetFlowInfo() SourceInfo
 	GetData(port string) (data any, ok bool)
