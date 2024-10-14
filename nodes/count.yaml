@@ -1,0 +1,35 @@
+id: count
+name: Count objects
+
+label:
+  en: Number of objects
+  ru: Количество объектов
+
+lang: go
+
+group: objects
+
+# ports
+input:
+  - type: objects
+    name: objects
+output:
+  - type: more
+    name: objects
+  - type: equal
+    name: objects
+  - type: less
+    name: objects
+
+form:
+  - name: count
+    type: number
+    label:
+      en: Count
+      ru: Количество
+
+run:
+  file: count.go
+  target: Count
+  run: Run
+  gopath: ./gopath
