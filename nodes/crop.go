@@ -9,7 +9,8 @@ import (
 
 // Crop frame by regions and objects
 type Crop struct {
-	Region string
+	Region string  `yaml:"region"`
+	Expand float32 `yaml:"expand"`
 
 	storage flownodes.Storage
 }
@@ -25,6 +26,10 @@ type CropResp struct {
 
 func (node *Crop) Init(storage flownodes.Storage) {
 	node.storage = storage
+
+	if node.Expand <= 0 {
+		node.Expand = 1
+	}
 }
 
 func (node *Crop) Run(req CropReq, c flownodes.Ctx) (resp CropResp, err error) {
@@ -38,7 +43,9 @@ func (node *Crop) Run(req CropReq, c flownodes.Ctx) (resp CropResp, err error) {
 			continue
 		}
 
-		frame, err := req.Frame.Crop(o.BBox)
+		bbox := o.BBox.Scale(node.Expand)
+
+		frame, err := req.Frame.Crop(bbox)
 		if err != nil {
 			return resp, err
 		}
@@ -54,9 +61,10 @@ func (node *Crop) Run(req CropReq, c flownodes.Ctx) (resp CropResp, err error) {
 	}
 
 	// get required regions from the camera, and crop frame by it
-
 	for _, r := range cam.GetRegions(node.Region) {
 		if bbox, ok := r.BBox(); ok && bbox.IsValid() {
+			bbox = bbox.Scale(node.Expand)
+
 			frame, err := req.Frame.Crop(bbox)
 			if err != nil {
 				return resp, err

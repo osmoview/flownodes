@@ -26,6 +26,9 @@ form:
     type: select
     hook: regions
     options: []
+  - name: expand
+    type: number
+    default: 1.0
 
 run:
   file: crop.go
