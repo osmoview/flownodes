@@ -2,6 +2,7 @@ package flownodes
 
 import (
 	"errors"
+	"time"
 
 	"github.com/osmoview/flowdata"
 )
@@ -47,6 +48,7 @@ const (
 // DataMap() returns all data as map[string]any
 type Ctx interface {
 	GetID() string
+	GetTime() time.Time
 	GetSourceInfo() SourceInfo
 	GetFlowInfo() SourceInfo
 	GetData(port string) (data any, ok bool)
