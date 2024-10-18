@@ -1,0 +1,46 @@
+id: tracking
+name: Tracking
+
+label:
+  en: Objects Tracking
+  ru: Отслеживать объекты
+
+lang: go
+
+group: objects
+
+# ports
+input:
+  - type: objects
+    name: objects
+    required: true
+
+output:
+  - type: objects
+    name: objects
+
+form:
+  - name: dist
+    type: number
+    default: 2.0
+    label:
+      en: Distance
+      ru: Дистанция
+    help:
+      en: Maximum distance to look for an object between frames
+      ru: Максимальное растояние где искать объект между кадрами
+  - name: keep
+    type: number
+    default: 3
+    label:
+      en: Keep
+      ru: Хранить
+    help:
+      en: How many seconds to keep an object if it has not been detected
+      ru: Cколько секунд хранить объект если он не был обнаружен
+
+run:
+  file: tracking.go
+  target: Tracking
+  run: Run
+  gopath: ./gopath
