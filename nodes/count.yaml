@@ -14,12 +14,12 @@ input:
   - type: objects
     name: objects
 output:
-  - type: more
-    name: objects
-  - type: equal
-    name: objects
-  - type: less
-    name: objects
+  - type: objects
+    name: more
+  - type: objects
+    name: equal
+  - type: objects
+    name: less
 
 form:
   - name: count
