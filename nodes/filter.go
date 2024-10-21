@@ -9,8 +9,6 @@ const FilterAny = "*"
 type Filter struct {
 	Prob    float64  `yaml:"prob" json:"prob"`
 	Classes []string `yaml:"classes" json:"classes"`
-
-	Probs map[string]float64 `yaml:"probs" json:"probs"`
 }
 
 type FilterData struct {
@@ -18,16 +16,10 @@ type FilterData struct {
 }
 
 func (f *Filter) Run(req FilterData) (resp FilterData) {
-
 	resp.Objects = make([]*flowdata.Object, 0, len(req.Objects))
 
 	for _, o := range req.Objects {
-		prob, ok := f.Probs[o.Type]
-		if !ok {
-			prob, ok = f.Probs[FilterAny]
-		}
-
-		if (ok && prob < o.Prob) || o.Prob < f.Prob {
+		if o.Prob < f.Prob || !f.classContains(o.Type) {
 			continue
 		}
 
@@ -35,4 +27,18 @@ func (f *Filter) Run(req FilterData) (resp FilterData) {
 	}
 
 	return
+}
+
+func (f *Filter) classContains(s string) bool {
+	if len(f.Classes) == 0 {
+		return true
+	}
+
+	for _, c := range f.Classes {
+		if c == s {
+			return true
+		}
+	}
+
+	return false
 }
