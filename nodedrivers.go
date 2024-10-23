@@ -39,8 +39,8 @@ type NodeDriver struct {
 
 	IsDataSource bool `yaml:"is_datasource,omitempty" json:"is_datasource,omitempty"`
 
-	Desc  flowdata.L10n `yaml:"desc,omitempty" json:"desc,omitempty"`
 	Label flowdata.L10n `yaml:"label,omitempty" json:"label,omitempty"`
+	Help  flowdata.L10n `yaml:"help,omitempty" json:"help,omitempty"`
 	Group string        `yaml:"group,omitempty" json:"group,omitempty"`
 
 	Input  []Port               `yaml:"input,omitempty" json:"input,omitempty"`
