@@ -6,7 +6,7 @@ import (
 )
 
 type InRegion struct {
-	Region string
+	Regions []string `yaml:"regions"`
 
 	storage flownodes.Storage
 }
@@ -49,5 +49,9 @@ func (node *InRegion) getRegions(cameraID string) (regions []flowdata.Region, er
 		return regions, err
 	}
 
-	return cam.GetRegions(node.Region), nil
+	for _, regionName := range node.Regions {
+		regions = append(regions, cam.GetRegions(regionName)...)
+	}
+
+	return
 }

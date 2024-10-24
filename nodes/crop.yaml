@@ -22,8 +22,9 @@ output:
     name: frames
 
 form:
-  - name: region
+  - name: regions
     type: select
+    multiple: true
     hook: regions
     options: []
   - name: expand

@@ -23,9 +23,10 @@ output:
     name: objects
 
 form:
-  - name: region
+  - name: regions
     type: select
     hook: regions
+    multiple: true
     options: []
 
 classes:
