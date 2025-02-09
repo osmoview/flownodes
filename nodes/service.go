@@ -5,7 +5,11 @@ import (
 )
 
 type Service struct {
-	ID string
+	ID     string
+	Method string
+	Path   string
+
+	opt map[string]any
 
 	service flownodes.RemoteService
 }
@@ -14,6 +18,14 @@ type Service struct {
 func (node *Service) Init(storage flownodes.Storage) (err error) {
 	if node.ID != "" {
 		node.service, err = storage.GetService(node.ID)
+	}
+
+	node.opt = map[string]any{}
+	if node.Method != "" {
+		node.opt["method"] = node.Method
+	}
+	if node.Path != "" {
+		node.opt["path"] = node.Path
 	}
 
 	return
@@ -27,6 +39,6 @@ func (node *Service) Run(c flownodes.Ctx) (resp flownodes.Data, err error) {
 		return nil, nil
 	}
 
-	err = node.service.Send(c.DataMap(), &resp)
+	err = node.service.Send(c.DataMap(), &resp, node.opt)
 	return
 }
