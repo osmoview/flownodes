@@ -24,7 +24,7 @@ var (
 	// WARN: maybe required to add sync.Mutex to access to the Nodes map
 	nodeDrivers sync.Map // map[string]NodeDriver{}
 
-	ReNodeClassName = regexp.MustCompile(`^[a-zA-Z]+$`)
+	ReNodeClassName = regexp.MustCompile(`^[a-zA-Z][\w]+$`)
 
 	ErrNoNameAndID = errors.New("node name and id is empty")
 	ErrInvalidName = errors.New("node name is invalid, should contains only latin letters")
