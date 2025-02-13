@@ -22,6 +22,9 @@ input:
     name: frames
 
 output:
+  - type: objects
+    name: objects
+
 
 form:
 
