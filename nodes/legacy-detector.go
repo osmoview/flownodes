@@ -46,6 +46,8 @@ func (node *LegacyDetector) Run(req LegacyDetectorReq) (resp LegacyDetectorResp,
 		if err != nil {
 			return
 		}
+
+		node.fixBBoxes(req.Frame, resp.Objects)
 	}
 
 	for _, frame := range req.Frames {
@@ -53,11 +55,9 @@ func (node *LegacyDetector) Run(req LegacyDetectorReq) (resp LegacyDetectorResp,
 		if err != nil {
 			return resp, err
 		}
-		if frame.BBox.IsValid() {
-			for _, o := range objects {
-				o.BBox = o.BBox.RestoreSize(frame.BBox)
-			}
-		}
+
+		node.fixBBoxes(frame, objects)
+
 		resp.Objects = append(resp.Objects, objects...)
 	}
 
@@ -89,4 +89,19 @@ func (node *LegacyDetector) sendFrame(frame *flowdata.Frame) (objects []*flowdat
 	}
 
 	return nil, errors.New("unexpected data layout")
+}
+
+func (node *LegacyDetector) fixBBoxes(frame *flowdata.Frame, objects []*flowdata.Object) {
+	if !frame.BBox.IsValid() {
+		return
+	}
+
+	for _, o := range objects {
+		o.BBox = o.BBox.RestoreSize(frame.BBox)
+
+		if len(o.Objects) > 0 {
+			node.fixBBoxes(frame, o.Objects)
+		}
+	}
+
 }
