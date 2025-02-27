@@ -1,6 +1,8 @@
 package nodes
 
 import (
+	"log"
+
 	"github.com/osmoview/flownodes"
 )
 
@@ -20,7 +22,15 @@ func (node *Service) Init(storage flownodes.Storage) (err error) {
 		node.service, err = storage.GetService(node.ID)
 	}
 
+	// initialize service send options
 	node.opt = map[string]any{}
+
+	// if service exist then substitute data from it to the options
+	if node.service != nil {
+		node.service.GetData().BindTo(&node.opt)
+	}
+
+	// if node has method or path, then overwrite the existing options
 	if node.Method != "" {
 		node.opt["method"] = node.Method
 	}
@@ -36,6 +46,7 @@ func (node *Service) Init(storage flownodes.Storage) (err error) {
 // WARN: string, arrays and other responses not supported
 func (node *Service) Run(c flownodes.Ctx) (resp flownodes.Data, err error) {
 	if node.service == nil {
+		log.Println("WARN: no service")
 		return nil, nil
 	}
 

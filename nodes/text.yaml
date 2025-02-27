@@ -21,6 +21,7 @@ input:
   - type: map
     name: '*'
 
+
 output:
   - type: string
     name: text
@@ -38,3 +39,4 @@ run:
   target: Text
   # init: Init
   run: Run
+

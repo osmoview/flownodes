@@ -69,6 +69,7 @@ type Storage interface {
 type RemoteService interface {
 	Send(data, resp any, opt ...any) error
 	GetPorts() (input, output []Port)
+	GetData() Data
 }
 
 type FrameReceiver interface {
