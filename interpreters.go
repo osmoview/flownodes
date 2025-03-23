@@ -9,6 +9,7 @@ var (
 // NodeRunner is an interface for different virtual machines, interpreters or other solutions to run and execute custom nodes
 type Interpreter interface {
 	NewNode(nd NodeDriver, data Data, storage Storage, db Database) (Runner, error)
+	LintNode(nd NodeDriver) error
 	GetBlankCode() string
 }
 
