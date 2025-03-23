@@ -9,14 +9,16 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/osmoview/flowdata"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-
 	"gopkg.in/yaml.v3"
+
+	"github.com/osmoview/flowdata"
 )
 
 var (
+	Dir = "./nodes"
+
 	// IgnoreDirs contains a list of directory names that should be skipped
 	IgnoreDirs = []string{"vendor", "gopath", "deps"}
 
@@ -32,8 +34,6 @@ var (
 
 // NodeDriver structure describe how to run and communicate with the node
 type NodeDriver struct {
-	filepath string
-
 	// node id, should be unique
 	ID string `yaml:"id" json:"id"`
 
@@ -65,7 +65,7 @@ type NodeDriver struct {
 		Data `yaml:",inline"`
 	} `yaml:"run" json:"run"`
 
-	Errors []string `yaml:"-" json:"errors,omitempty"`
+	// Errors []string `yaml:"-" json:"errors,omitempty"`
 }
 
 // IsValid check if node driver is valid or not
@@ -85,12 +85,12 @@ func (nd NodeDriver) IsValid() error {
 
 // GetNodeDriverFilePath returns path to the .yaml file
 func (nd NodeDriver) GetNodeDriverFilePath() string {
-	return nd.filepath
+	return filepath.Join(Dir, nd.Path)
 }
 
 // GetRunFilePath returns path to the source code file or executable file
 func (nd NodeDriver) GetRunFilePath() string {
-	return filepath.Join(nd.Path, nd.Run.File)
+	return filepath.Join(Dir, filepath.Dir(nd.Path), nd.Run.File)
 }
 
 func (nd NodeDriver) GetRunTarget() (string, bool) {
@@ -178,6 +178,8 @@ func LoadNodeDrivers(dir string) error {
 		return err
 	}
 
+	Dir = dir
+
 	return filepath.Walk(path, func(fp string, fi os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -193,14 +195,18 @@ func LoadNodeDrivers(dir string) error {
 			return nil
 		}
 
+		relPath := strings.TrimPrefix(fp, path)
+
 		// useful for symlink directory, trim symlink path and substitute relative
-		fp = filepath.Join(dir, strings.TrimPrefix(fp, path))
+		fp = filepath.Join(dir, relPath)
 
 		// read and check node driver file
 		nd, err := ReadNodeDriver(fp)
 		if err != nil {
 			return fmt.Errorf("failed to load '%s' node: %v", fp, err)
 		}
+
+		nd.Path = relPath
 
 		SetNodeDriver(nd)
 
@@ -219,9 +225,6 @@ func ReadNodeDriver(fp string) (nd NodeDriver, err error) {
 	if yaml.NewDecoder(f).Decode(&nd); err != nil {
 		return nd, err
 	}
-
-	nd.filepath = fp
-	nd.Path = filepath.Dir(fp)
 
 	return nd, nd.IsValid()
 }
