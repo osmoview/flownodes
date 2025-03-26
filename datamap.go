@@ -57,3 +57,17 @@ func (m Data) BindTo(x any) error {
 func (m *Data) Set(k string, v any) {
 	(*m)[k] = v
 }
+
+func (m *Data) Has(k string) bool {
+	_, ok := (*m)[k]
+	return ok
+}
+
+func (m *Data) Contains(k string, v any) bool {
+	vv, ok := (*m)[k]
+	if !ok {
+		return false
+	}
+
+	return vv == v
+}
