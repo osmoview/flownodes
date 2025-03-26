@@ -5,7 +5,6 @@ label:
   en: Service
   ru: Сервис
 
-node: service
 lang: go
 
 group: services
