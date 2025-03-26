@@ -1,0 +1,34 @@
+id: timer
+name: Timer
+
+label:
+  en: Timer
+  ru: Таймер
+
+node: timer
+lang: go
+
+group: objects
+
+# ports
+input:
+  - type: map
+    name: '*'
+output:
+  - type: transition
+    name: '*'
+
+form:
+  - name: timeout
+    type: number
+    default: 5
+    label:
+      en: Timeout
+      ru: Таймаут
+
+run:
+  file: timer.go
+  target: Timer
+  init: Init
+  run: Run
+  gopath: ./gopath
