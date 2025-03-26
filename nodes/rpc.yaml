@@ -1,0 +1,14 @@
+id: rpc
+name: RPC
+
+label:
+  en: RPC
+  ru: RPC
+
+lang: go
+
+group: rpc
+
+run:
+  file: rpc.go
+  target: RPC
