@@ -1,0 +1,23 @@
+id: db-select
+name: Database SELECT
+
+label:
+  en: Database `Select` Data
+  ru: Выбрать из базы данных одну запись
+
+lang: go
+
+group: database
+
+# ports
+input:
+  - type: map
+    name: '*'
+
+output:
+  - type: record
+    name: record
+
+run:
+  file: db-select.go
+  target: DBSelect

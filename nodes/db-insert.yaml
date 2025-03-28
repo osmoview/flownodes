@@ -1,0 +1,23 @@
+id: db-insert
+name: Database INSERT
+
+label:
+  en: Database `Insert` Data
+  ru: Добавить данные в базу данных
+
+lang: go
+
+group: database
+
+# ports
+input:
+  - type: map
+    name: '*'
+    
+output:
+  - type: record
+    name: record
+
+run:
+  file: db-insert.go
+  target: DBInsert

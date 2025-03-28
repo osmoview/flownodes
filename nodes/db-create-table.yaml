@@ -1,0 +1,30 @@
+id: db-record-example
+name: Database Example
+
+label:
+  en: Database Example
+  ru: Пример Базы данных
+
+lang: go
+
+group: database
+
+is_datasource: true
+
+# ports
+input:
+  - type: map
+    name: '*'
+output:
+  - type: record
+    name: record
+
+form:
+  - type: string
+    name: table
+  - type: number
+    name: value
+
+run:
+  file: db-record-example.go
+  target: DBRecordExample
