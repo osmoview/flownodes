@@ -2,6 +2,7 @@ package flownodes
 
 import (
 	"errors"
+	"time"
 
 	"github.com/osmoview/flowdata"
 )
@@ -47,6 +48,7 @@ const (
 // DataMap() returns all data as map[string]any
 type Ctx interface {
 	GetID() string
+	GetTime() time.Time
 	GetSourceInfo() SourceInfo
 	GetFlowInfo() SourceInfo
 	GetData(port string) (data any, ok bool)
@@ -67,6 +69,7 @@ type Storage interface {
 type RemoteService interface {
 	Send(data, resp any, opt ...any) error
 	GetPorts() (input, output []Port)
+	GetData() Data
 }
 
 type FrameReceiver interface {
@@ -84,10 +87,31 @@ type Database interface {
 	Get(x DatabaseTableModel) error
 	Del(x DatabaseTableModel) error
 	Range(x DatabaseTableModel, f func(v DatabaseTableModel) bool) error
+	Table(x TableScheme) (DatabaseTable, error)
+	// SQL(query string, x ...any) (*sql.DB, error)
 }
 
 type DatabaseTableModel interface {
 	TableName() string
+}
+
+type DatabaseTable interface {
+	Select(where map[string]any) (records []Data, err error)
+	SelectOne(where map[string]any) (record Data, err error)
+	Insert(record Data) error
+	Update(where, values map[string]any) error
+	Delete(where map[string]any) error
+}
+
+// TableModel describe
+type TableScheme struct {
+	Table   string
+	Columns []TableColumn
+}
+
+type TableColumn struct {
+	Name string
+	Type string
 }
 
 //
