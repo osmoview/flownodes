@@ -1,0 +1,29 @@
+id: legacy-classifier
+name: Legacy Classifier
+
+desc:
+  en: Node for compatibility with the old classifier services API
+
+label:
+  en: Classifier
+  ru: Классификатор
+
+
+lang: go
+
+group: services
+
+# ports
+input:
+  - type: frame
+    name: frame
+  - type: objects
+    name: objects
+
+output:
+  - type: objects
+    name: objects
+
+run:
+  file: legacy-classifier.go
+  target: LegacyClassifier

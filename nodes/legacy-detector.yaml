@@ -8,7 +8,6 @@ label:
   en: Legacy Detector
   ru: Старый детектор
 
-node: legacy-detector
 
 lang: go
 
@@ -25,16 +24,6 @@ output:
   - type: objects
     name: objects
 
-
-form:
-
-classes:
-  input: []
-  output: []
-
 run:
   file: legacy-detector.go
   target: LegacyDetector
-  init: Init
-  run: Run
-  gopath: ./gopath
