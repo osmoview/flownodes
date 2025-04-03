@@ -34,5 +34,5 @@ type Port struct {
 	Desc string `yaml:"desc,omitempty" json:"desc,omitempty"`
 
 	// required flag
-	Required bool `yaml:"required" json:"required,omitempty"`
+	Required bool `yaml:"required,omitempty" json:"required,omitempty"`
 }

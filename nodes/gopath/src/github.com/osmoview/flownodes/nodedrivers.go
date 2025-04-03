@@ -1,12 +1,17 @@
 package flownodes
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/osmoview/flowdata"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	"gopkg.in/yaml.v3"
 )
@@ -17,7 +22,12 @@ var (
 
 	// NodeDrivers contains all available(registered) nodes
 	// WARN: maybe required to add sync.Mutex to access to the Nodes map
-	NodeDrivers = map[string]NodeDriver{}
+	nodeDrivers sync.Map // map[string]NodeDriver{}
+
+	ReNodeClassName = regexp.MustCompile(`^[a-zA-Z][\w]+$`)
+
+	ErrNoNameAndID = errors.New("node name and id is empty")
+	ErrInvalidName = errors.New("node name is invalid, should contains only latin letters")
 )
 
 // NodeDriver structure describe how to run and communicate with the node
@@ -39,8 +49,8 @@ type NodeDriver struct {
 
 	IsDataSource bool `yaml:"is_datasource,omitempty" json:"is_datasource,omitempty"`
 
-	Desc  flowdata.L10n `yaml:"desc,omitempty" json:"desc,omitempty"`
 	Label flowdata.L10n `yaml:"label,omitempty" json:"label,omitempty"`
+	Help  flowdata.L10n `yaml:"help,omitempty" json:"help,omitempty"`
 	Group string        `yaml:"group,omitempty" json:"group,omitempty"`
 
 	Input  []Port               `yaml:"input,omitempty" json:"input,omitempty"`
@@ -83,6 +93,22 @@ func (nd NodeDriver) GetRunFilePath() string {
 	return filepath.Join(nd.Path, nd.Run.File)
 }
 
+func (nd NodeDriver) GetRunTarget() (string, bool) {
+	v, ok := nd.Run.Data["target"]
+	if !ok {
+		return "", false
+	}
+
+	s, ok := v.(string)
+	if !ok {
+		return "", false
+	}
+
+	s = strings.TrimSpace(s)
+
+	return s, s != ""
+}
+
 // Start node with specified data, returns runner interface with 'Run' method
 func (nd NodeDriver) Start(data Data, storage Storage, db Database) (Runner, error) {
 	i, err := GetInterpreter(nd.Lang)
@@ -93,36 +119,53 @@ func (nd NodeDriver) Start(data Data, storage Storage, db Database) (Runner, err
 	return i.NewNode(nd, data, storage, db)
 }
 
-//
-//
-//
+func (nd NodeDriver) BuildClassName() (c string, err error) {
+	caser := cases.Title(language.English)
 
-// ReadNodeDriver from the .yaml file
-func ReadNodeDriver(fp string) (nd NodeDriver, err error) {
-	f, err := os.Open(fp)
-	if err != nil {
-		return nd, err
-	}
-	defer f.Close()
-
-	if yaml.NewDecoder(f).Decode(&nd); err != nil {
-		return nd, err
+	if nd.Name != "" {
+		c = caser.String(nd.Name)
+	} else if nd.ID != "" {
+		c = caser.String(nd.ID)
+	} else {
+		return "", ErrNoNameAndID
 	}
 
-	nd.filepath = fp
-	nd.Path = filepath.Dir(fp)
+	c = strings.TrimSpace(c)
 
-	return nd, nd.IsValid()
+	if !ReNodeClassName.MatchString(c) {
+		return "", ErrInvalidName
+	}
+
+	return c, nil
+}
+
+//
+//
+//
+
+func RangeNodeDrivers(f func(NodeDriver) bool) {
+	nodeDrivers.Range(func(k, v any) bool {
+		return f(v.(NodeDriver))
+	})
 }
 
 // GetNodeDriver by id from the loaded nodes
-func GetNodeDriver(node string) (NodeDriver, error) {
-	n, ok := NodeDrivers[node]
+func GetNodeDriver(id string) (NodeDriver, error) {
+	v, ok := nodeDrivers.Load(id)
 	if !ok {
-		return NodeDriver{}, fmt.Errorf("%s %w", node, ErrNodeNotFound)
+		return NodeDriver{}, fmt.Errorf("%s %w", id, ErrNodeNotFound)
 	}
 
-	return n, nil
+	return v.(NodeDriver), nil
+}
+
+// SetNodeDriver save node driver to the global node drivers storage
+func SetNodeDriver(nd NodeDriver) {
+	nodeDrivers.Store(nd.ID, nd)
+}
+
+func DelNodeDriver(id string) {
+	nodeDrivers.Delete(id)
 }
 
 // LoadNodes should find and load analytics nodes dynamically connected as modules.
@@ -154,13 +197,31 @@ func LoadNodeDrivers(dir string) error {
 		fp = filepath.Join(dir, strings.TrimPrefix(fp, path))
 
 		// read and check node driver file
-		drv, err := ReadNodeDriver(fp)
+		nd, err := ReadNodeDriver(fp)
 		if err != nil {
 			return fmt.Errorf("failed to load '%s' node: %v", fp, err)
 		}
 
-		NodeDrivers[drv.ID] = drv
+		SetNodeDriver(nd)
 
 		return nil
 	})
+}
+
+// ReadNodeDriver from the .yaml file
+func ReadNodeDriver(fp string) (nd NodeDriver, err error) {
+	f, err := os.Open(fp)
+	if err != nil {
+		return nd, err
+	}
+	defer f.Close()
+
+	if yaml.NewDecoder(f).Decode(&nd); err != nil {
+		return nd, err
+	}
+
+	nd.filepath = fp
+	nd.Path = filepath.Dir(fp)
+
+	return nd, nd.IsValid()
 }

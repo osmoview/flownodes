@@ -87,31 +87,10 @@ type Database interface {
 	Get(x DatabaseTableModel) error
 	Del(x DatabaseTableModel) error
 	Range(x DatabaseTableModel, f func(v DatabaseTableModel) bool) error
-	Table(x TableScheme) (DatabaseTable, error)
-	// SQL(query string, x ...any) (*sql.DB, error)
 }
 
 type DatabaseTableModel interface {
 	TableName() string
-}
-
-type DatabaseTable interface {
-	Select(where map[string]any) (records []Data, err error)
-	SelectOne(where map[string]any) (record Data, err error)
-	Insert(record Data) error
-	Update(where, values map[string]any) error
-	Delete(where map[string]any) error
-}
-
-// TableModel describe
-type TableScheme struct {
-	Table   string
-	Columns []TableColumn
-}
-
-type TableColumn struct {
-	Name string
-	Type string
 }
 
 //
