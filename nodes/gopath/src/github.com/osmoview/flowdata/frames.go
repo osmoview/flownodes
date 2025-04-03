@@ -1,10 +1,13 @@
 package flowdata
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"image"
 	"image/color"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -45,6 +48,9 @@ type Frame struct {
 
 	// if image based on the some bbox, it required to restore objects bboxes from the crop imaged to original
 	BBox BBox `json:"-"`
+
+	// mutex required to avoid double reencoding with simultaneous requests
+	sync.Mutex
 }
 
 type ImageInfo struct {
@@ -93,6 +99,10 @@ func (f *Frame) GetImage() image.Image {
 	return f
 }
 
+func (f *Frame) String() string {
+	return fmt.Sprintf("id: %s, %d bytes, image: %v", f.ID, len(f.Bytes), f.Image != nil)
+}
+
 // GetID returns the ID. generated when frame was created
 func (f *Frame) GetID() string {
 	return f.ID
@@ -131,6 +141,9 @@ func (f *Frame) GetSize() (w, h int) {
 
 // GetBytes return slice from `bytes` field, if it exists, overwise encode image to the jpeg
 func (f *Frame) GetBytes() (imgdata []byte, err error) {
+	f.Lock()
+	defer f.Unlock()
+
 	// if bytes exists then just return it
 	if len(f.Bytes) > 0 {
 		return f.Bytes, nil
@@ -161,6 +174,9 @@ func (f *Frame) At(x, y int) color.Color {
 	if f.Image != nil {
 		return f.Image.At(x, y)
 	}
+
+	f.Lock()
+	defer f.Unlock()
 
 	// if bytes exists, decode it as jpeg and return color from obtained image.Image
 	if len(f.Bytes) > 0 {
@@ -236,9 +252,11 @@ func (f *Frame) WriteResponse(c RespContext) error {
 
 	c.Set("Content-Type", ContentTypeImageJPEG)
 	c.Set("Content-Length", strconv.Itoa(len(bytes)))
-	c.Set("X-Time", f.Time.Format(HeadersFrameTimeLayout))
-	c.Set("X-Time_ms", strconv.Itoa(int(f.Time.UnixMilli())))
+
+	c.Set("X-DateTime", f.Time.Format(HeadersFrameTimeLayout))
+	c.Set("X-Timestamp_ms", strconv.Itoa(int(f.Time.UnixMilli())))
 	c.Set("X-Position", strconv.Itoa(f.Position))
+	c.Set("X-Size", fmt.Sprintf("%dx%d", f.Info.Width, f.Info.Height))
 	c.Set("X-ID", f.ID)
 
 	return c.Send(bytes)
@@ -247,4 +265,12 @@ func (f *Frame) WriteResponse(c RespContext) error {
 func (f *Frame) FormDataFile() (filedata []byte, filename, contentType string, err error) {
 	filedata, err = f.GetBytes()
 	return filedata, f.ID, ContentTypeImageJPEG, err
+}
+
+func (f *Frame) MarshalJSON() ([]byte, error) {
+	if _, err := f.GetBytes(); err != nil {
+		return nil, err
+	}
+
+	return json.Marshal(struct{ Frame }{*f})
 }
