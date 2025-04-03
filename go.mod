@@ -3,7 +3,7 @@ module github.com/osmoview/flownodes
 go 1.24.1
 
 require (
-	github.com/osmoview/flowdata v0.0.37
+	github.com/osmoview/flowdata v0.0.38
 	golang.org/x/text v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
 )

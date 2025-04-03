@@ -67,9 +67,11 @@ type Storage interface {
 }
 
 type RemoteService interface {
-	Send(data, resp any, opt ...any) error
-	GetPorts() (input, output []Port)
-	GetData() Data
+	GetAddresses(path string) ([]string, error)
+	GetAddress(path string) (string, error)
+	Upload(path string, data map[string]any, resp any) error
+	Post(path string, data, resp any) error
+	Get(path string, resp any) error
 }
 
 type FrameReceiver interface {

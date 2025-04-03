@@ -9,7 +9,8 @@ import (
 )
 
 type LegacyDetector struct {
-	ID string
+	ID   string
+	Path string
 
 	service flownodes.RemoteService
 }
@@ -65,11 +66,8 @@ func (node *LegacyDetector) Run(req LegacyDetectorReq) (resp LegacyDetectorResp,
 }
 
 func (node *LegacyDetector) sendFrame(frame *flowdata.Frame) (objects []*flowdata.Object, err error) {
-	reqData := map[string]any{"frame": frame}
-
-	// send request
 	var rawResp json.RawMessage
-	if err = node.service.Send(reqData, &rawResp); err != nil {
+	if err := node.service.Upload(node.Path, map[string]any{"frame": frame}, &rawResp); err != nil {
 		return nil, err
 	}
 

@@ -7,7 +7,8 @@ import (
 )
 
 type RPC struct {
-	ID      string
+	ID string
+
 	service flownodes.RemoteService
 }
 
@@ -33,6 +34,6 @@ func (node *RPC) Run(data flownodes.Data) (resp flownodes.Data, err error) {
 		return nil, errors.New("no rpc service")
 	}
 
-	err = node.service.Send(map[string]any{"run": data}, &resp, nil)
+	err = node.service.Post("", map[string]any{"run": data}, &resp)
 	return
 }

@@ -8,7 +8,8 @@ import (
 )
 
 type LegacyClassifier struct {
-	ID string
+	ID   string
+	Path string
 
 	service flownodes.RemoteService
 }
@@ -59,11 +60,8 @@ func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame, o *flowdata.Objec
 		return err
 	}
 
-	reqData := map[string]any{"frame": frame}
-
-	// send request
 	var resp flowdata.Object
-	if err := node.service.Send(reqData, &resp); err != nil {
+	if err := node.service.Upload(node.Path, map[string]any{"frame": frame}, &resp); err != nil {
 		return err
 	}
 
