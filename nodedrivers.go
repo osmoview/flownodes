@@ -1,16 +1,12 @@
 package flownodes
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"sync"
 
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
 
 	"github.com/osmoview/flowdata"
@@ -25,11 +21,6 @@ var (
 	// NodeDrivers contains all available(registered) nodes
 	// WARN: maybe required to add sync.Mutex to access to the Nodes map
 	nodeDrivers sync.Map // map[string]NodeDriver{}
-
-	ReNodeClassName = regexp.MustCompile(`^[a-zA-Z][\w]+$`)
-
-	ErrNoNameAndID = errors.New("node name and id is empty")
-	ErrInvalidName = errors.New("node name is invalid, should contains only latin letters")
 )
 
 // NodeDriver structure describe how to run and communicate with the node
@@ -62,7 +53,7 @@ type NodeDriver struct {
 		// path to the source code file, relative to the .yaml file
 		File string `yaml:"file" json:"file"`
 		// data may contains any optional fields required by different interpreters
-		Data `yaml:",inline"`
+		Data `yaml:",inline" json:"data"`
 	} `yaml:"run" json:"run"`
 
 	// Errors []string `yaml:"-" json:"errors,omitempty"`
@@ -117,26 +108,6 @@ func (nd NodeDriver) Start(data Data, storage Storage, db Database) (Runner, err
 	}
 
 	return i.NewNode(nd, data, storage, db)
-}
-
-func (nd NodeDriver) BuildClassName() (c string, err error) {
-	caser := cases.Title(language.English)
-
-	if nd.Name != "" {
-		c = caser.String(nd.Name)
-	} else if nd.ID != "" {
-		c = caser.String(nd.ID)
-	} else {
-		return "", ErrNoNameAndID
-	}
-
-	c = strings.TrimSpace(c)
-
-	if !ReNodeClassName.MatchString(c) {
-		return "", ErrInvalidName
-	}
-
-	return c, nil
 }
 
 //
