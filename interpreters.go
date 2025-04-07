@@ -1,5 +1,7 @@
 package flownodes
 
+import "gitlab.osmoview.com/platform/logger"
+
 var (
 	// interpreters is a map contains virtual machines and other solutions
 	// to run and execute logic for custom nodes, key is a language.
@@ -22,6 +24,9 @@ type Runner interface {
 
 	// close should stop interpreter and clear memory
 	Close() error
+
+	// returns last log lines from the interpreter
+	Logs() []logger.LogLine
 }
 
 // RegisterInterpreter add new interpreter for the specified language
