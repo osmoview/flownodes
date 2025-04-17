@@ -66,8 +66,10 @@ func (node *LegacyDetector) Run(req LegacyDetectorReq) (resp LegacyDetectorResp,
 }
 
 func (node *LegacyDetector) sendFrame(frame *flowdata.Frame) (objects []*flowdata.Object, err error) {
+	data := map[string]any{"frame": frame}
+
 	var rawResp json.RawMessage
-	if err := node.service.Upload(node.Path, map[string]any{"frame": frame}, &rawResp); err != nil {
+	if err := node.service.Upload(node.Path, data, &rawResp); err != nil {
 		return nil, err
 	}
 
