@@ -1,6 +1,7 @@
 package nodes
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/osmoview/flowdata"
@@ -46,35 +47,48 @@ func (node *LegacyClassifier) Run(req LegacyClassifierReq) (resp LegacyClassifie
 			continue
 		}
 
-		if err := node.sendFrame(req.Frame, o); err != nil {
+		subFrame, err := req.Frame.Crop(o.BBox)
+
+		r, err := node.sendFrame(subFrame)
+		if err != nil {
 			return resp, err
 		}
+
+		node.fixBBoxes(subFrame, &r)
+		o.Merge(&r)
+
+		resp.Objects = append(resp.Objects, o)
 	}
 
 	return
 }
 
-func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame, o *flowdata.Object) (err error) {
-	frame, err = frame.Crop(o.BBox)
-	if err != nil {
-		return err
+type responseWithPredicts struct {
+	Predicts flowdata.Object
+}
+
+func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame) (obj flowdata.Object, err error) {
+	var rawResp json.RawMessage
+	if err := node.service.Upload(node.Path, map[string]any{"frame": frame}, &rawResp); err != nil {
+		return obj, err
 	}
 
-	var resp flowdata.Object
-	if err := node.service.Upload(node.Path, map[string]any{"frame": frame}, &resp); err != nil {
-		return err
+	// try to parse response with predicts and batch fields
+	{
+		var r responseWithPredicts
+		if err = json.Unmarshal(rawResp, &r); err == nil {
+			return r.Predicts, nil
+		}
 	}
 
-	node.fixBBoxes(frame, &resp)
-
-	// if classifier change object type, change it manually for the object as o.Merge do not change type
-	if resp.Type == "" {
-		o.Type = resp.Type
+	// try to parse response to the array of objects
+	{
+		if err = json.Unmarshal(rawResp, &obj); err == nil {
+			return
+		}
 	}
 
-	o.Merge(&resp)
-
-	return nil
+	return obj, errors.New("unexpected data layout")
 }
 
 func (node *LegacyClassifier) fixBBoxes(frame *flowdata.Frame, objects ...*flowdata.Object) {
