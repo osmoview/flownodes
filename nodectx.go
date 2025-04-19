@@ -103,9 +103,9 @@ type DatabaseTable interface {
 	Insert(record Data) error
 	Update(where, values map[string]any) error
 	Delete(where map[string]any) error
+	Range(where map[string]any, f func(Data) bool) error
 }
 
-// TableModel describe
 type TableScheme struct {
 	Table   string
 	Columns []TableColumn

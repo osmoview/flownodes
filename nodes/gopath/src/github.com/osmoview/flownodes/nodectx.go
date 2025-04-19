@@ -67,9 +67,11 @@ type Storage interface {
 }
 
 type RemoteService interface {
-	Send(data, resp any, opt ...any) error
-	GetPorts() (input, output []Port)
-	GetData() Data
+	GetAddresses(path string) ([]string, error)
+	GetAddress(path string) (string, error)
+	Upload(path string, data map[string]any, resp any) error
+	Post(path string, data, resp any) error
+	Get(path string, resp any) error
 }
 
 type FrameReceiver interface {
@@ -87,10 +89,29 @@ type Database interface {
 	Get(x DatabaseTableModel) error
 	Del(x DatabaseTableModel) error
 	Range(x DatabaseTableModel, f func(v DatabaseTableModel) bool) error
+	Table(x TableScheme) (DatabaseTable, error)
 }
 
 type DatabaseTableModel interface {
 	TableName() string
+}
+
+type DatabaseTable interface {
+	Select(where map[string]any) (records []Data, err error)
+	SelectOne(where map[string]any) (record Data, err error)
+	Insert(record Data) error
+	Update(where, values map[string]any) error
+	Delete(where map[string]any) error
+}
+
+type TableScheme struct {
+	Table   string
+	Columns []TableColumn
+}
+
+type TableColumn struct {
+	Name string
+	Type string
 }
 
 //
