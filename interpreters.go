@@ -22,6 +22,12 @@ type Runner interface {
 	// where the key is a port name, and the value contains the data
 	Run(c Ctx) (out Data, err error)
 
+	// Call required function by name
+	Call(fnc string, c Ctx) (out Data, err error)
+
+	// Check if a function(or variable) exists by the specified name
+	Has(fnc string) (bool, error)
+
 	// close should stop interpreter and clear memory
 	Close() error
 
