@@ -72,6 +72,7 @@ func (node *Profiles) Run(req ProfilesDTO) (ProfilesDTO, error) {
 			if ok {
 				o.Profile = p
 				o.VectorMatch = []float32{dist, float32(iter)}
+				o.Name = p.Name
 				delete(objectsWithVector, o)
 				break
 			}
