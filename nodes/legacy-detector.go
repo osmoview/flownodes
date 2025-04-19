@@ -23,10 +23,6 @@ func (node *LegacyDetector) Init(storage flownodes.Storage) (err error) {
 	return
 }
 
-type responseWithPredicts struct {
-	Predicts []*flowdata.Object
-}
-
 type LegacyDetectorReq struct {
 	Frame  *flowdata.Frame
 	Frames []*flowdata.Frame
@@ -75,7 +71,7 @@ func (node *LegacyDetector) sendFrame(frame *flowdata.Frame) (objects []*flowdat
 
 	// try to parse response with predicts and batch fields
 	{
-		var r responseWithPredicts
+		var r struct{ Predicts []*flowdata.Object }
 		if err = json.Unmarshal(rawResp, &r); err == nil {
 			return r.Predicts, nil
 		}

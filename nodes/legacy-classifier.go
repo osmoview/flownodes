@@ -63,10 +63,6 @@ func (node *LegacyClassifier) Run(req LegacyClassifierReq) (resp LegacyClassifie
 	return
 }
 
-type responseWithPredicts struct {
-	Predicts flowdata.Object
-}
-
 func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame) (obj flowdata.Object, err error) {
 	var rawResp json.RawMessage
 	if err := node.service.Upload(node.Path, map[string]any{"frame": frame}, &rawResp); err != nil {
@@ -75,7 +71,7 @@ func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame) (obj flowdata.Obj
 
 	// try to parse response with predicts and batch fields
 	{
-		var r responseWithPredicts
+		var r struct{ Predicts flowdata.Object }
 		if err = json.Unmarshal(rawResp, &r); err == nil {
 			return r.Predicts, nil
 		}
