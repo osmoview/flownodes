@@ -1,0 +1,28 @@
+id: legacy-faces
+name: Legacy Faces
+
+desc:
+  en: Node for compatibility with the old faces detector API
+  ru: Нода для работы со старым детектором лиц
+
+label:
+  en: Legacy Faces Detector 
+  ru: Старый детектор лиц
+
+
+lang: go
+
+group: services
+
+# ports
+input:
+  - type: frame
+    name: frame
+
+output:
+  - type: objects
+    name: objects
+
+run:
+  file: legacy-faces.go
+  target: LegacyFaces
