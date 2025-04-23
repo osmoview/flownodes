@@ -89,7 +89,7 @@ type Database interface {
 	Set(x DatabaseTableModel) error
 	Get(x DatabaseTableModel) error
 	Del(x DatabaseTableModel) error
-	Upd(x DatabaseTableModel, where any) error
+	Upd(where any, x DatabaseTableModel) error
 	Range(x DatabaseTableModel, f func(v DatabaseTableModel) bool) error
 	Table(x TableScheme) (DatabaseTable, error)
 	// SQL(query string, x ...any) (*sql.DB, error)
