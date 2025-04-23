@@ -1,6 +1,7 @@
 package nodes
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 
@@ -33,7 +34,6 @@ type LegacyClassifierResp struct {
 }
 
 func (node *LegacyClassifier) Run(req LegacyClassifierReq) (resp LegacyClassifierResp, err error) {
-	// WARN: i do not know what to do if there is no service
 	if node.service == nil {
 		return resp, nil
 	}
@@ -69,22 +69,16 @@ func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame) (obj flowdata.Obj
 		return obj, err
 	}
 
-	// try to parse response with predicts and batch fields
-	{
+	// check if response has predicts, then try to parse with it
+	if bytes.HasPrefix([]byte(rawResp), []byte(`{"predicts":`)) {
 		var r struct{ Predicts flowdata.Object }
 		if err = json.Unmarshal(rawResp, &r); err == nil {
 			return r.Predicts, nil
 		}
 	}
 
-	// try to parse response to the array of objects
-	{
-		if err = json.Unmarshal(rawResp, &obj); err == nil {
-			return
-		}
-	}
-
-	return obj, errors.New("unexpected data layout")
+	err = json.Unmarshal(rawResp, &obj)
+	return
 }
 
 func (node *LegacyClassifier) fixBBoxes(frame *flowdata.Frame, objects ...*flowdata.Object) {
