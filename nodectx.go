@@ -64,6 +64,8 @@ type Ctx interface {
 type Storage interface {
 	GetService(id string) (RemoteService, error)
 	GetCamera(id string) (FrameReceiver, error)
+	GetDataSource(id string) (DataSource, error)
+	GetFlow(id string) (Flow, error)
 }
 
 type RemoteService interface {
@@ -74,10 +76,23 @@ type RemoteService interface {
 	Get(path string, resp any) error
 }
 
+// Deperecated: use DataSource instead
 type FrameReceiver interface {
 	GetFrame() (*flowdata.Frame, error)
 	GetRegions(name string) []flowdata.Region
 	GetLines(name string) []flowdata.Line
+}
+
+type DataSource interface {
+	GetName() string
+	GetAddr() string
+	GetFrame() (*flowdata.Frame, error)
+	GetRegions(name string) []flowdata.Region
+	GetLines(name string) []flowdata.Line
+}
+
+type Flow interface {
+	GetName() string
 }
 
 //
