@@ -69,6 +69,7 @@ type Storage interface {
 }
 
 type RemoteService interface {
+	GetName() string
 	GetAddresses(path string) ([]string, error)
 	GetAddress(path string) (string, error)
 	Upload(path string, data map[string]any, resp any) error
