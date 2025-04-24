@@ -55,14 +55,14 @@ func (node *Crop) Run(req CropReq, c flownodes.Ctx) (resp CropResp, err error) {
 
 	// crop frame by regions
 	// load camera from the storage
-	cam, err := node.storage.GetCamera(c.GetSourceInfo().ID)
+	ds, err := node.storage.GetDataSource(c.GetSourceInfo().ID)
 	if err != nil {
 		return resp, err
 	}
 
 	for _, regionName := range node.Regions {
 		// get required regions from the camera, and crop frame by it
-		for _, r := range cam.GetRegions(regionName) {
+		for _, r := range ds.GetRegions(regionName) {
 			if bbox, ok := r.BBox(); ok && bbox.IsValid() {
 				bbox = bbox.Scale(node.Expand)
 

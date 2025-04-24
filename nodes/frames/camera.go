@@ -10,20 +10,20 @@ import (
 type Camera struct {
 	ID string
 
-	receiver flownodes.FrameReceiver
+	ds flownodes.DataSource
 }
 
 func (cam *Camera) Init(s flownodes.Storage) (err error) {
 	if cam.ID != "" {
-		cam.receiver, err = s.GetCamera(cam.ID)
+		cam.ds, err = s.GetDataSource(cam.ID)
 	}
 
 	return
 }
 
 func (cam *Camera) Run(data CameraData) (CameraData, error) {
-	if cam.receiver != nil {
-		frame, err := cam.receiver.GetFrame()
+	if cam.ds != nil {
+		frame, err := cam.ds.GetFrame()
 		return CameraData{Frame: frame}, err
 	}
 

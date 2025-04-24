@@ -1,0 +1,35 @@
+id: telegram-chat-bot
+name: TelegramChatBot
+
+label:
+  en: Telegram Chat Bot
+  ru: Telegram Chat Bot
+
+node: telegram-chat-bot
+lang: go
+
+group: services
+
+# ports
+output:
+  - type: string
+    name: text
+  - type: number
+    name: chat
+
+input:
+  - type: string
+    name: text
+  - type: number
+    name: chat
+
+form:
+  - name: URL
+    type: string
+    default: http://127.0.0.1:11051/api/messages
+
+run:
+  file: telegram-chat-bot.go
+  target: TelegramChatBot
+  run: Run
+  gopath: ./gopath

@@ -44,13 +44,13 @@ func (node *InRegion) Run(req RegionsDTO, c flownodes.Ctx) (resp RegionsDTO, err
 
 func (node *InRegion) getRegions(cameraID string) (regions []flowdata.Region, err error) {
 	// load camera from the storage
-	cam, err := node.storage.GetCamera(cameraID)
+	ds, err := node.storage.GetDataSource(cameraID)
 	if err != nil {
 		return regions, err
 	}
 
 	for _, regionName := range node.Regions {
-		regions = append(regions, cam.GetRegions(regionName)...)
+		regions = append(regions, ds.GetRegions(regionName)...)
 	}
 
 	return

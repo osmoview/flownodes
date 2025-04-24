@@ -1,0 +1,30 @@
+id: chart-result
+
+label:
+  en: Chart Result
+  ru: Результат Графика
+
+lang: go
+
+group: charts
+
+input:
+  - type: chart-series
+    name: series
+  - type: chart-axis
+    name: xaxis
+  # - type: chart-axis
+  #   name: y-axis
+  # - type: chart-grid
+  #   name: grid
+  # - type: chart-legend
+  #   name: legend
+  # - type: chart-tooltip
+  #   name: tooltip
+  # - type: chart-textstyles
+  #   name: text styles
+
+run:
+  file: chart-result.go
+  target: ChartResult
+

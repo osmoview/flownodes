@@ -1,0 +1,24 @@
+id: chart-xaxis
+
+label:
+  en: X-Axis
+  ru: Ось X
+
+lang: go
+
+group: charts
+
+input:
+  - type: number
+    name: duration
+  - type: number
+    name: interval
+
+output:
+  - type: chart-axis
+    name: xaxis
+
+run:
+  file: chart-xaxis.go
+  target: ChartXAxis
+

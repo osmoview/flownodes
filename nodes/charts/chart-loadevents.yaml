@@ -1,0 +1,40 @@
+id: chart-series
+
+label:
+  en: Chart Series
+  ru: Построить график
+
+lang: go
+
+group: charts
+
+input:
+  - type: chart-filters
+    name: filters
+  - type: number
+    name: duration
+  - type: number
+    name: interval
+
+output:
+  - type: chart-series
+    name: series
+
+form:
+  - name: type
+  - name: split
+    type: select
+    options: 
+      - value: class
+        label: Class
+      - value: status
+        label: Status
+      - value: datasource
+        label: Datasource
+      - value: flow
+        label: Flow
+
+run:
+  file: chart-series.go
+  target: ChartBuildSeries
+
