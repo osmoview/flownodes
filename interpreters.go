@@ -1,6 +1,6 @@
 package flownodes
 
-import "gitlab.osmoview.com/platform/logger"
+import "github.com/osmoview/logger"
 
 var (
 	// interpreters is a map contains virtual machines and other solutions

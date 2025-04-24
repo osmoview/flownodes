@@ -4,7 +4,7 @@ go 1.24.1
 
 require (
 	github.com/osmoview/flowdata v0.0.41
-	gitlab.osmoview.com/platform/logger v0.1.1
+	github.com/osmoview/logger v0.1.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
