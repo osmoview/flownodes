@@ -178,7 +178,7 @@ func LoadNodeDrivers(dir string) error {
 			return fmt.Errorf("failed to load '%s' node: %v", fp, err)
 		}
 
-		nd.Path = relPath
+		nd.Path = fp
 
 		SetNodeDriver(nd)
 
