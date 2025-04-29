@@ -76,12 +76,12 @@ func (nd NodeDriver) IsValid() error {
 
 // GetNodeDriverFilePath returns path to the .yaml file
 func (nd NodeDriver) GetNodeDriverFilePath() string {
-	return filepath.Join(Dir, nd.Path)
+	return nd.Path
 }
 
 // GetRunFilePath returns path to the source code file or executable file
 func (nd NodeDriver) GetRunFilePath() string {
-	return filepath.Join(Dir, filepath.Dir(nd.Path), nd.Run.File)
+	return filepath.Join(filepath.Dir(nd.GetNodeDriverFilePath()), nd.Run.File)
 }
 
 func (nd NodeDriver) GetRunTarget() (string, bool) {
@@ -167,6 +167,7 @@ func LoadNodeDrivers(dir string) error {
 		}
 
 		relPath := strings.TrimPrefix(fp, path)
+		relPath = strings.TrimPrefix(relPath, string(filepath.Separator))
 
 		// useful for symlink directory, trim symlink path and substitute relative
 		fp = filepath.Join(dir, relPath)
@@ -195,6 +196,13 @@ func ReadNodeDriver(fp string) (nd NodeDriver, err error) {
 
 	if yaml.NewDecoder(f).Decode(&nd); err != nil {
 		return nd, err
+	}
+
+	nd.Path = fp
+	if nd.Group == "" {
+		if rel, err := filepath.Rel(Dir, filepath.Dir(fp)); err == nil {
+			nd.Group = filepath.Base(rel)
+		}
 	}
 
 	return nd, nd.IsValid()
