@@ -1,4 +1,4 @@
-package nodes
+package results
 
 import "github.com/osmoview/flownodes"
 

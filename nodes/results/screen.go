@@ -1,4 +1,4 @@
-package nodes
+package results
 
 import (
 	"fmt"
