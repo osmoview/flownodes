@@ -26,6 +26,9 @@ type SaveEvent struct {
 	Timeout  int `yaml:"timeout"`
 	saveTime time.Time
 
+	// alert flag
+	Alert bool `yaml:"alert"`
+
 	db flownodes.Database
 }
 
@@ -66,6 +69,7 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
 		Flow:       c.GetFlowInfo().ID,
 		Status:     data.Status,
 		Objects:    data.Objects,
+		Alert:      node.Alert,
 	}
 
 	if data.Frame != nil && node.Dir != "" {

@@ -39,6 +39,12 @@ form:
       ru: Таймаут между сохранением событий
     default: 10
 
+  - name: alert
+    type: checkbox
+    label:
+      en: Alert
+      ru: Оповещение
+
 run:
   file: saveevent.go
   target: SaveEvent
