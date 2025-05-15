@@ -2,19 +2,17 @@ id: chart-xaxis
 name: X-Axis
 lang: go
 label:
-    en: X-Axis
-    ru: Ось X
+  en: X-Axis
+  ru: Ось X
 group: charts
 input:
-    - name: duration
-      type: number
-    - name: interval
-      type: number
+  - name: duration
+    type: duration
+  - name: interval
+    type: duration
 output:
-    - name: xaxis
-      type: chart-axis
-
-
+  - name: xaxis
+    type: chart-axis
     
 run:
     file: chart-xaxis.go

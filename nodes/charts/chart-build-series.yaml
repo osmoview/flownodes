@@ -1,0 +1,42 @@
+id: chart-build-series
+
+label:
+  en: Draw a chart line
+  ru: Построить график
+
+lang: go
+
+group: charts
+
+input:
+  - type: events
+    name: events
+  - type: chart-axis
+    name: xaxis
+
+output:
+  - type: chart-series
+    name: series
+
+form:
+  - name: name
+    label:
+      en: Name
+      ru: Наименование
+  - type: select
+    name: type
+    label:
+      en: Type
+      ru: Тип
+    options: 
+      - label: Line
+        value: line
+      - label: Bar
+        value: bar
+    default: line
+
+
+run:
+  file: chart-build-series.go
+  target: ChartSeries
+

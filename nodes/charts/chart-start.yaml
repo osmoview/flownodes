@@ -2,21 +2,20 @@ id: chart-start
 
 label:
   en: Chart Start
-  ru: Старт Графика
+  ru: Начало графика
 
 lang: go
+
+is_datasource: true
 
 group: charts
 
 output:
-  - type: chart-filters
-    name: filters
-  - type: number
-    name: duration
-  - type: number
-    name: interval
-
-
+  - name: duration
+    type: duration
+  - name: interval
+    type: duration
+    
 run:
   file: chart-start.go
   target: ChartStart

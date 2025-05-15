@@ -1,0 +1,51 @@
+id: chart-select-events
+
+label:
+  en: Chart Select Events
+  ru: Выбрать события
+
+lang: go
+
+group: charts
+
+input:
+  - name: duration
+    type: duration
+
+output:
+  - type: events
+    name: events
+
+form:
+  - name: datasources
+    label:
+      en: DataSources
+      ru: Источники данных
+    type: select
+    hook: datasources
+
+  - name: flows
+    label:
+      en: Analytics
+      ru: Аналитики
+    type: select
+    hook: flows
+  
+  - name: classes
+    label:
+      en: Objects Classes
+      ru: Классы объектов
+    type: select
+    hook: classes
+    creatable: true
+    multiple: true
+
+  - name: status
+    label: 
+      en: Status
+      ru: Статус
+
+run:
+  file: chart-select-events.go
+  target: ChartSelectEvents
+
