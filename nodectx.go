@@ -113,7 +113,7 @@ type DatabaseTable interface {
 	Insert(record Data) error
 	Update(where, values map[string]any) error
 	Delete(where map[string]any) error
-	Range(where map[string]any, f func(Data) bool) error
+	Range(where map[string]any, f func(DatabaseTableRow) bool) error
 }
 
 type TableScheme struct {
@@ -124,6 +124,10 @@ type TableScheme struct {
 type TableColumn struct {
 	Name string
 	Type string
+}
+
+type DatabaseTableRow interface {
+	BindTo(x any) error
 }
 
 //

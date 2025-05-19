@@ -1,4 +1,5 @@
 id: chart-build-series
+name: chart-build-series
 
 label:
   en: Draw a chart line
@@ -38,5 +39,5 @@ form:
 
 run:
   file: chart-build-series.go
-  target: ChartSeries
+  target: ChartBuildSeries
 

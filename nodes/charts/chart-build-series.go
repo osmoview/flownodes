@@ -3,6 +3,7 @@ package charts
 import (
 	"time"
 
+	"github.com/osmoview/echarts"
 	"github.com/osmoview/flowdata"
 	"github.com/osmoview/flownodes"
 )
@@ -21,7 +22,7 @@ type ChartBuildSeriesInput struct {
 }
 
 type ChartBuildSeriesOutput struct {
-	Series []ChartSeries
+	Series []echarts.Series
 }
 
 func (node *ChartBuildSeries) Init(storage flownodes.Storage, db flownodes.Database) {
@@ -34,7 +35,7 @@ func (node *ChartBuildSeries) Init(storage flownodes.Storage, db flownodes.Datab
 }
 
 func (node *ChartBuildSeries) Run(in ChartBuildSeriesInput) ChartBuildSeriesOutput {
-	chart := ChartSeries{
+	chart := echarts.Series{
 		Name: node.Name,
 		Type: node.Type,
 		Data: make([]float64, len(in.XAxis)),
@@ -44,14 +45,23 @@ func (node *ChartBuildSeries) Run(in ChartBuildSeriesInput) ChartBuildSeriesOutp
 		node.setData(e, chart.Data, in.XAxis)
 	}
 
-	return ChartBuildSeriesOutput{Series: []ChartSeries{chart}}
+	return ChartBuildSeriesOutput{Series: []echarts.Series{chart}}
 }
 
 func (node *ChartBuildSeries) setData(e flowdata.Event, data []float64, xaxis []time.Time) {
+	if len(xaxis) <= 1 {
+		data[0] += float64(len(e.Objects))
+		return
+	}
+
+	diff := xaxis[1].Sub(xaxis[0])
+
 	for i, t := range xaxis {
-		if (e.CreatedAt.After(t) || e.CreatedAt.Equal(t)) && e.CreatedAt.Before(t) {
+		if (e.CreatedAt.After(t) || e.CreatedAt.Equal(t)) && e.CreatedAt.Before(t.Add(diff)) {
 			data[i] += float64(len(e.Objects))
 			return
 		}
 	}
+
+	return
 }

@@ -32,9 +32,9 @@ func (node *ChartSelectEvents) Init(db flownodes.Database) (err error) {
 }
 
 func (node *ChartSelectEvents) Run(in ChartSelectEventsInput) (out ChartSelectEventsOutput, err error) {
-	err = node.table.Range(node.buildFilter(in), func(d flownodes.Data) bool {
+	err = node.table.Range(node.buildFilter(in), func(row flownodes.DatabaseTableRow) bool {
 		var e flowdata.Event
-		if err = d.BindTo(&e); err != nil {
+		if err = row.BindTo(&e); err != nil {
 			log.Println(err)
 			return true
 		}
@@ -44,7 +44,7 @@ func (node *ChartSelectEvents) Run(in ChartSelectEventsInput) (out ChartSelectEv
 			return true
 		}
 
-		// check by
+		// check by objects
 		if len(node.Classes) > 0 && !node.HasObject(e.Objects, node.Classes) {
 			return true
 		}
@@ -53,6 +53,8 @@ func (node *ChartSelectEvents) Run(in ChartSelectEventsInput) (out ChartSelectEv
 
 		return true
 	})
+
+	log.Println(len(out.Events), err)
 
 	return
 }
@@ -68,7 +70,8 @@ func (node *ChartSelectEvents) buildFilter(in ChartSelectEventsInput) (filter ma
 		filter["flow"] = node.Flows
 	}
 
-	filter["created_at > ?"] = time.Now().Add(-1 * in.Duration)
+	filter["created_at >= ?"] = time.Now().Add(-1 * in.Duration)
+	log.Println(in.Duration)
 
 	return
 }
