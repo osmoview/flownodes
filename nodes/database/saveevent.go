@@ -1,7 +1,9 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -14,6 +16,7 @@ import (
 
 var (
 	JPEGExt          = ".jpg"
+	JSONExt          = ".json"
 	DefaultEventsDir = "data/events" // default dir
 )
 
@@ -72,26 +75,46 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
 		Alert:      node.Alert,
 	}
 
+	dir, fn := node.buildFilename(e)
+
+	// nolint:errcheck
+	os.MkdirAll(dir, 0755) // no need to check error, write file return it
+
 	if data.Frame != nil && node.Dir != "" {
-		if err := node.saveFrame(data.Frame, e); err != nil {
+		if err := node.saveFrame(fn+JPEGExt, data.Frame); err != nil {
 			return fmt.Errorf("failed to save frame image: %v", err)
+		}
+	}
+
+	if len(data.Objects) > 0 {
+		if err := node.saveObjects(fn+JSONExt, data.Objects); err != nil {
+			log.Printf("failed to save objects: %v", err)
 		}
 	}
 
 	return node.db.Add(e)
 }
 
-func (node *SaveEvent) saveFrame(frame *flowdata.Frame, e *flowdata.Event) error {
+func (node *SaveEvent) saveFrame(fn string, frame *flowdata.Frame) error {
 	imgdata, err := frame.GetBytes()
 	if err != nil {
 		return err
 	}
 
-	dir := filepath.Join(node.Dir, e.DataSource)
-	fn := filepath.Join(dir, e.ID) + JPEGExt
+	return os.WriteFile(fn, imgdata, 0666)
+}
 
-	// nolint:errcheck
-	os.MkdirAll(dir, 0755) // no need to check error, write file return it
+func (node *SaveEvent) saveObjects(fn string, objects []*flowdata.Object) error {
+	b, err := json.Marshal(objects)
+	if err != nil {
+		return err
+	}
 
-	return os.WriteFile(fn, imgdata, 0755)
+	return os.WriteFile(fn, b, 0666)
+}
+
+func (node *SaveEvent) buildFilename(e *flowdata.Event) (dir string, fn string) {
+	dir = filepath.Join(node.Dir, e.DataSource)
+	fn = filepath.Join(dir, e.ID)
+	return
 }
