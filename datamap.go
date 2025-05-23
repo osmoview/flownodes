@@ -3,7 +3,7 @@ package flownodes
 import (
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"github.com/go-viper/mapstructure/v2"
 )
 
 // Data is just a `map[string]any`, for example, it used as response from the node
@@ -46,12 +46,17 @@ func (m Data) BindTo(x any) error {
 		return nil
 	}
 
-	b, err := yaml.Marshal(m)
+	cfg := &mapstructure.DecoderConfig{
+		WeaklyTypedInput: true,
+		Result:           x,
+	}
+
+	dec, err := mapstructure.NewDecoder(cfg)
 	if err != nil {
 		return err
 	}
 
-	return yaml.Unmarshal(b, x)
+	return dec.Decode(m)
 }
 
 func (m *Data) Set(k string, v any) {
