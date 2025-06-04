@@ -20,13 +20,11 @@ output:
 
 form:
   - name: id
-    type: string
+    type: select
+    hook: datasources
     label:
-      en: ID
-      ru: ИД
-    help:
-      en: Datasource ID
-      ru: Идентификатор источника данных
+      en: Datasource
+      ru: Источник данных
 
 run:
   file: camera.go
