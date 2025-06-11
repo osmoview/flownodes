@@ -8,7 +8,7 @@ require (
 	github.com/oliamb/cutter v0.2.2
 	github.com/osmoview/flowdata v0.0.45
 	github.com/osmoview/logger v0.1.3
-	golang.org/x/text v0.25.0
+	golang.org/x/text v0.26.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -18,6 +18,6 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/sg3des/libjpeg v0.1.0 // indirect
-	golang.org/x/image v0.27.0 // indirect
+	golang.org/x/image v0.28.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 )
