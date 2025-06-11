@@ -49,8 +49,8 @@ const (
 type Ctx interface {
 	GetID() string
 	GetTime() time.Time
-	GetSourceInfo() SourceInfo
-	GetFlowInfo() SourceInfo
+	GetSourceInfo() flowdata.SourceInfo
+	GetFlowInfo() flowdata.SourceInfo
 	GetData(port string) (data any, ok bool)
 	MustGetData(port string) (data any)
 	DataMap() map[string]any
@@ -128,15 +128,4 @@ type TableColumn struct {
 
 type DatabaseTableRow interface {
 	BindTo(x any) error
-}
-
-//
-// source info
-//
-
-// SourceInfo contins some basic information about camera or remote service
-type SourceInfo struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Type string `json:"type"`
 }
