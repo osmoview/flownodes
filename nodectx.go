@@ -51,6 +51,7 @@ type Ctx interface {
 	GetTime() time.Time
 	GetSourceInfo() flowdata.SourceInfo
 	GetFlowInfo() flowdata.SourceInfo
+	Headers() map[string]string
 	GetData(port string) (data any, ok bool)
 	MustGetData(port string) (data any)
 	DataMap() map[string]any

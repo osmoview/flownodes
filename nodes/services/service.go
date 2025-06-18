@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/osmoview/flowdata"
 	"github.com/osmoview/flownodes"
 )
 
@@ -37,12 +38,35 @@ func (node *Service) Run(c flownodes.Ctx) (resp flownodes.Data, err error) {
 		return nil, nil
 	}
 
-	switch strings.ToUpper(node.Method) {
-	case http.MethodPost:
-		err = node.service.Post(node.Path, c.DataMap(), &resp)
-	case http.MethodGet:
-		err = node.service.Get(node.Path, &resp)
+	// build URL address
+	url, err := node.service.GetAddress(node.Path)
+	if err != nil {
+		return resp, err
 	}
 
-	return
+	// create new http request
+	req := flowdata.NewRequest()
+	req.Method = strings.ToUpper(node.Method)
+	req.URL = url
+
+	// set datasource id, flow id, flow run id as http headers
+	req.Headers = c.Headers()
+
+	// if data exists, set it as body or query related method
+	if data := c.DataMap(); len(data) > 0 {
+		if req.Method == http.MethodGet {
+			req.Query = data
+		} else {
+			req.Body = data
+		}
+	}
+
+	// do request and receive response
+	r, err := req.Do()
+	if err != nil {
+		return resp, err
+	}
+
+	// parse response as JSON
+	return resp, r.JSON(&resp)
 }
