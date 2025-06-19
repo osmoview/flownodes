@@ -82,15 +82,20 @@ func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame) (obj flowdata.Obj
 }
 
 func (node *LegacyClassifier) fixBBoxes(frame *flowdata.Frame, objects ...*flowdata.Object) {
+	var attributeIndex float32
 	for _, o := range objects {
 		if !o.BBox.IsValid() {
-			continue
+			o.BBox[1] += attributeIndex * 0.1
+			attributeIndex++
 		}
 
 		o.BBox = o.BBox.RestoreSize(frame.BBox)
 
 		if len(o.Objects) > 0 {
 			node.fixBBoxes(frame, o.Objects...)
+		}
+		if len(o.Items) > 0 {
+			node.fixBBoxes(frame, o.Items...)
 		}
 	}
 }
