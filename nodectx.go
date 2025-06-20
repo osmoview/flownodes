@@ -78,14 +78,18 @@ type RemoteService interface {
 }
 
 type DataSource interface {
+	GetID() string
 	GetName() string
 	GetAddr() string
 	GetFrame() (*flowdata.Frame, error)
 	GetRegions(name string) []flowdata.Region
 	GetLines(name string) []flowdata.Line
+	GetData() Data
+	GetInfo() Data
 }
 
 type Flow interface {
+	GetID() string
 	GetName() string
 }
 
