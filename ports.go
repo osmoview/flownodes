@@ -19,6 +19,12 @@ const (
 	PortAsterisk = "*"
 )
 
+const (
+	PortModeOne = "one"
+	PortModeLot = "lot"
+	PortModeAll = "all"
+)
+
 // Port on the Node, contains name and type
 // should be impossible to connect ports of different types
 type Port struct {
@@ -35,4 +41,10 @@ type Port struct {
 
 	// required flag
 	Required bool `yaml:"required,omitempty" json:"required,omitempty"`
+
+	// port mode:
+	// one - pick first data and mark port is completed, all other links to it port will be ignored
+	// lot - pick at least one link, all other links will be merged, but not wait when all links executed
+	// all - wait when all links executed, mode by default if mode not specified
+	Mode string `yaml:"mode,omitempty" json:"mode,omitempty"`
 }
