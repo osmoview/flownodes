@@ -67,6 +67,10 @@ func (node *Service) Run(c flownodes.Ctx) (resp flownodes.Data, err error) {
 		return resp, err
 	}
 
+	if r.StatusCode == 204 {
+		return resp, nil
+	}
+
 	// parse response as JSON
 	return resp, r.JSON(&resp)
 }
