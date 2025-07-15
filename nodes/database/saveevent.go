@@ -75,19 +75,17 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
 		Alert:      node.Alert,
 	}
 
-	dir, fn := node.buildFilename(e)
-
-	// nolint:errcheck
-	os.MkdirAll(dir, 0755) // no need to check error, write file return it
+	abs, rel := node.buildFilename(e)
 
 	if data.Frame != nil && node.Dir != "" {
-		if err := node.saveFrame(fn+JPEGExt, data.Frame); err != nil {
+		e.Image = rel + JPEGExt
+		if err := node.saveFrame(abs+JPEGExt, data.Frame); err != nil {
 			return fmt.Errorf("failed to save frame image: %v", err)
 		}
 	}
 
 	if len(data.Objects) > 0 {
-		if err := node.saveObjects(fn+JSONExt, data.Objects); err != nil {
+		if err := node.saveObjects(abs+JSONExt, data.Objects); err != nil {
 			log.Printf("failed to save objects: %v", err)
 		}
 	}
@@ -113,8 +111,16 @@ func (node *SaveEvent) saveObjects(fn string, objects []*flowdata.Object) error 
 	return os.WriteFile(fn, b, 0666)
 }
 
-func (node *SaveEvent) buildFilename(e *flowdata.Event) (dir string, fn string) {
-	dir = filepath.Join(node.Dir, e.DataSource)
-	fn = filepath.Join(dir, e.ID)
+func (node *SaveEvent) buildFilename(e *flowdata.Event) (abs string, rel string) {
+	// relative path to the directory where save files
+	reldir := filepath.Join(e.DataSource, e.Flow)
+
+	// nolint:errcheck
+	os.MkdirAll(filepath.Join(node.Dir, reldir), 0755)
+
+	// absolute and relative path to the file, without extension
+	abs = filepath.Join(node.Dir, reldir, e.ID)
+	rel = filepath.Join(reldir, e.ID)
+
 	return
 }
