@@ -1,0 +1,18 @@
+id: testnode
+
+lang: go
+
+group: simple
+
+# ports
+input:
+  - type: map
+    name: '*'
+    
+output:
+  - type: transition
+    name: '*'
+
+run:
+  file: testnode.go
+  target: TestNode

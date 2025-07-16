@@ -20,8 +20,10 @@ input:
     name: frame
   - type: objects
     name: objects
+    mode: all
   - type: string
     name: status
+    
 output:
 
 form:
