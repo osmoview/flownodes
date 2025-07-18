@@ -3,10 +3,10 @@ module github.com/osmoview/flownodes
 go 1.24.3
 
 require (
-	github.com/go-viper/mapstructure/v2 v2.3.0
+	github.com/go-viper/mapstructure/v2 v2.4.0
 	github.com/google/uuid v1.6.0
 	github.com/oliamb/cutter v0.2.2
-	github.com/osmoview/flowdata v0.0.49
+	github.com/osmoview/flowdata v0.0.50
 	github.com/osmoview/logger v0.1.3
 	golang.org/x/text v0.27.0
 	gopkg.in/yaml.v3 v3.0.1

@@ -4,6 +4,8 @@ lang: go
 
 group: simple
 
+is_datasource: true
+
 # ports
 input:
   - type: map
