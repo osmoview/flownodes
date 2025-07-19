@@ -32,6 +32,8 @@ type SaveEvent struct {
 	// alert flag
 	Alert bool `yaml:"alert"`
 
+	Group string `yaml:"group"`
+
 	db flownodes.Database
 }
 
@@ -39,6 +41,7 @@ type SaveEventData struct {
 	Frame   *flowdata.Frame
 	Objects []*flowdata.Object
 	Status  string
+	State   string
 }
 
 func (node *SaveEvent) Init(db flownodes.Database) {
@@ -57,11 +60,11 @@ func (node *SaveEvent) Init(db flownodes.Database) {
 	node.db = db
 }
 
-func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
+func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) (flownodes.Data, error) {
 	t := time.Now()
 
 	if node.saveTime.After(t) {
-		return nil
+		return nil, nil
 	}
 
 	node.saveTime = t.Add(time.Duration(node.Timeout) * time.Second)
@@ -71,8 +74,10 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
 		DataSource: c.GetSourceInfo().ID,
 		Flow:       c.GetFlowInfo().ID,
 		Status:     data.Status,
+		State:      data.State,
 		Objects:    data.Objects,
 		Alert:      node.Alert,
+		Group:      node.Group,
 	}
 
 	abs, rel := node.buildFilename(e)
@@ -80,7 +85,7 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
 	if data.Frame != nil && node.Dir != "" {
 		e.Image = rel + JPEGExt
 		if err := node.saveFrame(abs+JPEGExt, data.Frame); err != nil {
-			return fmt.Errorf("failed to save frame image: %v", err)
+			return nil, fmt.Errorf("failed to save frame image: %v", err)
 		}
 	}
 
@@ -90,7 +95,7 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) error {
 		}
 	}
 
-	return node.db.Add(e)
+	return flownodes.Data{"event": e}, node.db.Add(e)
 }
 
 func (node *SaveEvent) saveFrame(fn string, frame *flowdata.Frame) error {

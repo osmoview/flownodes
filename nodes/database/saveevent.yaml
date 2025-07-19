@@ -17,7 +17,11 @@ input:
     name: objects
   - type: string
     name: status
+  - type: string
+    name: state
 output:
+  - type: event
+    name: event
 
 form:
   - name: dir
@@ -38,6 +42,14 @@ form:
       en: Timeout between events
       ru: Таймаут между сохранением событий
     default: 10
+
+  - name: group
+    label:
+      en: Group
+      ru: Группа
+    help:
+      en: Some name of group to grouping events
+      ru: Наименование группы для группировки ивентов
 
   - name: alert
     type: checkbox
