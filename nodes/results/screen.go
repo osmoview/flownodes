@@ -12,6 +12,7 @@ type ScreenData struct {
 	Frame   *flowdata.Frame    `json:"frame"`
 	Objects []*flowdata.Object `json:"objects"`
 	Status  string             `json:"status"`
+	State   string             `json:"state"`
 }
 
 func (node *Screen) Run(data ScreenData) ScreenData {

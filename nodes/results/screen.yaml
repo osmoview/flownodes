@@ -23,6 +23,8 @@ input:
     mode: all
   - type: string
     name: status
+  - type: string
+    name: state
     
 output:
 
