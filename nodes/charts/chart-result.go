@@ -10,7 +10,7 @@ type ChartResult struct{}
 
 type ChartResultInput struct {
 	Series []echarts.Series `json:"series"`
-	XAxis  []time.Time      `json:"xaxis"`
+	XAxis  []time.Time      `json:"xAxis"`
 }
 
 func (t *ChartResult) Run(input ChartResultInput) echarts.Echarts {

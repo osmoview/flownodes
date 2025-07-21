@@ -4,14 +4,14 @@ go 1.24.3
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/osmoview/echarts v0.0.1
+	github.com/osmoview/echarts v0.0.2
 	github.com/osmoview/flowdata v0.0.49
 	github.com/osmoview/flownodes v0.3.8
 )
 
 require (
 	github.com/fatih/color v1.18.0 // indirect
-	github.com/go-viper/mapstructure/v2 v2.3.0 // indirect
+	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
