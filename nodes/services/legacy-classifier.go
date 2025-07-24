@@ -14,15 +14,15 @@ type LegacyClassifier struct {
 	Path string
 
 	service flownodes.RemoteService
-	data    flownodes.Data
+	form    flownodes.Data
 }
 
-func (node *LegacyClassifier) Init(storage flownodes.Storage, data flownodes.Data) (err error) {
+func (node *LegacyClassifier) Init(storage flownodes.Storage, form flownodes.Data) (err error) {
 	if node.ID != "" {
 		node.service, err = storage.GetService(node.ID)
 	}
 
-	node.data = data
+	node.form = form
 
 	return
 }
@@ -36,7 +36,7 @@ type LegacyClassifierResp struct {
 	Objects []*flowdata.Object
 }
 
-func (node *LegacyClassifier) Run(req LegacyClassifierReq) (resp LegacyClassifierResp, err error) {
+func (node *LegacyClassifier) Run(req LegacyClassifierReq, input flownodes.Data) (resp LegacyClassifierResp, err error) {
 	if node.service == nil {
 		return resp, nil
 	}
@@ -52,7 +52,7 @@ func (node *LegacyClassifier) Run(req LegacyClassifierReq) (resp LegacyClassifie
 
 		subFrame, err := req.Frame.Crop(o.BBox)
 
-		r, err := node.sendFrame(subFrame)
+		r, err := node.sendFrame(subFrame, input)
 		if err != nil {
 			return resp, err
 		}
@@ -66,12 +66,12 @@ func (node *LegacyClassifier) Run(req LegacyClassifierReq) (resp LegacyClassifie
 	return
 }
 
-func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame) (obj flowdata.Object, err error) {
+func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame, input flownodes.Data) (obj flowdata.Object, err error) {
 	path := node.Path + "?cam_id=" + frame.DataSource.ID
 	data := map[string]any{
 		"frame":      frame,
 		"datasource": frame.DataSource,
-		"node_data":  node.data,
+		"node_data":  node.mergeData(input),
 	}
 
 	var rawResp json.RawMessage
@@ -108,4 +108,16 @@ func (node *LegacyClassifier) fixBBoxes(frame *flowdata.Frame, objects ...*flowd
 			node.fixBBoxes(frame, o.Items...)
 		}
 	}
+}
+
+func (node *LegacyClassifier) mergeData(input flownodes.Data) flownodes.Data {
+	data := flownodes.Data{}
+	for k, v := range node.form {
+		data[k] = v
+		if v, ok := input[k]; ok {
+			data[k] = v
+		}
+	}
+
+	return data
 }

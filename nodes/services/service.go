@@ -15,11 +15,11 @@ type Service struct {
 	Path   string
 
 	service flownodes.RemoteService
-	data    flownodes.Data
+	form    flownodes.Data
 }
 
 // Init should load client to the service by id
-func (node *Service) Init(storage flownodes.Storage, data flownodes.Data) (err error) {
+func (node *Service) Init(storage flownodes.Storage, form flownodes.Data) (err error) {
 	if node.ID != "" {
 		node.service, err = storage.GetService(node.ID)
 	}
@@ -27,7 +27,7 @@ func (node *Service) Init(storage flownodes.Storage, data flownodes.Data) (err e
 		node.Method = http.MethodPost
 	}
 
-	node.data = data
+	node.form = form
 
 	return
 }
@@ -56,11 +56,18 @@ func (node *Service) Run(c flownodes.Ctx) (resp flownodes.Data, err error) {
 	req.Headers = c.Headers()
 
 	// prepare request data
+	data := c.DataMap()
+	// set data from the form if it not exists in the input,
+	// to prevent overwrite it, as input data more important than form data
+	for k, v := range node.form {
+		if _, ok := data[k]; !ok {
+			data[k] = v
+		}
+	}
+
 	if req.Method == http.MethodGet {
-		req.Query = c.DataMap()
+		req.Query = data
 	} else {
-		data := c.DataMap()
-		data["node_data"] = node.data // substitute node data to the request
 		req.Body = data
 	}
 

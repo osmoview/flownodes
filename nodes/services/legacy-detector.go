@@ -3,7 +3,6 @@ package services
 import (
 	"encoding/json"
 	"errors"
-	"log"
 
 	"github.com/osmoview/flowdata"
 	"github.com/osmoview/flownodes"
@@ -14,16 +13,15 @@ type LegacyDetector struct {
 	Path string
 
 	service flownodes.RemoteService
-	data    flownodes.Data
+	form    flownodes.Data
 }
 
-func (node *LegacyDetector) Init(storage flownodes.Storage, data flownodes.Data) (err error) {
+func (node *LegacyDetector) Init(storage flownodes.Storage, form flownodes.Data) (err error) {
 	if node.ID != "" {
 		node.service, err = storage.GetService(node.ID)
 	}
 
-	node.data = data
-	log.Println(data)
+	node.form = form
 
 	return
 }
@@ -37,14 +35,14 @@ type LegacyDetectorResp struct {
 	Objects []*flowdata.Object
 }
 
-func (node *LegacyDetector) Run(req LegacyDetectorReq) (resp LegacyDetectorResp, err error) {
+func (node *LegacyDetector) Run(req LegacyDetectorReq, input flownodes.Data) (resp LegacyDetectorResp, err error) {
 	// WARN: i do not know what to do if there is no service
 	if node.service == nil {
 		return resp, nil
 	}
 
 	if req.Frame != nil {
-		resp.Objects, err = node.sendFrame(req.Frame)
+		resp.Objects, err = node.sendFrame(req.Frame, input)
 		if err != nil {
 			return
 		}
@@ -53,7 +51,7 @@ func (node *LegacyDetector) Run(req LegacyDetectorReq) (resp LegacyDetectorResp,
 	}
 
 	for _, frame := range req.Frames {
-		objects, err := node.sendFrame(frame)
+		objects, err := node.sendFrame(frame, input)
 		if err != nil {
 			return resp, err
 		}
@@ -66,12 +64,12 @@ func (node *LegacyDetector) Run(req LegacyDetectorReq) (resp LegacyDetectorResp,
 	return
 }
 
-func (node *LegacyDetector) sendFrame(frame *flowdata.Frame) (objects []*flowdata.Object, err error) {
+func (node *LegacyDetector) sendFrame(frame *flowdata.Frame, input flownodes.Data) (objects []*flowdata.Object, err error) {
 	path := node.Path + "?cam_id=" + frame.DataSource.ID
 	data := map[string]any{
 		"frame":      frame,
 		"datasource": frame.DataSource,
-		"node_data":  node.data,
+		"node_data":  node.mergeData(input),
 	}
 
 	var rawResp json.RawMessage
@@ -109,5 +107,16 @@ func (node *LegacyDetector) fixBBoxes(frame *flowdata.Frame, objects []*flowdata
 			node.fixBBoxes(frame, o.Objects)
 		}
 	}
+}
 
+func (node *LegacyDetector) mergeData(input flownodes.Data) flownodes.Data {
+	data := flownodes.Data{}
+	for k, v := range node.form {
+		data[k] = v
+		if v, ok := input[k]; ok {
+			data[k] = v
+		}
+	}
+
+	return data
 }
