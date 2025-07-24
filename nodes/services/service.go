@@ -15,16 +15,19 @@ type Service struct {
 	Path   string
 
 	service flownodes.RemoteService
+	data    flownodes.Data
 }
 
 // Init should load client to the service by id
-func (node *Service) Init(storage flownodes.Storage) (err error) {
+func (node *Service) Init(storage flownodes.Storage, data flownodes.Data) (err error) {
 	if node.ID != "" {
 		node.service, err = storage.GetService(node.ID)
 	}
 	if node.Method == "" {
 		node.Method = http.MethodPost
 	}
+
+	node.data = data
 
 	return
 }
@@ -52,13 +55,13 @@ func (node *Service) Run(c flownodes.Ctx) (resp flownodes.Data, err error) {
 	// set datasource id, flow id, flow run id as http headers
 	req.Headers = c.Headers()
 
-	// if data exists, set it as body or query related method
-	if data := c.DataMap(); len(data) > 0 {
-		if req.Method == http.MethodGet {
-			req.Query = data
-		} else {
-			req.Body = data
-		}
+	// prepare request data
+	if req.Method == http.MethodGet {
+		req.Query = c.DataMap()
+	} else {
+		data := c.DataMap()
+		data["node_data"] = node.data // substitute node data to the request
+		req.Body = data
 	}
 
 	// do request and receive response

@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"errors"
+	"log"
 
 	"github.com/osmoview/flowdata"
 	"github.com/osmoview/flownodes"
@@ -13,12 +14,16 @@ type LegacyDetector struct {
 	Path string
 
 	service flownodes.RemoteService
+	data    flownodes.Data
 }
 
-func (node *LegacyDetector) Init(storage flownodes.Storage) (err error) {
+func (node *LegacyDetector) Init(storage flownodes.Storage, data flownodes.Data) (err error) {
 	if node.ID != "" {
 		node.service, err = storage.GetService(node.ID)
 	}
+
+	node.data = data
+	log.Println(data)
 
 	return
 }
@@ -66,6 +71,7 @@ func (node *LegacyDetector) sendFrame(frame *flowdata.Frame) (objects []*flowdat
 	data := map[string]any{
 		"frame":      frame,
 		"datasource": frame.DataSource,
+		"node_data":  node.data,
 	}
 
 	var rawResp json.RawMessage

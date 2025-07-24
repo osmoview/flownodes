@@ -14,12 +14,15 @@ type LegacyClassifier struct {
 	Path string
 
 	service flownodes.RemoteService
+	data    flownodes.Data
 }
 
-func (node *LegacyClassifier) Init(storage flownodes.Storage) (err error) {
+func (node *LegacyClassifier) Init(storage flownodes.Storage, data flownodes.Data) (err error) {
 	if node.ID != "" {
 		node.service, err = storage.GetService(node.ID)
 	}
+
+	node.data = data
 
 	return
 }
@@ -64,8 +67,15 @@ func (node *LegacyClassifier) Run(req LegacyClassifierReq) (resp LegacyClassifie
 }
 
 func (node *LegacyClassifier) sendFrame(frame *flowdata.Frame) (obj flowdata.Object, err error) {
+	path := node.Path + "?cam_id=" + frame.DataSource.ID
+	data := map[string]any{
+		"frame":      frame,
+		"datasource": frame.DataSource,
+		"node_data":  node.data,
+	}
+
 	var rawResp json.RawMessage
-	if err := node.service.Upload(node.Path, map[string]any{"frame": frame}, &rawResp); err != nil {
+	if err := node.service.Upload(path, data, &rawResp); err != nil {
 		return obj, err
 	}
 
