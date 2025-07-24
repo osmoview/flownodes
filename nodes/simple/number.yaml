@@ -1,0 +1,28 @@
+id: number
+name: Number
+
+label:
+  en: Number
+  ru: Число
+
+lang: go
+
+is_datasource: true
+
+group: simple
+
+output:
+  - type: number
+    name: number
+
+form:
+  - name: number
+    type: number
+    label:
+      en: Number
+      ru: Число
+
+run:
+  file: number.go
+  target: Number
+
