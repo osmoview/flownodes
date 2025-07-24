@@ -54,8 +54,6 @@ func (node *ChartSelectEvents) Run(in ChartSelectEventsInput) (out ChartSelectEv
 		return true
 	})
 
-	log.Println(len(out.Events), err)
-
 	return
 }
 
@@ -71,7 +69,6 @@ func (node *ChartSelectEvents) buildFilter(in ChartSelectEventsInput) (filter ma
 	}
 
 	filter["created_at >= ?"] = time.Now().Add(-1 * in.Duration)
-	log.Println(in.Duration)
 
 	return
 }
