@@ -5,7 +5,7 @@ go 1.24.3
 require (
 	github.com/google/uuid v1.6.0
 	github.com/osmoview/echarts v0.0.2
-	github.com/osmoview/flowdata v0.0.49
+	github.com/osmoview/flowdata v0.0.51
 	github.com/osmoview/flownodes v0.3.8
 )
 
