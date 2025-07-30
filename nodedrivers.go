@@ -25,7 +25,7 @@ var (
 
 const (
 	AccessReadOnly = "read-only" // prevent to change code or a driver
-	AccessLocal    = "local"     // local packages are not exported
+	AccessInternal = "internal"  // internal packages are not exported
 	AccessPrivate  = "private"   // private packages cannot be modified or viewed
 )
 
