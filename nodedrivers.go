@@ -23,6 +23,12 @@ var (
 	nodeDrivers sync.Map // map[string]NodeDriver{}
 )
 
+const (
+	AccessReadOnly = "read-only" // prevent to change code or a driver
+	AccessLocal    = "local"     // local packages are not exported
+	AccessPrivate  = "private"   // private packages cannot be modified or viewed
+)
+
 // NodeDriver structure describe how to run and communicate with the node
 type NodeDriver struct {
 	// node id, should be unique
@@ -37,6 +43,9 @@ type NodeDriver struct {
 	// INFO: node field is deprecated, use ID instead
 	// Node string `yaml:"node" json:"-"`
 	Lang string `yaml:"lang,omitempty" json:"lang,omitempty"`
+
+	// access level
+	Access string `yaml:"access,omitempty" json:"access,omitempty"`
 
 	IsDataSource bool `yaml:"is_datasource,omitempty" json:"is_datasource,omitempty"`
 
