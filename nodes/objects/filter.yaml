@@ -8,6 +8,8 @@ label:
 node: filter
 lang: go
 
+access: internal
+
 group: objects
 
 # ports

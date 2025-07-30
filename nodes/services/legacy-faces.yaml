@@ -12,6 +12,8 @@ label:
 
 lang: go
 
+access: internal
+
 group: services
 
 form:

@@ -2,6 +2,8 @@ id: testnode
 
 lang: go
 
+access: internal
+
 group: simple
 
 is_datasource: true

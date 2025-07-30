@@ -6,6 +6,8 @@ label:
 
 lang: go
 
+access: internal
+
 group: charts
 
 input:

@@ -8,6 +8,8 @@ label:
 node: timer
 lang: go
 
+access: internal
+
 group: objects
 
 # ports

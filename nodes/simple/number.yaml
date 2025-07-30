@@ -7,6 +7,8 @@ label:
 
 lang: go
 
+access: internal
+
 is_datasource: true
 
 group: simple

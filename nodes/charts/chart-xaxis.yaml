@@ -1,6 +1,8 @@
 id: chart-xaxis
 name: X-Axis
 lang: go
+
+access: internal
 label:
   en: X-Axis
   ru: Ось X

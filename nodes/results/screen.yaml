@@ -12,6 +12,8 @@ node: screen
 
 lang: go
 
+access: internal
+
 group: results
 
 # ports

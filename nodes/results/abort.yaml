@@ -4,6 +4,8 @@ name: Abort
 node: abort
 lang: go
 
+access: internal
+
 label:
   en: Abort
   ru: Прервать

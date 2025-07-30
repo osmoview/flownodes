@@ -7,6 +7,8 @@ label:
 
 lang: go
 
+access: internal
+
 group: objects
 
 # ports
