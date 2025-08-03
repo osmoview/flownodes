@@ -49,6 +49,11 @@ func (m Data) BindTo(x any) error {
 	cfg := &mapstructure.DecoderConfig{
 		WeaklyTypedInput: true,
 		Result:           x,
+		TagName:          "yaml",
+		MatchName: func(mapKey, fieldName string) bool {
+			mapKey = strings.ReplaceAll(mapKey, "_", "")
+			return strings.EqualFold(mapKey, fieldName)
+		},
 	}
 
 	dec, err := mapstructure.NewDecoder(cfg)
