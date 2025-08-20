@@ -1,6 +1,7 @@
 package flownodes
 
 import (
+	"reflect"
 	"strings"
 
 	"github.com/go-viper/mapstructure/v2"
@@ -47,9 +48,16 @@ func (m Data) BindTo(x any) error {
 	}
 
 	cfg := &mapstructure.DecoderConfig{
+		DecodeHook: func(f, t reflect.Type, data any) (any, error) {
+			if s, ok := data.(string); ok && s == "" {
+				return nil, nil
+			}
+			return data, nil
+		},
 		WeaklyTypedInput: true,
 		Result:           x,
 		TagName:          "yaml",
+		Squash:           true,
 		MatchName: func(mapKey, fieldName string) bool {
 			mapKey = strings.ReplaceAll(mapKey, "_", "")
 			return strings.EqualFold(mapKey, fieldName)
