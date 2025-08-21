@@ -142,8 +142,9 @@ func GetNodeDriver(id string) (NodeDriver, error) {
 // SetNodeDriver save node driver to the global node drivers storage
 func SetNodeDriver(nd NodeDriver) {
 	// fix node driver path
-	if !strings.HasPrefix(nd.Path, Dir) {
-		nd.Path = filepath.Join(filepath.Clean(Dir), nd.Path)
+	dir := filepath.Clean(Dir)
+	if !strings.HasPrefix(nd.Path, dir) {
+		nd.Path = filepath.Join(dir, nd.Path)
 	}
 
 	nodeDrivers.Store(nd.ID, nd)
