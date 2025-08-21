@@ -6,8 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
-	"github.com/goccy/go-yaml"
+	"gopkg.in/yaml.v3"
 
 	"github.com/osmoview/flowdata"
 )
@@ -65,7 +66,7 @@ type NodeDriver struct {
 		Data `yaml:",inline" json:"data"`
 	} `yaml:"run" json:"run"`
 
-	// Errors []string `yaml:"-" json:"errors,omitempty"`
+	Errors []NodeDriverError `yaml:"-" json:"errors,omitempty"`
 }
 
 // IsValid check if node driver is valid or not
@@ -193,7 +194,11 @@ func LoadNodeDrivers(dir string) error {
 			return fmt.Errorf("failed to load '%s' node: %v", fp, err)
 		}
 
-		nd.Path = fp
+		if e, err := GetNodeDriver(nd.ID); err == nil {
+			nd.Errors = append(nd.Errors, NewNodeDriverError("node with id '%s' already exists: %s", nd.ID, e.Path))
+			e.Errors = append(e.Errors, NewNodeDriverError("node with id '%s' already exists: %s", nd.ID, nd.Path))
+			SetNodeDriver(e)
+		}
 
 		SetNodeDriver(nd)
 
@@ -221,4 +226,24 @@ func ReadNodeDriver(fp string) (nd NodeDriver, err error) {
 	}
 
 	return nd, nd.IsValid()
+}
+
+//
+//
+//
+
+type NodeDriverError struct {
+	Time time.Time `json:"time"`
+	Text string    `json:"text"`
+}
+
+func (nde *NodeDriverError) Error() string {
+	return nde.Text
+}
+
+func NewNodeDriverError(msg string, a ...any) NodeDriverError {
+	return NodeDriverError{
+		Time: time.Now(),
+		Text: fmt.Sprintf(msg, a...),
+	}
 }

@@ -4,10 +4,10 @@ go 1.24.3
 
 require (
 	github.com/go-viper/mapstructure/v2 v2.4.0
-	github.com/goccy/go-yaml v1.18.0
 	github.com/google/uuid v1.6.0
 	github.com/oliamb/cutter v0.2.2
 	golang.org/x/text v0.28.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

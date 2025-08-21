@@ -3,7 +3,7 @@ package flownodes
 import (
 	"strings"
 
-	"github.com/goccy/go-yaml"
+	"gopkg.in/yaml.v3"
 )
 
 // Data is just a `map[string]any`, for example, it used as response from the node

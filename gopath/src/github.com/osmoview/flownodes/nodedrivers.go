@@ -12,8 +12,7 @@ import (
 	"github.com/osmoview/flowdata"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-
-	"github.com/goccy/go-yaml"
+	"gopkg.in/yaml.v3"
 )
 
 var (
