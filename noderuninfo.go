@@ -1,0 +1,24 @@
+package flownodes
+
+import (
+	"time"
+)
+
+type NodeRunInfo struct {
+	// transaction ID, usualy should be same as incoming frame
+	ID string `json:"id,omitempty"`
+
+	// time when the node was executed
+	Time time.Time `json:"time,omitempty"`
+
+	// execution latency in ms
+	Latency int `json:"latency"`
+
+	// incoming data to the node
+	InputData Data `json:"inputdata,omitempty"`
+
+	// response from the node
+	OutputData Data `json:"outputdata,omitempty"`
+
+	Error string `json:"error,omitempty"`
+}
