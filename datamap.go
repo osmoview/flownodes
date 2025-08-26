@@ -1,6 +1,7 @@
 package flownodes
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -59,6 +60,10 @@ func (m Data) BindTo(x any) error {
 		TagName:          "yaml",
 		Squash:           true,
 		MatchName: func(mapKey, fieldName string) bool {
+			if strings.EqualFold(mapKey, fieldName) {
+				return true
+			}
+
 			mapKey = strings.ReplaceAll(mapKey, "_", "")
 			return strings.EqualFold(mapKey, fieldName)
 		},
@@ -69,10 +74,52 @@ func (m Data) BindTo(x any) error {
 		return err
 	}
 
-	return dec.Decode(m)
+	return dec.Decode(m.FixDotKeys())
+}
+
+func (m *Data) FixDotKeys() Data {
+	data := Data{}
+
+	for k, v := range *m {
+		data.Set(k, v)
+	}
+
+	return data
+}
+
+func (m *Data) setmap(k string, v any) error {
+	keyParts := strings.Split(k, ".")
+	for i := 0; i < len(keyParts); i++ {
+		key := keyParts[i]
+
+		if i == len(keyParts)-1 {
+			m.Set(key, v)
+			break
+		}
+
+		sub, ok := (*m)[key]
+		if !ok {
+			sub = map[string]any{}
+			(*m)[key] = sub
+		}
+		switch x := sub.(type) {
+		case map[string]any:
+			d := Data(x)
+			return d.setmap(strings.Join(keyParts[i+1:], "."), v)
+		default:
+			return fmt.Errorf("%T is unexpected type", x)
+		}
+	}
+
+	return nil
 }
 
 func (m *Data) Set(k string, v any) {
+	if strings.Contains(k, ".") {
+		m.setmap(k, v)
+		return
+	}
+
 	(*m)[k] = v
 }
 
