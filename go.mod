@@ -11,13 +11,13 @@ require (
 )
 
 require (
-	github.com/osmoview/flowdata v0.0.51
+	github.com/osmoview/flowdata v0.0.59
 	github.com/osmoview/logger v0.1.3
 )
 
 require (
 	github.com/fatih/color v1.18.0 // indirect
-	github.com/google/go-querystring v1.1.0 // indirect
+	github.com/hetiansu5/urlquery v1.2.7 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
