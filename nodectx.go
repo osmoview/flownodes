@@ -86,6 +86,7 @@ type DataSource interface {
 	GetLines(name string) []flowdata.Line
 	GetData() Data
 	GetInfo() Data
+	Update(data map[string]any) error
 }
 
 type Flow interface {
