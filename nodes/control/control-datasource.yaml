@@ -1,0 +1,33 @@
+id: control-datasource
+name: Control DataSource
+
+label:
+  en: Control DataSource
+  ru: Управление источником данных
+
+lang: go
+
+access: internal
+
+group: control
+
+input:
+  - name: enable
+    type: bool
+  - name: address
+    type: string
+  - name: '*'
+    type: map
+
+form: 
+  - name: remoteid
+    type: select
+    hook: datasources
+    label:
+      en: Datasource
+      ru: Источник данных
+      
+run:
+  file: control-datasource.go
+  target: ControlDataSource
+  
