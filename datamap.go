@@ -114,6 +114,8 @@ func (m *Data) setmap(k string, v any) error {
 	return nil
 }
 
+// Set value to the map
+// if key has dots, split key by dots and set as nested map
 func (m *Data) Set(k string, v any) {
 	if strings.Contains(k, ".") {
 		m.setmap(k, v)
@@ -123,11 +125,13 @@ func (m *Data) Set(k string, v any) {
 	(*m)[k] = v
 }
 
+// Has check if data has specified key
 func (m *Data) Has(k string) bool {
 	_, ok := (*m)[k]
 	return ok
 }
 
+// Contains check if data has key and value
 func (m *Data) Contains(k string, v any) bool {
 	vv, ok := (*m)[k]
 	if !ok {
@@ -135,4 +139,15 @@ func (m *Data) Contains(k string, v any) bool {
 	}
 
 	return vv == v
+}
+
+// Copy creates a copy of the Data, not a deepcopy
+func (m Data) Copy() Data {
+	copy := map[string]any{}
+
+	for k, v := range m {
+		copy[k] = v
+	}
+
+	return copy
 }
