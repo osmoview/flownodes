@@ -1,6 +1,7 @@
 package flownodes
 
 import (
+	"encoding/base64"
 	"fmt"
 	"reflect"
 	"strings"
@@ -50,9 +51,17 @@ func (m Data) BindTo(x any) error {
 
 	cfg := &mapstructure.DecoderConfig{
 		DecodeHook: func(f, t reflect.Type, data any) (any, error) {
-			if s, ok := data.(string); ok && s == "" {
-				return nil, nil
+			if s, ok := data.(string); ok {
+				// hook to bind empty strings to int/float
+				if s == "" {
+					return nil, nil
+				}
+				// hook to bind base64 bytes as []byte slice
+				if t.String() == "[]uint8" {
+					return base64.StdEncoding.DecodeString(s)
+				}
 			}
+
 			return data, nil
 		},
 		WeaklyTypedInput: true,
