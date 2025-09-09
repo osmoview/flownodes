@@ -11,6 +11,9 @@ type NodeRunInfo struct {
 	// time when the node was executed
 	Time time.Time `json:"time,omitempty"`
 
+	// time when flow run was started
+	FlowTime time.Time `json:"flow_time,omitempty"`
+
 	// execution latency in ms
 	Latency int `json:"latency"`
 
