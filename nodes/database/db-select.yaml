@@ -1,5 +1,6 @@
 id: db-select
 name: Database SELECT
+icon: database
 
 label:
   en: Database `Select` Data

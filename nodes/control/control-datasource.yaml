@@ -1,5 +1,6 @@
 id: control-datasource
 name: Control DataSource
+icon: settings
 
 label:
   en: Control DataSource

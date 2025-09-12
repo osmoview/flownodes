@@ -1,5 +1,6 @@
 id: timer
 name: Timer
+icon: clock
 
 label:
   en: Timer

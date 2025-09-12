@@ -1,5 +1,6 @@
 id: control-service
 name: Control Service
+icon: settings
 
 label:
   en: Control Service

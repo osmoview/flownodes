@@ -1,5 +1,6 @@
 id: db-insert
 name: Database INSERT
+icon: database
 
 label:
   en: Database `Insert` Data

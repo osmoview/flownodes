@@ -1,5 +1,6 @@
 id: count
 name: Count objects
+icon: count
 
 label:
   en: Number of objects

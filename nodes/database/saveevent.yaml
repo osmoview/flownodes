@@ -1,5 +1,6 @@
 id: saveevent
 name: Save Event
+icon: database
 
 label:
   en: Create Event

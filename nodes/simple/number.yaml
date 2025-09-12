@@ -1,5 +1,6 @@
 id: number
 name: Number
+icon: numeric
 
 label:
   en: Number

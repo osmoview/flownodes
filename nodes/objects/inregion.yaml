@@ -1,5 +1,6 @@
 id: inregion
 name: InRegion
+icon: region
 
 desc:
   en: Filter objects includes in the specified region
