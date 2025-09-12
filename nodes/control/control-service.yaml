@@ -1,0 +1,31 @@
+id: control-service
+name: Control Service
+
+label:
+  en: Control Service
+  ru: Управление Сервисом
+
+lang: go
+
+access: internal
+
+group: control
+
+input:
+  - name: enable
+    type: bool
+  - name: '*'
+    type: map
+
+form: 
+  - name: remoteid
+    type: select
+    hook: services
+    label:
+      en: Service
+      ru: Сервис
+      
+run:
+  file: control-service.go
+  target: ControlService
+  

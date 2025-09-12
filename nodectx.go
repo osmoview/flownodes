@@ -75,6 +75,7 @@ type RemoteService interface {
 	Upload(path string, data map[string]any, resp any) error
 	Post(path string, data, resp any) error
 	Get(path string, resp any) error
+	Update(data map[string]any) error
 }
 
 type DataSource interface {
