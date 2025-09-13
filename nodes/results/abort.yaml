@@ -1,5 +1,6 @@
 id: abort
 name: Abort
+icon: close
 
 node: abort
 lang: go
