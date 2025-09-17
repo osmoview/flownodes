@@ -18,7 +18,15 @@ func (m Data) GetData(key string) (v any, ok bool) {
 		return v, ok
 	}
 
-	return m.GetCaseInsensitive(key)
+	if v, ok := m.GetCaseInsensitive(key); ok {
+		return v, ok
+	}
+
+	if strings.Contains(key, ".") {
+		return m.getmap(key)
+	}
+
+	return nil, false
 }
 
 // MustGetData same as GetData, but do not returns second boolean variable
@@ -134,9 +142,40 @@ func (m *Data) Set(k string, v any) {
 	(*m)[k] = v
 }
 
+func (m *Data) getmap(k string) (any, bool) {
+	keyParts := strings.Split(k, ".")
+	for i := 0; i < len(keyParts); i++ {
+		key := keyParts[i]
+
+		if i == len(keyParts)-1 {
+			return m.Get(key)
+		}
+
+		sub, ok := (*m)[key]
+		if !ok {
+			sub = map[string]any{}
+			(*m)[key] = sub
+		}
+		switch x := sub.(type) {
+		case map[string]any:
+			d := Data(x)
+			return d.getmap(strings.Join(keyParts[i+1:], "."))
+		default:
+			// fmt.Errorf("%T is unexpected type", x)
+			return nil, false
+		}
+	}
+
+	return nil, false
+}
+
+func (m *Data) Get(k string) (any, bool) {
+	return m.GetData(k)
+}
+
 // Has check if data has specified key
 func (m *Data) Has(k string) bool {
-	_, ok := (*m)[k]
+	_, ok := m.Get(k)
 	return ok
 }
 
