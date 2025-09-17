@@ -54,9 +54,9 @@ type NodeDriver struct {
 	Help  flowdata.L10n `yaml:"help,omitempty" json:"help,omitempty"`
 	Group string        `yaml:"group,omitempty" json:"group,omitempty"`
 
-	Input  []Port               `yaml:"input,omitempty" json:"input,omitempty"`
-	Output []Port               `yaml:"output,omitempty" json:"output,omitempty"`
-	Form   []flowdata.FormField `yaml:"form,omitempty" json:"form,omitempty"`
+	Input  []Port `yaml:"input,omitempty" json:"input,omitempty"`
+	Output []Port `yaml:"output,omitempty" json:"output,omitempty"`
+	// Form   []flowdata.FormField `yaml:"form,omitempty" json:"form,omitempty"`
 
 	// INFO: Run section describe how to run this node, and may contains reqired for interpreter(related to 'lang') custom data, like working directory, path to the dependencies directory, etc
 	Run struct {
