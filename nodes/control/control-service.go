@@ -11,9 +11,8 @@ type ControlService struct {
 	service  flownodes.RemoteService
 }
 
-func (node *ControlService) Init(storage flownodes.Storage) (err error) {
-	node.service, err = storage.GetService(node.RemoteID)
-	return
+func (node *ControlService) Init(storage flownodes.Storage) {
+	node.service, _ = storage.GetService(node.RemoteID)
 }
 
 func (node *ControlService) Run(c flownodes.Ctx) (err error) {

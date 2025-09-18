@@ -11,9 +11,8 @@ type ControlDataSource struct {
 	datasource flownodes.DataSource
 }
 
-func (node *ControlDataSource) Init(storage flownodes.Storage) (err error) {
-	node.datasource, err = storage.GetDataSource(node.RemoteID)
-	return
+func (node *ControlDataSource) Init(storage flownodes.Storage) {
+	node.datasource, _ = storage.GetDataSource(node.RemoteID)
 }
 
 func (node *ControlDataSource) Run(c flownodes.Ctx) (err error) {
