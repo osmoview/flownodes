@@ -11,6 +11,7 @@ type ChartResult struct{}
 type ChartResultInput struct {
 	Series []echarts.Series `json:"series"`
 	XAxis  []time.Time      `json:"xAxis"`
+	YAxis  echarts.Axis     `json:"yAxis"`
 }
 
 func (t *ChartResult) Run(input ChartResultInput) echarts.Echarts {
@@ -22,6 +23,8 @@ func (t *ChartResult) Run(input ChartResultInput) echarts.Echarts {
 	for _, t := range input.XAxis {
 		opt.XAxis.Data = append(opt.XAxis.Data, t.Format(echarts.TimeLayoutDateTime))
 	}
+
+	opt.YAxis = input.YAxis
 
 	return opt
 }
