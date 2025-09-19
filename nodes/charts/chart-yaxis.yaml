@@ -1,0 +1,17 @@
+id: chart-yaxis
+name: Y-Axis
+lang: go
+
+access: internal
+group: charts
+
+output:
+    - type: chart-yaxis
+      name: yaxis
+form:
+    - name: min
+    - name: max
+
+run:
+    file: chart-yaxis.go
+    target: ChartYAxis
