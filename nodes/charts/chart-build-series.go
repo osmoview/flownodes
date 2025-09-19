@@ -1,6 +1,7 @@
 package charts
 
 import (
+	"errors"
 	"time"
 
 	"github.com/osmoview/echarts"
@@ -34,7 +35,11 @@ func (node *ChartBuildSeries) Init(storage flownodes.Storage, db flownodes.Datab
 	}
 }
 
-func (node *ChartBuildSeries) Run(in ChartBuildSeriesInput) ChartBuildSeriesOutput {
+func (node *ChartBuildSeries) Run(in ChartBuildSeriesInput) (ChartBuildSeriesOutput, error) {
+	if len(in.XAxis) == 0 {
+		return ChartBuildSeriesOutput{}, errors.New("x-axis required")
+	}
+
 	chart := echarts.Series{
 		Name: node.Name,
 		Type: node.Type,
@@ -45,7 +50,7 @@ func (node *ChartBuildSeries) Run(in ChartBuildSeriesInput) ChartBuildSeriesOutp
 		node.setData(e, chart.Data, in.XAxis)
 	}
 
-	return ChartBuildSeriesOutput{Series: []echarts.Series{chart}}
+	return ChartBuildSeriesOutput{Series: []echarts.Series{chart}}, nil
 }
 
 func (node *ChartBuildSeries) setData(e flowdata.Event, data []float64, xaxis []time.Time) {
