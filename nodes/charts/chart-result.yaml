@@ -16,7 +16,7 @@ input:
     name: series
   - type: chart-axis
     name: xaxis
-  - type: chart-axis
+  - type: chart-yaxis
     name: yaxis
   # - type: chart-axis
   #   name: y-axis
