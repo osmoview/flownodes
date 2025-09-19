@@ -5,8 +5,11 @@ import (
 )
 
 type NodeRunInfo struct {
-	// transaction ID, usualy should be same as incoming frame
-	ID string `json:"id,omitempty"`
+	// flow run ID, usualy should be same as incoming frame
+	ID string `json:"id"`
+
+	// node ID, for which this run info was obtained
+	NodeID string `json:"node_id"`
 
 	// time when the node was executed
 	Time time.Time `json:"time,omitempty"`
