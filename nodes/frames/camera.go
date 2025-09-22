@@ -24,6 +24,7 @@ func (cam *Camera) Init(s flownodes.Storage) (err error) {
 func (cam *Camera) Run(data CameraData) (CameraData, error) {
 	if cam.ds != nil {
 		frame, err := cam.ds.GetFrame()
+
 		return CameraData{Frame: frame}, err
 	}
 

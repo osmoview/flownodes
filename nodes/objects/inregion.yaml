@@ -24,6 +24,8 @@ input:
 output:
   - type: objects
     name: objects
+  - type: regions
+    name: regions
 
 form:
   - name: regions

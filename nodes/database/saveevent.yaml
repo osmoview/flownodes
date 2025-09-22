@@ -18,6 +18,10 @@ input:
     name: frame
   - type: objects
     name: objects
+  - type: regions
+    name: regions
+  - type: lines
+    name: lines
   - type: string
     name: status
   - type: string

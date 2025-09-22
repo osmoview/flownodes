@@ -11,35 +11,46 @@ type InRegion struct {
 	storage flownodes.Storage
 }
 
-type RegionsDTO struct {
+type InRegionInput struct {
 	Objects []*flowdata.Object
+}
+
+type InRegionOutput struct {
+	Objects []*flowdata.Object
+	Regions []flowdata.Region
 }
 
 func (node *InRegion) Init(storage flownodes.Storage) {
 	node.storage = storage
 }
 
-func (node *InRegion) Run(req RegionsDTO, c flownodes.Ctx) (resp RegionsDTO, err error) {
+func (node *InRegion) Run(in InRegionInput, c flownodes.Ctx) (out InRegionOutput, err error) {
 	regions, err := node.getRegions(c.GetSourceInfo().ID)
 	if err != nil {
-		return resp, err
+		return out, err
 	}
 
 	// map to collect only unique objects
-	objects := map[*flowdata.Object]struct{}{}
+	objectsMap := map[*flowdata.Object]struct{}{}
+	regionsMap := map[string]flowdata.Region{}
 	for _, r := range regions {
-		for _, o := range req.Objects {
+		for _, o := range in.Objects {
 			if r.ContainsPoint(o.BBox.Center()) {
-				objects[o] = struct{}{}
+				objectsMap[o] = struct{}{}
+				regionsMap[r.ID] = r
 			}
 		}
 	}
 
-	for o := range objects {
-		resp.Objects = append(resp.Objects, o)
+	for o := range objectsMap {
+		out.Objects = append(out.Objects, o)
 	}
 
-	return resp, nil
+	for _, r := range regionsMap {
+		out.Regions = append(out.Regions, r)
+	}
+
+	return out, nil
 }
 
 func (node *InRegion) getRegions(cameraID string) (regions []flowdata.Region, err error) {

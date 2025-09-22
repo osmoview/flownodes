@@ -26,6 +26,8 @@ type SaveEvent struct {
 type SaveEventData struct {
 	Frame   *flowdata.Frame
 	Objects []*flowdata.Object
+	Regions []*flowdata.Region
+	Lines   []*flowdata.Line
 	Status  string
 	State   string
 }
@@ -51,6 +53,8 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) (flownodes.Data,
 		ID:         uuid.NewString(),
 		DataSource: c.GetSourceInfo().ID,
 		Flow:       c.GetFlowInfo().ID,
+		Regions:    data.Regions,
+		Lines:      data.Lines,
 		Status:     data.Status,
 		State:      data.State,
 		Objects:    data.Objects,
