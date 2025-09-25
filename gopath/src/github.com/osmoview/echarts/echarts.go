@@ -23,17 +23,17 @@ func NewEcharts() (eopt Echarts) {
 
 	eopt.Grid = Grid{
 		Show:         FALSE,
-		Left:         "2%",
-		Top:          "3%",
-		Right:        "2%",
-		Bottom:       "3%",
+		Left:         "3%",
+		Top:          "4%",
+		Right:        "3%",
+		Bottom:       "4%",
 		ContainLabel: TRUE,
 	}
 
 	eopt.Legend = Legend{
 		Show:  FALSE,
 		Top:   "0px",
-		Right: "2%",
+		Right: "3%",
 		Icon:  "roundRect",
 		TextStyle: TextStyle{
 			Color:      "currentColor",
@@ -97,15 +97,18 @@ type Grid struct {
 }
 
 type Axis struct {
-	Show        *bool     `json:"show,omitempty"`
-	Type        string    `json:"type,omitempty"`
-	Data        []any     `json:"data,omitempty"`
-	AxisLine    AxisLine  `json:"axisLine"`
-	SplitLine   SplitLine `json:"splitLine"`
-	AxisTick    AxisTick  `json:"axisTick"`
-	BoundaryGap [2]any    `json:"boundaryGap,omitempty"`
-	Min         any       `json:"min,omitempty"`
-	Max         any       `json:"max,omitempty"`
+	Show         *bool     `json:"show,omitempty"`
+	Name         string    `json:"name,omitempty"`
+	NameLocation string    `json:"nameLocation,omitempty"`
+	NameGap      int       `json:"nameGap,omitempty"`
+	Type         string    `json:"type,omitempty"`
+	Data         []any     `json:"data,omitempty"`
+	AxisLine     AxisLine  `json:"axisLine"`
+	SplitLine    SplitLine `json:"splitLine"`
+	AxisTick     AxisTick  `json:"axisTick"`
+	BoundaryGap  [2]any    `json:"boundaryGap,omitempty"`
+	Min          any       `json:"min,omitempty"`
+	Max          any       `json:"max,omitempty"`
 }
 
 type AxisLine struct {
