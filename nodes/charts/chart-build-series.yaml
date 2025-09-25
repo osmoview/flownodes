@@ -36,6 +36,8 @@ form:
         value: line
       - label: Bar
         value: bar
+      - label: Scatter
+        value: scatter
     default: line
 
 
