@@ -74,7 +74,7 @@ func (node *Detector) Run(req DetectorReq) (resp DetectorResp, err error) {
 	}
 
 	var r responseWithBatch
-	if err = node.service.Post(node.Path, req.DataMap(), &r); err != nil {
+	if err = node.service.Upload(node.Path, req.DataMap(), &r); err != nil {
 		return resp, err
 	}
 
