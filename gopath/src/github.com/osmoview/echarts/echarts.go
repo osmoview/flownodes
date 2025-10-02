@@ -21,14 +21,14 @@ func NewEcharts() (eopt Echarts) {
 
 	eopt.Tooltip.Trigger = "axis"
 
-	eopt.Grid = Grid{
-		Show:         FALSE,
-		Left:         "3%",
-		Top:          "4%",
-		Right:        "3%",
-		Bottom:       "4%",
-		ContainLabel: TRUE,
-	}
+	// eopt.Grid = Grid{
+	// 	Show:         FALSE,
+	// 	Left:         "3%",
+	// 	Top:          "4%",
+	// 	Right:        "3%",
+	// 	Bottom:       "4%",
+	// 	ContainLabel: TRUE,
+	// }
 
 	eopt.Legend = Legend{
 		Show:  FALSE,
