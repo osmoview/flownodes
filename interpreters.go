@@ -1,6 +1,9 @@
 package flownodes
 
-import "github.com/osmoview/logger"
+import (
+	"github.com/osmoview/logger"
+	"gitlab.osmoview.com/platform/lotus"
+)
 
 var (
 	// interpreters is a map contains virtual machines and other solutions
@@ -33,6 +36,8 @@ type Runner interface {
 
 	// returns last log lines from the interpreter
 	Logs() []logger.LogLine
+
+	StreamLogs() *lotus.LogStreamer
 }
 
 // RegisterInterpreter add new interpreter for the specified language
