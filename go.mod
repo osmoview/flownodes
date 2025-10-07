@@ -12,7 +12,7 @@ require (
 
 require (
 	github.com/osmoview/flowdata v0.0.64
-	github.com/osmoview/logger v0.1.3
+	github.com/osmoview/logger v0.1.4
 )
 
 require (
