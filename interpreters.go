@@ -2,7 +2,6 @@ package flownodes
 
 import (
 	"github.com/osmoview/logger"
-	"gitlab.osmoview.com/platform/lotus"
 )
 
 var (
@@ -35,9 +34,13 @@ type Runner interface {
 	Close() error
 
 	// returns last log lines from the interpreter
-	Logs() []logger.LogLine
+	Logger() Logger
+}
 
-	StreamLogs() *lotus.LogStreamer
+type Logger interface {
+	Logs() []logger.LogLine
+	Subscribe() chan logger.LogLine
+	Unsubscribe(chan logger.LogLine)
 }
 
 // RegisterInterpreter add new interpreter for the specified language
