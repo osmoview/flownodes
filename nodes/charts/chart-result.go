@@ -20,11 +20,13 @@ func (t *ChartResult) Run(input ChartResultInput) echarts.Echarts {
 	opt.Tooltip = echarts.Tooltip{Trigger: "axis"}
 	opt.Legend.Show = echarts.TRUE
 
+	xaxis := echarts.Axis{}
 	for _, t := range input.XAxis {
-		opt.XAxis.Data = append(opt.XAxis.Data, t.Format(echarts.TimeLayoutDateTime))
+		xaxis.Data = append(xaxis.Data, t.Format(echarts.TimeLayoutDateTime))
 	}
 
-	opt.YAxis = input.YAxis
+	opt.XAxis = []echarts.Axis{xaxis}
+	opt.YAxis = []echarts.Axis{input.YAxis}
 
 	return opt
 }

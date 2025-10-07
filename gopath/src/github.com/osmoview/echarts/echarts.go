@@ -49,7 +49,7 @@ func NewEcharts() (eopt Echarts) {
 		TextBorderWidth: 0,
 	}
 
-	eopt.YAxis.Min = 0
+	// eopt.YAxis.Min = 0
 
 	return eopt
 }
@@ -58,9 +58,9 @@ type Echarts struct {
 	Title     Title     `json:"title"`
 	Legend    Legend    `json:"legend"`
 	Tooltip   Tooltip   `json:"tooltip"`
-	Grid      Grid      `json:"grid"`
-	XAxis     Axis      `json:"xAxis"`
-	YAxis     Axis      `json:"yAxis"`
+	Grid      []Grid    `json:"grid"`
+	XAxis     []Axis    `json:"xAxis"`
+	YAxis     []Axis    `json:"yAxis"`
 	Series    []Series  `json:"series"`
 	TextStyle TextStyle `json:"textStyle"`
 	BlendMode string    `json:"blendMode,omitempty"`
@@ -97,6 +97,7 @@ type Grid struct {
 }
 
 type Axis struct {
+	ID           string    `json:"id,omitempty"`
 	Show         *bool     `json:"show,omitempty"`
 	Name         string    `json:"name,omitempty"`
 	NameLocation string    `json:"nameLocation,omitempty"`
@@ -137,6 +138,10 @@ type Series struct {
 	ShowSymbol *bool       `json:"showSymbol,omitempty"`
 	Label      SeriesLabel `json:"label,omitempty"`
 	Stack      string      `json:"stack,omitempty"`
+	XAxisIndex int         `json:"xAxisIndex,omitempty"`
+	XAxisID    string      `json:"xAxisId,omitempty"`
+	YAxisIndex int         `json:"yAxisIndex,omitempty"`
+	YAxisID    string      `json:"yAxisId,omitempty"`
 }
 
 type SeriesLabel struct {
