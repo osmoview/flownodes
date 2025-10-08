@@ -19,5 +19,12 @@ func (node *ChartYAxis) Run() ChartYAxisOutput {
 		Min:         node.Min,
 		Max:         node.Max,
 		BoundaryGap: [2]any{"10%", "10%"},
+		SplitLine: echarts.SplitLine{
+			LineStyle: echarts.LineStyle{
+				Color:   "currentColor",
+				Type:    "dashed",
+				Opacity: 0.3,
+			},
+		},
 	}}
 }
