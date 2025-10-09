@@ -55,15 +55,16 @@ func NewEcharts() (eopt Echarts) {
 }
 
 type Echarts struct {
-	Title     Title     `json:"title"`
-	Legend    Legend    `json:"legend"`
-	Tooltip   Tooltip   `json:"tooltip"`
-	Grid      []Grid    `json:"grid"`
-	XAxis     []Axis    `json:"xAxis"`
-	YAxis     []Axis    `json:"yAxis"`
-	Series    []Series  `json:"series"`
-	TextStyle TextStyle `json:"textStyle"`
-	BlendMode string    `json:"blendMode,omitempty"`
+	Title       Title       `json:"title"`
+	Legend      Legend      `json:"legend"`
+	Tooltip     Tooltip     `json:"tooltip"`
+	Grid        []Grid      `json:"grid"`
+	XAxis       []Axis      `json:"xAxis"`
+	YAxis       []Axis      `json:"yAxis"`
+	AxisPointer AxisPointer `json:"axisPointer"`
+	Series      []Series    `json:"series"`
+	TextStyle   TextStyle   `json:"textStyle"`
+	BlendMode   string      `json:"blendMode,omitempty"`
 }
 
 type Title struct {
@@ -88,6 +89,7 @@ type Legend struct {
 }
 
 type Grid struct {
+	ID           string `json:"id,omitempty"`
 	Left         string `json:"left,omitempty"`
 	Top          string `json:"top,omitempty"`
 	Right        string `json:"right,omitempty"`
@@ -104,12 +106,31 @@ type Axis struct {
 	NameGap      int       `json:"nameGap,omitempty"`
 	Type         string    `json:"type,omitempty"`
 	Data         []any     `json:"data,omitempty"`
+	GridIndex    int       `json:"gridIndex,omitempty"`
 	AxisLine     AxisLine  `json:"axisLine"`
 	SplitLine    SplitLine `json:"splitLine"`
 	AxisTick     AxisTick  `json:"axisTick"`
 	BoundaryGap  [2]any    `json:"boundaryGap,omitempty"`
 	Min          any       `json:"min,omitempty"`
 	Max          any       `json:"max,omitempty"`
+}
+
+type AxisPointer struct {
+	ID   string `json:"id,omitempty"`
+	Show *bool  `json:"show,omitempty"`
+	Type string `json:"type,omitempty"`
+	Snap *bool  `json:"snap,omitempty"`
+	// Value int    `json:"value,omitempty"`
+	Link      []AxisPointerLink `json:"link,omitempty"`
+	TriggerOn string            `json:"triggerOn,omitempty"`
+}
+
+type AxisPointerLink struct {
+	XAxisIndex []int  `json:"xAxisIndex,omitempty"`
+	XAxisName  string `json:"xAxisName,omitempty"`
+	YAxisIndex []int  `json:"yAxisIndex,omitempty"`
+	YAxisName  string `json:"yAxisName,omitempty"`
+	AngleAxis  string `json:"angeAxis,omitempty"`
 }
 
 type AxisLine struct {
