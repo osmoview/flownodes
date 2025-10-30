@@ -33,10 +33,6 @@ type SaveEventData struct {
 }
 
 func (node *SaveEvent) Init(db flownodes.Database) {
-	if node.Timeout == 0 {
-		node.Timeout = 10
-	}
-
 	node.db = db
 }
 
