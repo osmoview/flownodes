@@ -45,6 +45,9 @@ type NodeDriver struct {
 	// Node string `yaml:"node" json:"-"`
 	Lang string `yaml:"lang,omitempty" json:"lang,omitempty"`
 
+	// module ID to use node with downloaded libs
+	ModuleID string `yaml:"module_id,omitempty" json:"module_id,omitempty"`
+
 	// access level
 	Access string `yaml:"access,omitempty" json:"access,omitempty"`
 
