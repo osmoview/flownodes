@@ -38,9 +38,12 @@ type Runner interface {
 }
 
 type Logger interface {
+	Add(s string, level string)
+	AddLog(ll logger.LogLine)
 	Logs() []logger.LogLine
 	Subscribe() chan logger.LogLine
 	Unsubscribe(chan logger.LogLine)
+	UnsubscribeAll()
 }
 
 // RegisterInterpreter add new interpreter for the specified language
