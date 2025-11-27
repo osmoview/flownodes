@@ -29,6 +29,8 @@ input:
 output:
   - type: event
     name: event
+  - type: events
+    name: events
 
 form:
   - name: dir
@@ -49,6 +51,26 @@ form:
       en: Timeout between events
       ru: Таймаут между сохранением событий
     default: 10
+
+  - name: allowempty
+    type: checkbox
+    default: false
+    label:
+      en: Save without objects
+      ru: Сохранить без объектов
+    help:
+      en: If enabled, the event will be created even when the objects list is empty. Otherwise, the event is created only if there are one or more objects.
+      ru: Если включено, событие создаётся даже при пустом списке объектов. Иначе событие создаётся только при наличии одного или нескольких объектов.
+
+  - name: eventperobject
+    type: checkbox
+    default: false
+    label:
+      en: Event per object
+      ru: Событие на каждый объект
+    help:
+      en: If enabled, the event will be created even when the objects list is empty. Otherwise, the event is created only if there are one or more objects.
+      ru: Если включено, событие создаётся даже при пустом списке объектов. Иначе событие создаётся только при наличии одного или нескольких объектов.
 
   - name: group
     label:
