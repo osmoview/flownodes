@@ -31,7 +31,7 @@ output:
 
 form:
   - name: text
-    type: string
+    type: textarea
     label:
       en: Text
       ru: Текст
