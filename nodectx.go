@@ -105,7 +105,7 @@ type Database interface {
 	Get(x DatabaseTableModel) error
 	Del(x DatabaseTableModel) error
 	Upd(where any, x DatabaseTableModel) error
-	Range(x DatabaseTableModel, f func(v DatabaseTableModel) bool) error
+	Range(x DatabaseTableModel, filter map[string]any, f func(v DatabaseTableModel) bool) error
 	Table(x TableScheme) (DatabaseTable, error)
 	// SQL(query string, x ...any) (*sql.DB, error)
 }
