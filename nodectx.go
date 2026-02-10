@@ -105,13 +105,20 @@ type Database interface {
 	Get(x DatabaseTableModel) error
 	Del(x DatabaseTableModel) error
 	Upd(where any, x DatabaseTableModel) error
-	Range(x DatabaseTableModel, filter map[string]any, f func(v DatabaseTableModel) bool) error
+	Range(x DatabaseTableModel, opt DatabaseRangeOpt, f func(v DatabaseTableModel) bool) error
 	Table(x TableScheme) (DatabaseTable, error)
-	// SQL(query string, x ...any) (*sql.DB, error)
+	SQL(query string, x any) error
 }
 
 type DatabaseTableModel interface {
 	TableName() string
+}
+
+type DatabaseRangeOpt struct {
+	Filter map[string]any
+	Offset int
+	Limit  int
+	Order  string
 }
 
 type DatabaseTable interface {
@@ -120,7 +127,7 @@ type DatabaseTable interface {
 	Insert(record Data) error
 	Update(where, values map[string]any) error
 	Delete(where map[string]any) error
-	Range(where map[string]any, f func(DatabaseTableRow) bool) error
+	Range(opt DatabaseRangeOpt, f func(DatabaseTableRow) bool) error
 }
 
 type TableScheme struct {
