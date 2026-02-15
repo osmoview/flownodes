@@ -37,6 +37,7 @@ const (
 	GroupDataSources   = "datasources"
 	GroupNotifications = "notifications"
 	GroupFiles         = "files"
+	GroupStorage       = "storage"
 )
 
 //
@@ -56,6 +57,7 @@ type Ctx interface {
 	MustGetData(port string) (data any)
 	DataMap() map[string]any
 	Abort()
+	Break()
 }
 
 //
@@ -66,6 +68,19 @@ type Storage interface {
 	GetService(id string) (RemoteService, error)
 	GetDataSource(id string) (DataSource, error)
 	GetFlow(id string) (Flow, error)
+	GetBeltStorage() (BeltStorage, error)
+}
+
+type BeltStorage interface {
+	Get(id string) (BeltStorageData, error)
+	Set(id string, data BeltStorageData) error
+	Del(id string) error
+}
+
+type BeltStorageData struct {
+	ID          string `json:"id"`
+	ContentType string `json:"content_type"`
+	Content     []byte `json:"content"`
 }
 
 type RemoteService interface {
