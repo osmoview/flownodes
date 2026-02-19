@@ -58,7 +58,6 @@ type Ctx interface {
 	MustGetData(port string) (data any)
 	DataMap() map[string]any
 	Abort()
-	Break()
 }
 
 //
