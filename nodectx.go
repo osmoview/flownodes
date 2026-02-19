@@ -12,6 +12,7 @@ var (
 	ErrNoDataSource        = errors.New("no data source")
 	ErrUnexpectedDataType  = errors.New("unexpected data type")
 	ErrInterpreterNotExist = errors.New("interpreter not exist")
+	ErrInterrupted         = errors.New("execution interrupted")
 )
 
 const (
@@ -72,8 +73,8 @@ type Storage interface {
 }
 
 type BeltStorage interface {
-	Get(id string) (BeltStorageData, error)
-	Set(id string, data BeltStorageData) error
+	Get(id string, out *any) error
+	Set(id string, data any) error
 	Del(id string) error
 }
 
