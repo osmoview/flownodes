@@ -78,12 +78,6 @@ type BeltStorage interface {
 	Del(id string) error
 }
 
-type BeltStorageData struct {
-	ID          string `json:"id"`
-	ContentType string `json:"content_type"`
-	Content     []byte `json:"content"`
-}
-
 type RemoteService interface {
 	GetName() string
 	GetAddresses(path string) ([]string, error)
