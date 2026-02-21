@@ -68,10 +68,6 @@ type Storage interface {
 	GetService(id string) (RemoteService, error)
 	GetDataSource(id string) (DataSource, error)
 	GetFlow(id string) (Flow, error)
-	GetBeltStorage() (BeltStorage, error)
-}
-
-type BeltStorage interface {
 	Get(id string, out *any) error
 	Set(id string, data any) error
 	Del(id string) error
