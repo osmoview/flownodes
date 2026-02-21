@@ -68,7 +68,7 @@ type Storage interface {
 	GetService(id string) (RemoteService, error)
 	GetDataSource(id string) (DataSource, error)
 	GetFlow(id string) (Flow, error)
-	Get(id string, out *any) error
+	Get(id string, out any) error
 	Set(id string, data any) error
 	Del(id string) error
 }
