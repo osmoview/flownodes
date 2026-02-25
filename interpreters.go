@@ -35,6 +35,9 @@ type Runner interface {
 
 	// returns last log lines from the interpreter
 	Logger() Logger
+
+	// returns the node variables
+	Vars() map[string]Data
 }
 
 type Logger interface {
