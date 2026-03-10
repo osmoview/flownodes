@@ -99,6 +99,22 @@ type DataSource interface {
 type Flow interface {
 	GetID() string
 	GetName() string
+	Execute(data Data, opt FlowExecuteOptions, onResponse ...chan NodeRunInfo) (*FlowExecuteState, error)
+}
+
+type FlowExecuteOptions struct {
+	// force to execute a node
+	Force bool
+
+	// skip execute node, use input data as output data
+	// this is necessary to perform classical analytics when input data corresponds
+	// to output data from the entry node
+	Skip bool
+}
+
+type FlowExecuteState struct {
+	ID    string
+	Error error
 }
 
 //
