@@ -1,37 +1,26 @@
 id: camera
 name: Camera
-icon: camera
-
-label:
-  en: Camera
-  ru: Камера
-
-node: camera
 lang: go
-
 access: internal
-
 is_datasource: true
-
+label:
+    en: Camera
+    ru: Камера
 group: frames
-
-# ports
-input:
 output:
-  - type: frame
-    name: frame
-
-form:
-  - name: id
-    type: select
-    hook: datasources
-    label:
-      en: Datasource
-      ru: Источник данных
-
+    - name: frame
+      type: frame
 run:
-  file: camera.go
-  target: Camera
-  init: Init
-  run: Run
-  gopath: ./gopath
+    file: camera.go
+    gopath: ./gopath
+    init: Init
+    run: Run
+    target: Camera
+form:
+    - name: id
+      type: select
+      label:
+        en: Datasource
+        ru: Источник данных
+      hook: datasources
+icon: camera

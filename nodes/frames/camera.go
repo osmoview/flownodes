@@ -21,16 +21,20 @@ func (cam *Camera) Init(s flownodes.Storage) (err error) {
 	return
 }
 
-func (cam *Camera) Run(data CameraData) (CameraData, error) {
+func (cam *Camera) Run(data CameraData) (any, error) {
 	if cam.ds != nil {
 		frame, err := cam.ds.GetFrame()
 
 		return CameraData{Frame: frame}, err
 	}
 
+	if data.Frame == nil {
+		return nil, nil
+	}
+
 	return data, nil
 }
 
 type CameraData struct {
-	Frame *flowdata.Frame
+	Frame *flowdata.Frame `json:"frame,omitempty"`
 }
