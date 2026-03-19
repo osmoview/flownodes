@@ -57,21 +57,38 @@ func (node *ChartSelectEvents) Run(in ChartSelectEventsInput) (out ChartSelectEv
 	return
 }
 
-func (node *ChartSelectEvents) buildFilter(in ChartSelectEventsInput) (filter map[string]any) {
-	filter = make(map[string]any)
+func (node *ChartSelectEvents) buildFilter(in ChartSelectEventsInput) (opt flownodes.DatabaseRangeOpt) {
+	opt.Limit = -1
+	opt.Filter = make(map[string]any)
 
 	if len(node.DataSources) > 0 {
-		filter["datasource"] = node.DataSources
+		opt.Filter["datasource"] = node.DataSources
 	}
 
 	if len(node.Flows) > 0 {
-		filter["flow"] = node.Flows
+		opt.Filter["flow"] = node.Flows
 	}
 
-	filter["created_at >= ?"] = time.Now().Add(-1 * in.Duration)
+	opt.Filter["created_at >= ?"] = time.Now().Add(-1 * in.Duration)
 
 	return
 }
+
+// func (node *ChartSelectEvents) buildFilter(in ChartSelectEventsInput) (filter flownodes.DatabaseRangeOpt) {
+//   filter = flownodes.DatabaseRangeOpt{}
+
+//   if len(node.DataSources) > 0 {
+//     filter.Filter["datasource"] = node.DataSources
+//   }
+
+//   if len(node.Flows) > 0 {
+//     filter.Filter["flow"] = node.Flows
+//   }
+
+//   filter.Filter["created_at >= ?"] = time.Now().Add(-1 * in.Duration)
+
+//   return
+// }
 
 func (node *ChartSelectEvents) HasObject(objects []*flowdata.Object, classes []string) bool {
 	for _, obj := range objects {
