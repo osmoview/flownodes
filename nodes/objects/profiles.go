@@ -68,7 +68,7 @@ func (node *Profiles) Run(req ProfilesDTO) (ProfilesDTO, error) {
 	}
 
 	// load profiles from the database one by one and compare it with objects
-	err := node.db.Range(&flowdata.Profile{Type: node.ProfilesType}, func(v flownodes.DatabaseTableModel) bool {
+	err := node.db.Range(&flowdata.Profile{Type: node.ProfilesType}, flownodes.DatabaseRangeOpt{}, func(v flownodes.DatabaseTableModel) bool {
 		p := v.(*flowdata.Profile)
 
 		for o := range objectsWithVector {

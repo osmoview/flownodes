@@ -11,11 +11,12 @@ require (
 )
 
 require (
-	github.com/osmoview/flowdata v0.0.65
-	github.com/osmoview/logger v0.1.6
+	github.com/osmoview/flowdata v0.0.67
+	github.com/osmoview/logger v0.1.7
 )
 
 require (
+	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/hetiansu5/urlquery v1.2.7 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
