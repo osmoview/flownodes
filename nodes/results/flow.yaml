@@ -1,0 +1,14 @@
+id: flow
+name: Flow
+lang: go
+access: internal
+label:
+    en: Flow
+    ru: Аналитика
+group: results
+run:
+    file: flow.go
+    gopath: ./gopath
+    init: Init
+    run: Run
+    target: Flow
