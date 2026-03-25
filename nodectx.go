@@ -58,7 +58,7 @@ type Ctx interface {
 	MustGetData(port string) (data any)
 	DataMap() map[string]any
 	Abort()
-	Send(data any)
+	Publish(data any)
 	Return(map[string]any)
 }
 
