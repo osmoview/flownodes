@@ -23,8 +23,8 @@ github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 h1:lDH9UUVJtmYCjyT0C
 github.com/op/go-logging v0.0.0-20160315200505-970db520ece7/go.mod h1:HzydrMdWErDVzsI23lYNej1Htcns9BCg93Dk0bBINWk=
 github.com/osmoview/echarts v0.1.1 h1:k5QwTxAOPNIgMxIDKDdMZBg0nzgnsvEK3r2pb4+KVM4=
 github.com/osmoview/echarts v0.1.1/go.mod h1:wY7I0ilVl8elwsuoWSZFlc1qRi49PBvlrZoqPVwvr8I=
-github.com/osmoview/flowdata v0.0.67 h1:/P0zom1td5naCZ6u+7V6YDgM5djQXn/HIndM40q1bE4=
-github.com/osmoview/flowdata v0.0.67/go.mod h1:GmpL/bpWCI2wSqv0JR3cLoUQbaQzNfldiZSpeFD5BMw=
+github.com/osmoview/flowdata v0.0.68 h1:GSVnYo/gO7BTHgihN2gFP5Rrkductww2vmrnbxVElps=
+github.com/osmoview/flowdata v0.0.68/go.mod h1:dnZR7I3ta6d0GD/0hxn+tgSqS7yMjmVyO9bB5kqfmZE=
 github.com/osmoview/flownodes v0.4.13 h1:wHjprrYgF5RT6O98RMQSGCssKYz3ClEbGtQ1oZRMwmg=
 github.com/osmoview/flownodes v0.4.13/go.mod h1:NDhgjc3Z/CikYVJs43Vl5RJ2lYjOO973B9y0Jcg605k=
 github.com/osmoview/logger v0.1.6 h1:CAYw2Xz+PuAZtsy/jequX3V65XQLF+KUxDsi/EKUDwY=
@@ -34,11 +34,11 @@ github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7
 github.com/sg3des/libjpeg v0.1.0 h1:VOkYsbQu3Z4EJtctGao2dDgN0WA7rf66RpzDJEAg7Co=
 github.com/sg3des/libjpeg v0.1.0/go.mod h1:fZmXbNtr/170lZsSzbl6ZGS6Mq+w84snApDUWT/EKwo=
 golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=
-golang.org/x/image v0.32.0 h1:6lZQWq75h7L5IWNk0r+SCpUJ6tUVd3v4ZHnbRKLkUDQ=
-golang.org/x/image v0.32.0/go.mod h1:/R37rrQmKXtO6tYXAjtDLwQgFLHmhW+V6ayXlxzP2Pc=
+golang.org/x/image v0.36.0 h1:Iknbfm1afbgtwPTmHnS2gTM/6PPZfH+z2EFuOkSbqwc=
+golang.org/x/image v0.36.0/go.mod h1:YsWD2TyyGKiIX1kZlu9QfKIsQ4nAAK9bdgdrIsE7xy4=
 golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.36.0 h1:KVRy2GtZBrk1cBYA7MKu5bEZFxQk4NIDV6RLVcC8o0k=
-golang.org/x/sys v0.36.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
+golang.org/x/sys v0.41.0 h1:Ivj+2Cp/ylzLiEU89QhWblYnOE9zerudt9Ftecq2C6k=
+golang.org/x/sys v0.41.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=

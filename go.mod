@@ -6,12 +6,12 @@ require (
 	github.com/go-viper/mapstructure/v2 v2.4.0
 	github.com/google/uuid v1.6.0
 	github.com/oliamb/cutter v0.2.2
-	golang.org/x/text v0.30.0
+	golang.org/x/text v0.34.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	github.com/osmoview/flowdata v0.0.67
+	github.com/osmoview/flowdata v0.0.68
 	github.com/osmoview/logger v0.1.7
 )
 
@@ -25,7 +25,7 @@ require (
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/sg3des/libjpeg v0.1.0 // indirect
-	golang.org/x/image v0.32.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/image v0.36.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
