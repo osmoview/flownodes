@@ -1,0 +1,44 @@
+id: service-sse
+name: SSE Service
+
+label:
+  en: Service SSE
+  ru: Сервис SSE
+
+lang: go
+
+access: internal
+
+group: services
+
+is_datasource: true
+
+form:
+  - name: model
+    label:
+      en: Model
+      ru: model
+
+  - name: flow
+    label:
+      en: Flow
+      ru: Аналитики
+    type: select
+    hook: flows
+
+input:
+  - type: messages
+    name: messages
+
+output:
+  - type: message
+    name: message
+  - type: string
+    name: answer
+
+run:
+  file: service-sse.go
+  target: ServiceSSE
+  init: Init
+  run: Run
+  gopath: ./gopath
