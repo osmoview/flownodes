@@ -59,6 +59,7 @@ type Ctx interface {
 	DataMap() map[string]any
 	Abort()
 	Send(data any)
+	Return(map[string]any)
 }
 
 //
@@ -100,6 +101,7 @@ type Flow interface {
 	GetID() string
 	GetName() string
 	Execute(data Data, opt FlowExecuteOptions, onResponse ...chan NodeRunInfo) (*FlowExecuteState, error)
+	Run(data Data) (Data, error)
 }
 
 type FlowExecuteOptions struct {
