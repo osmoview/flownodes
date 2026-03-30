@@ -70,6 +70,7 @@ type Storage interface {
 	GetService(id string) (RemoteService, error)
 	GetDataSource(id string) (DataSource, error)
 	GetFlow(id string) (Flow, error)
+	GetNode(id string, data Data) (Runner, error)
 	Get(id string, out any) error
 	Set(id string, data any) error
 	Del(id string) error
@@ -102,6 +103,7 @@ type Flow interface {
 	GetName() string
 	Execute(data Data, opt FlowExecuteOptions, onResponse ...chan NodeRunInfo) (*FlowExecuteState, error)
 	Run(data Data) (Data, error)
+	GetNodeRunner(id string) (Runner, error)
 }
 
 type FlowExecuteOptions struct {
