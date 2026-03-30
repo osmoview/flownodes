@@ -70,9 +70,17 @@ type Storage interface {
 	GetService(id string) (RemoteService, error)
 	GetDataSource(id string) (DataSource, error)
 	GetFlow(id string) (Flow, error)
+	GetNode(id string, data Data, storage Storage, db Database) (Node, error)
 	Get(id string, out any) error
 	Set(id string, data any) error
 	Del(id string) error
+}
+
+// Node interface allows to run another node from node code
+type Node interface {
+	Run(ctx Ctx) (Data, error)
+	Call(fnc string, ctx Ctx) (Data, error)
+	Close() error
 }
 
 type RemoteService interface {
