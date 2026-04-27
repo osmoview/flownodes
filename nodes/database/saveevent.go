@@ -20,6 +20,8 @@ type SaveEvent struct {
 
 	Group string `yaml:"group"`
 
+	Level int `yaml:"level"`
+
 	db flownodes.Database
 }
 
@@ -56,6 +58,7 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) (flownodes.Data,
 		Objects:    data.Objects,
 		Alert:      node.Alert,
 		Group:      node.Group,
+		Level:      node.Level,
 	}
 
 	if err := e.Save(data.Frame); err != nil {

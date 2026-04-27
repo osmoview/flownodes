@@ -31,15 +31,6 @@ output:
     name: event
 
 form:
-  - name: dir
-    label:
-      en: Directory
-      ru: Директория
-    help:
-      en: The path to the directory where to save the event images
-      ru: Путь до директории куда сохранять изображения событий
-    default: 'data/events'
-
   - name: timeout
     type: number
     label:
@@ -49,6 +40,25 @@ form:
       en: Timeout between events
       ru: Таймаут между сохранением событий
     default: 10
+
+  - name: level
+    type: select
+    options:
+      - value: -1
+        label: debug
+      - value: 0
+        label: default
+      - value: 1
+        label: notice
+      - value: 2
+        label: important
+    default: 0
+    label:
+      en: Level
+      ru: Уровень
+    help:
+      en: 'Event level: debug, default, notice or important'
+      ru: 'Уровень события: отладка, важный ит.д.'
 
   - name: group
     label:
