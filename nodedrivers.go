@@ -217,7 +217,7 @@ func ReadNodeDriver(fp string) (nd NodeDriver, err error) {
 	}
 	defer f.Close()
 
-	if yaml.NewDecoder(f).Decode(&nd); err != nil {
+	if err := yaml.NewDecoder(f).Decode(&nd); err != nil {
 		return nd, err
 	}
 
