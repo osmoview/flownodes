@@ -10,9 +10,10 @@ import (
 )
 
 type Service struct {
-	ID     string
-	Method string
-	Path   string
+	ID          string
+	Method      string
+	Path        string
+	ContentType string
 
 	service flownodes.RemoteService
 	form    flownodes.Data
@@ -51,6 +52,7 @@ func (node *Service) Run(c flownodes.Ctx) (resp flownodes.Data, err error) {
 	req := flowdata.NewRequest()
 	req.Method = strings.ToUpper(node.Method)
 	req.URL = url
+	req.ContentType = node.ContentType
 
 	// set datasource id, flow id, flow run id as http headers
 	req.Headers = c.Headers()
