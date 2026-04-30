@@ -4,8 +4,8 @@ go 1.25.0
 
 require (
 	github.com/osmoview/echarts v0.1.1
-	github.com/osmoview/flowdata v0.0.72
-	github.com/osmoview/flownodes v0.4.13
+	github.com/osmoview/flowdata v0.0.73
+	github.com/osmoview/flownodes v0.4.19
 )
 
 require (
