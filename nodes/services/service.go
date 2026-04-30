@@ -13,7 +13,7 @@ type Service struct {
 	ID          string
 	Method      string
 	Path        string
-	ContentType string
+	ContentType string `json:"content-type" yaml:"content-type"`
 
 	service flownodes.RemoteService
 	form    flownodes.Data
