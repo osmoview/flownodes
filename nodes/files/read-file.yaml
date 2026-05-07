@@ -1,0 +1,15 @@
+id: read-file
+name: Read File
+lang: go
+group: files
+input:
+  - name: path
+    type: string
+output:
+  - name: file
+    type: file
+form:
+  - name: path
+run:
+  file: read-file.go
+  target: ReadFile
