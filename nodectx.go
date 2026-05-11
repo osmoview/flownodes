@@ -104,6 +104,7 @@ type Flow interface {
 	Execute(data Data, opt FlowExecuteOptions, onResponse ...chan NodeRunInfo) (*FlowExecuteState, error)
 	Run(data Data) (Data, error)
 	GetNodeRunner(id string) (Runner, error)
+	WaitTimeout(min time.Duration) time.Duration
 }
 
 type FlowExecuteOptions struct {

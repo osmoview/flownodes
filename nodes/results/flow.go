@@ -27,8 +27,8 @@ func (node *Flow) Run(data flownodes.Data) (flownodes.Data, error) {
 		return nil, err
 	}
 
-	// TODO: configurable timeout
-	t := time.Now().Add(30 * time.Second)
+	// resolve execution timeout from the flow txtimeout parameter
+	t := time.Now().Add(node.flow.WaitTimeout(5 * time.Second))
 
 	for {
 		select {
