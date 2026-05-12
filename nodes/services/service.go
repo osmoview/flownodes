@@ -1,7 +1,7 @@
 package services
 
 import (
-	"log"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -38,8 +38,7 @@ func (node *Service) Init(storage flownodes.Storage, form flownodes.Data) (err e
 // WARN: string, arrays and other responses not supported
 func (node *Service) Run(c flownodes.Ctx) (resp flownodes.Data, err error) {
 	if node.service == nil {
-		log.Println("WARN: no service")
-		return nil, nil
+		return nil, errors.New("no service")
 	}
 
 	// build URL address
