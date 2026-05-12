@@ -21,6 +21,10 @@ func (node *Flow) Init(storage flownodes.Storage) (err error) {
 }
 
 func (node *Flow) Run(data flownodes.Data) (flownodes.Data, error) {
+	if node.flow == nil {
+		return nil, errors.New("no flow")
+	}
+
 	ch := make(chan flownodes.NodeRunInfo)
 	fr, err := node.flow.Execute(data, flownodes.FlowExecuteOptions{Force: true}, ch)
 	if err != nil {
