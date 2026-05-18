@@ -4,11 +4,9 @@ import (
 	"github.com/osmoview/logger"
 )
 
-var (
-	// interpreters is a map contains virtual machines and other solutions
-	// to run and execute logic for custom nodes, key is a language.
-	interpreters = map[string]Interpreter{}
-)
+// interpreters is a map contains virtual machines and other solutions
+// to run and execute logic for custom nodes, key is a language.
+var interpreters = map[string]Interpreter{}
 
 // NodeRunner is an interface for different virtual machines, interpreters or other solutions to run and execute custom nodes
 type Interpreter interface {
@@ -37,7 +35,7 @@ type Runner interface {
 	Logger() Logger
 
 	// returns the node variables
-	Vars() map[string]Data
+	Vars() Data
 }
 
 type Logger interface {
