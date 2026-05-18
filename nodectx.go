@@ -2,6 +2,7 @@ package flownodes
 
 import (
 	"errors"
+	"sync"
 	"time"
 
 	"github.com/osmoview/flowdata"
@@ -60,6 +61,7 @@ type Ctx interface {
 	Abort()
 	Publish(data any)
 	Return(map[string]any)
+	Cache() *sync.Map
 }
 
 //
