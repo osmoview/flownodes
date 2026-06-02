@@ -107,6 +107,7 @@ type Flow interface {
 	Run(data Data) (Data, error)
 	GetNodeRunner(id string) (Runner, error)
 	WaitTimeout(min time.Duration) time.Duration
+	AbortFlowRun(frid string) error
 }
 
 type FlowExecuteOptions struct {
