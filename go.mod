@@ -11,7 +11,7 @@ require (
 )
 
 require (
-	github.com/osmoview/flowdata v0.0.73
+	github.com/osmoview/flowdata v0.0.83
 	github.com/osmoview/logger v0.1.7
 )
 
