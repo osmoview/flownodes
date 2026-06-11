@@ -1,65 +1,63 @@
 id: saveevent
 name: Save Event
-icon: database
-
+lang: go
+access: internal
 label:
   en: Create Event
   ru: Создать Событие
-
-lang: go
-
-access: internal
-
 group: results
-
 # ports
 input:
-  - type: frame
-    name: frame
-  - type: objects
-    name: objects
-  - type: regions
-    name: regions
-  - type: lines
-    name: lines
-  - type: string
-    name: status
-  - type: string
-    name: state
+  - name: frame
+    type: frame
+  - name: objects
+    type: objects
+  - name: regions
+    type: regions
+  - name: lines
+    type: lines
+  - name: status
+    type: string
+  - name: state
+    type: string
+  - name: '*'
+    type: map
 output:
-  - type: event
-    name: event
-
+  - name: event
+    type: event
+run:
+  file: saveevent.go
+  init: Init
+  run: Run
+  target: SaveEvent
 form:
   - name: timeout
     type: number
+    default: 10
     label:
       en: Timeout
       ru: Таймаут
     help:
       en: Timeout between events
       ru: Таймаут между сохранением событий
-    default: 10
-
   - name: level
     type: select
-    options:
-      - value: -1
-        label: debug
-      - value: 0
-        label: default
-      - value: 1
-        label: notice
-      - value: 2
-        label: important
     default: 0
     label:
       en: Level
       ru: Уровень
     help:
-      en: 'Event level: debug, default, notice or important'
-      ru: 'Уровень события: отладка, важный ит.д.'
-
+      en: "Event level: debug, default, notice or important"
+      ru: "Уровень события: отладка, важный ит.д."
+    options:
+      - label: debug
+        value: -1
+      - label: default
+        value: 0
+      - label: notice
+        value: 1
+      - label: important
+        value: 2
   - name: group
     label:
       en: Group
@@ -67,16 +65,9 @@ form:
     help:
       en: Some name of group to grouping events
       ru: Наименование группы для группировки ивентов
-
   - name: alert
     type: checkbox
     label:
       en: Alert
       ru: Оповещение
-
-run:
-  file: saveevent.go
-  target: SaveEvent
-  init: Init
-  run: Run
-  gopath: ./gopath
+icon: database

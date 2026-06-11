@@ -32,6 +32,7 @@ type SaveEventData struct {
 	Lines   []*flowdata.Line
 	Status  string
 	State   string
+	Group   string
 }
 
 func (node *SaveEvent) Init(db flownodes.Database) {
@@ -57,7 +58,7 @@ func (node *SaveEvent) Run(c flownodes.Ctx, data SaveEventData) (flownodes.Data,
 		State:      data.State,
 		Objects:    data.Objects,
 		Alert:      node.Alert,
-		Group:      node.Group,
+		Group:      data.Group,
 		Level:      node.Level,
 	}
 
