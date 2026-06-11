@@ -21,6 +21,7 @@ type CropReq struct {
 }
 
 type CropResp struct {
+	Frame  *flowdata.Frame
 	Frames []*flowdata.Frame
 }
 
@@ -50,6 +51,7 @@ func (node *Crop) Run(req CropReq, c flownodes.Ctx) (resp CropResp, err error) {
 			return resp, err
 		}
 
+		resp.Frame = frame
 		resp.Frames = append(resp.Frames, frame)
 	}
 
@@ -71,6 +73,7 @@ func (node *Crop) Run(req CropReq, c flownodes.Ctx) (resp CropResp, err error) {
 					return resp, err
 				}
 
+				resp.Frame = frame
 				resp.Frames = append(resp.Frames, frame)
 			}
 		}

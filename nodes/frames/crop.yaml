@@ -21,6 +21,8 @@ input:
     name: objects
 
 output:
+  - type: frame
+    name: frame
   - type: frames
     name: frames
 
