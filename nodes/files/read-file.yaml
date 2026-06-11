@@ -2,6 +2,7 @@ id: read-file
 name: Read File
 lang: go
 group: files
+is_datasource: true
 input:
   - name: path
     type: string
