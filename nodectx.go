@@ -62,6 +62,7 @@ type Ctx interface {
 	Publish(data any)
 	Return(map[string]any)
 	Cache() *sync.Map
+	Logger() Logger
 }
 
 //
