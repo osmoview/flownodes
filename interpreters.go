@@ -1,6 +1,8 @@
 package flownodes
 
 import (
+	"time"
+
 	"github.com/osmoview/logger"
 )
 
@@ -42,6 +44,7 @@ type Logger interface {
 	Add(s string, level string)
 	AddLog(ll logger.LogLine)
 	Logs() []logger.LogLine
+	LogsAfter(time.Time) []logger.LogLine
 	Subscribe() chan logger.LogLine
 	Unsubscribe(chan logger.LogLine)
 	UnsubscribeAll()
