@@ -2,7 +2,6 @@ package results
 
 import (
 	"errors"
-	"log"
 	"time"
 
 	"github.com/osmoview/flownodes"
@@ -14,18 +13,25 @@ type Flow struct {
 	flow flownodes.Flow
 }
 
-// Init
 func (node *Flow) Init(storage flownodes.Storage) (err error) {
 	node.flow, err = storage.GetFlow(node.ID)
 	return
 }
 
-func (node *Flow) Run(data flownodes.Data) (flownodes.Data, error) {
+func (node *Flow) Run(data flownodes.Data, c flownodes.Ctx) (flownodes.Data, error) {
 	if node.flow == nil {
 		return nil, errors.New("no flow")
 	}
 
-	ch := make(chan flownodes.NodeRunInfo)
+	if data == nil {
+		data = flownodes.Data{}
+	}
+	// substitute datasource info to the entry data
+	if _, ok := data[flownodes.PortSourceInfo]; !ok {
+		data[flownodes.PortSourceInfo] = c.GetSourceInfo()
+	}
+
+	ch := make(chan flownodes.NodeRunInfo, 32)
 	fr, err := node.flow.Execute(data, flownodes.FlowExecuteOptions{Force: true}, ch)
 	if err != nil {
 		return nil, err
@@ -37,7 +43,6 @@ func (node *Flow) Run(data flownodes.Data) (flownodes.Data, error) {
 	for {
 		select {
 		case result := <-ch:
-			log.Printf("%+v", result.OutputData)
 			return result.OutputData, nil
 		case <-time.Tick(time.Second):
 			if fr.Error != nil {
