@@ -20,9 +20,10 @@ const (
 )
 
 const (
-	PortModeOne = "one"
-	PortModeLot = "lot"
-	PortModeAll = "all"
+	PortModeOne    = "one"
+	PortModeLot    = "lot"
+	PortModeAll    = "all"
+	PortModeStream = "stream"
 )
 
 // Port on the Node, contains name and type
@@ -46,5 +47,6 @@ type Port struct {
 	// one - pick first data and mark port is completed, all other links to it port will be ignored
 	// lot - pick at least one link, all other links will be merged, but not wait when all links executed
 	// all - wait when all links executed, mode by default if mode not specified
+	// stream - execute destination node directly, without mergeData
 	Mode string `yaml:"mode,omitempty" json:"mode,omitempty"`
 }
