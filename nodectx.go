@@ -105,9 +105,21 @@ type Flow interface {
 	GetName() string
 	Execute(data Data, opt FlowExecuteOptions, onResponse ...chan NodeRunInfo) (*FlowExecuteState, error)
 	Run(data Data) (Data, error)
-	GetNodeRunner(id string) (Runner, error)
+	GetNodeRunner(nodeid string) (Runner, error)
 	WaitTimeout(min time.Duration) time.Duration
 	AbortFlowRun(frid string) error
+
+	NewFlowRun(sourceInfo flowdata.SourceInfo) FlowRun
+	RunFlowRun(fr FlowRun, data map[string]any) error
+}
+
+type FlowRun interface {
+	GetID() string
+	SubscribeOnResult(ch chan NodeRunInfo)
+	UnsubscribeOnResult(ch chan NodeRunInfo)
+	Abort()
+	IsAborted() bool
+	IsResulted() bool
 }
 
 type FlowExecuteOptions struct {
