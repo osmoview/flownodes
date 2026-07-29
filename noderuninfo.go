@@ -1,6 +1,7 @@
 package flownodes
 
 import (
+	"errors"
 	"time"
 )
 
@@ -26,5 +27,17 @@ type NodeRunInfo struct {
 	// response from the node
 	OutputData Data `json:"outputdata,omitempty"`
 
+	// error description
 	Error string `json:"error,omitempty"`
+
+	// completed flag is true when flow is totally completed
+	Completed bool `json:"completed,omitempty"`
+}
+
+func (info *NodeRunInfo) GetError() error {
+	if info.Error == "" {
+		return nil
+	}
+
+	return errors.New(info.Error)
 }
