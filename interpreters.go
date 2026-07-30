@@ -43,7 +43,7 @@ type Runner interface {
 type Logger interface {
 	Add(s string, level string)
 	AddLog(ll logger.LogLine)
-	Logs() []logger.LogLine
+	Logs(logger.LogFilter) []logger.LogLine
 	LogsAfter(time.Time) []logger.LogLine
 	Subscribe() chan logger.LogLine
 	Unsubscribe(chan logger.LogLine)
