@@ -1,6 +1,6 @@
 module github.com/osmoview/flownodes
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/go-viper/mapstructure/v2 v2.5.0
@@ -12,7 +12,7 @@ require (
 
 require (
 	github.com/osmoview/flowdata v0.0.84
-	github.com/osmoview/logger v0.1.8
+	github.com/osmoview/logger v0.1.10
 )
 
 require (
