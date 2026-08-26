@@ -2,6 +2,8 @@ package results
 
 import (
 	"errors"
+	"fmt"
+	"log"
 	"time"
 
 	"github.com/osmoview/flownodes"
@@ -31,25 +33,45 @@ func (node *Flow) Run(data flownodes.Data, c flownodes.Ctx) (flownodes.Data, err
 		data[flownodes.PortSourceInfo] = c.GetSourceInfo()
 	}
 
-	ch := make(chan flownodes.NodeRunInfo, 32)
-	fr, err := node.flow.Execute(data, flownodes.FlowExecuteOptions{Force: true}, ch)
+	ch := make(chan flownodes.NodeRunInfo, 64)
+	state, err := node.flow.Execute(data, flownodes.FlowExecuteOptions{Force: true}, ch)
 	if err != nil {
 		return nil, err
 	}
+	if state.Error != nil {
+		return nil, state.Error
+	}
 
 	// resolve execution timeout from the flow txtimeout parameter
-	t := time.Now().Add(node.flow.WaitTimeout(5 * time.Second))
+	t := time.Now().Add(node.flow.WaitTimeout(10 * time.Second))
 
 	for {
 		select {
 		case result := <-ch:
-			return result.OutputData, nil
-		case <-time.Tick(time.Second):
-			if fr.Error != nil {
-				return nil, fr.Error
+			if err = result.GetError(); err != nil {
+				log.Println("FLOW error", err)
+				return result.OutputData, err
 			}
+
+			if result.Completed {
+				log.Println("FLOW complete", result.OutputData)
+				return result.OutputData, nil
+			}
+
+			log.Println("FLOW c.Return", result.OutputData)
+			c.Return(result.OutputData)
+
+		case <-time.Tick(time.Second):
 			if time.Now().After(t) {
 				return nil, errors.New("timed out")
+			}
+			fr, ok := node.flow.GetFlowRun(state.ID)
+			if !ok {
+				return nil, fmt.Errorf("flowrun %s not found", state.ID)
+			}
+			if fr.IsCompleted() {
+				log.Println("FLOW flowrun is completed")
+				return nil, nil
 			}
 		}
 	}
