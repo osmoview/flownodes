@@ -111,6 +111,7 @@ type Flow interface {
 
 	NewFlowRun(sourceInfo flowdata.SourceInfo) FlowRun
 	RunFlowRun(fr FlowRun, data map[string]any) error
+	GetFlowRun(id string) (FlowRun, bool)
 }
 
 type FlowRun interface {
