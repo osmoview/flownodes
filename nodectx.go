@@ -121,6 +121,7 @@ type FlowRun interface {
 	Abort()
 	IsAborted() bool
 	IsResulted() bool
+	IsCompleted() bool
 }
 
 type FlowExecuteOptions struct {
