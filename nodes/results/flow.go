@@ -3,7 +3,6 @@ package results
 import (
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/osmoview/flownodes"
@@ -49,16 +48,13 @@ func (node *Flow) Run(data flownodes.Data, c flownodes.Ctx) (flownodes.Data, err
 		select {
 		case result := <-ch:
 			if err = result.GetError(); err != nil {
-				log.Println("FLOW error", err)
 				return result.OutputData, err
 			}
 
 			if result.Completed {
-				log.Println("FLOW complete", result.OutputData)
 				return result.OutputData, nil
 			}
 
-			log.Println("FLOW c.Return", result.OutputData)
 			c.Return(result.OutputData)
 
 		case <-time.Tick(time.Second):
@@ -70,7 +66,6 @@ func (node *Flow) Run(data flownodes.Data, c flownodes.Ctx) (flownodes.Data, err
 				return nil, fmt.Errorf("flowrun %s not found", state.ID)
 			}
 			if fr.IsCompleted() {
-				log.Println("FLOW flowrun is completed")
 				return nil, nil
 			}
 		}
