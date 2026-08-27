@@ -23,19 +23,13 @@ input:
     name: frame
   - type: objects
     name: objects
-    mode: all
   - type: string
     name: status
   - type: string
     name: state
-    
-output:
 
-form:
 
 run:
   file: screen.go
   target: Screen
-  # init: Init
   run: Run
-  gopath: ./gopath
