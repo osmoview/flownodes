@@ -18,7 +18,8 @@ func (t *ChartResult) Run(input ChartResultInput) echarts.Echarts {
 	opt := echarts.NewEcharts()
 	opt.Series = input.Series
 	opt.Tooltip = echarts.Tooltip{Trigger: "axis"}
-	opt.Legend.Show = echarts.TRUE
+	// opt.Grid = []echats.Grid
+	opt.Legend = echarts.Legend{Show: echarts.TRUE}
 
 	xaxis := echarts.Axis{}
 	for _, t := range input.XAxis {

@@ -1,23 +1,18 @@
 id: chart-result
 name: Chart Result
-
+lang: go
+access: internal
 label:
   en: Chart Result
   ru: Результат Графика
-
-lang: go
-
-access: internal
-
 group: charts
-
 input:
-  - type: chart-series
-    name: series
-  - type: chart-axis
-    name: xaxis
-  - type: chart-yaxis
-    name: yaxis
+  - name: series
+    type: chart-series
+  - name: xaxis
+    type: chart-axis
+  - name: yaxis
+    type: chart-yaxis
   # - type: chart-axis
   #   name: y-axis
   # - type: chart-grid
@@ -28,8 +23,6 @@ input:
   #   name: tooltip
   # - type: chart-textstyles
   #   name: text styles
-
 run:
   file: chart-result.go
   target: ChartResult
-
