@@ -11,11 +11,12 @@ require (
 )
 
 require (
-	github.com/osmoview/flowdata v0.0.84
-	github.com/osmoview/logger v0.1.10
+	github.com/osmoview/flowdata v0.0.86
+	github.com/osmoview/logger v0.1.11
 )
 
 require (
+	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
