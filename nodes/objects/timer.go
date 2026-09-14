@@ -18,7 +18,7 @@ func (node *Timer) Init() {
 }
 
 func (node *Timer) Run(c flownodes.Ctx) flownodes.Data {
-	if t := c.GetTime(); t.Before(node.t) {
+	if t := c.GetTime(); t.After(node.t) {
 		node.t = t
 		return c.DataMap()
 	}
