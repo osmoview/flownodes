@@ -201,6 +201,12 @@ type Flow interface {
 
 	// get flowrun by flowrun id
 	GetFlowRun(id string) (FlowRun, bool)
+
+	// create and initialize clone of the flow
+	Clone() (Flow, error)
+
+	// close flow
+	Close()
 }
 
 type FlowRun interface {
@@ -234,6 +240,9 @@ type FlowExecuteOptions struct {
 	// this is necessary to perform classical analytics when input data corresponds
 	// to output data from the entry node
 	Skip bool
+
+	// create flow clone before execute and terimante after it completed
+	Clone bool
 }
 
 type FlowExecuteState struct {
