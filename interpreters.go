@@ -33,6 +33,9 @@ type Runner interface {
 	// close should stop interpreter and clear memory
 	Close() error
 
+	// Clone creates a clone of Runner and also initializes it
+	Clone() (Runner, error)
+
 	// returns last log lines from the interpreter
 	Logger() Logger
 
