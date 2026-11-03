@@ -40,8 +40,8 @@ type Port struct {
 	// text description of the port
 	Desc string `yaml:"desc,omitempty" json:"desc,omitempty"`
 
-	// required flag
-	Required bool `yaml:"required,omitempty" json:"required,omitempty"`
+	// optional flag, not work with mode:stream
+	Optional bool `yaml:"optional,omitempty" json:"optional,omitempty"`
 
 	// port mode:
 	// one - pick first data and mark port is completed, all other links to it port will be ignored
